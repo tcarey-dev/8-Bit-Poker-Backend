@@ -3,7 +3,216 @@
 ## User Stories
 
 ### Player User Story
-* As a player, I want to be able to create an account, deposit (fake) money, choose a table, and play a game.
+* As a player, I want to be able to create an account, deposit (fake) money, choose a Room, and play a game.
 
 ### Admin User Story
-* As admin, I want to be able to create new tables, update existing table settings (such as stakes), and delete tables
+* As admin, I want to be able to create new Rooms, update existing Room settings (such as stakes), and delete Rooms
+
+## Models
+* Player
+  * int id
+  * String displayName
+  * String username
+  * String password
+  * int accountBalance
+  * Collection <GrantedAuthorities> roles
+  * List<Card> holeCards
+  * Position position
+  * boolean isPlayersAction
+
+* Room
+  * int id
+  * double stake
+  * int[] seats
+
+* Game
+  * int id
+  * Room room
+  * int pot
+  * Board board
+  * List<Player> players
+  * Player winner
+
+* Board
+  * int id
+  * List<Card> flop
+  * Card turn
+  * Card river
+
+* Position (enum)
+  * SMALL_BLIND
+  * BIG_BLIND
+
+* Action(enum)
+  * BET
+  * CHECK
+  * FOLD
+  * RAISE
+
+## Validation rules/business logic
+* Room stake must be even and greater or equal to 2 cents (consider creating drop down for stakes)
+
+## Package/Class Overview
+```
+src
+├───main
+│   ├───java
+│   │   └───learn
+│   │       └───poker
+│   │           │   App.java
+│   │           │   AppConfig.java
+│   │           │   WebSocketConfig.java
+│   │           │
+│   │           ├───security
+│   │           │       Player.java
+│   │           │       PlayerService.java
+│   │           │       Credentials.java
+│   │           │       JwtConverter.java
+│   │           │       JwtRequestFilter.java
+│   │           │       SecurityConfig.java
+│   │           │
+│   │           ├───data
+│   │           |   └─── mappers
+|   |           |       |      PlayerMapper.java
+|   |           |       |      RoomMapper.java
+|   |           |       |      GameMapper.java
+│   │           │       DataException.java
+│   │           │       RoomJdbcTemplateRepository.java
+│   │           │       RoomRepository.java
+│   │           │       PlayerJdbcTemplateRepository.java
+│   │           │       PlayerRepository.java
+│   │           │       GameJdbcTemplateRepository.java
+│   │           │       GameRepository.java
+│   │           │
+│   │           ├───domain
+│   │           │       RoomService.java
+│   │           │       GameService.java
+│   │           │       ResultType.java
+│   │           │       Result.java
+│   │           │
+│   │           ├───models
+│   │           │       Room.java
+│   │           │       Game.java
+│   │           │       Board.java
+│   │           │       Position.java
+│   │           │       Action.java
+│   │           │
+│   │           └───controller
+│   │                   PlayerController.java
+│   │                   RoomController.java
+│   │                   GameController.java
+│   │                   AuthController.java
+│   │                   GlobalExceptionHandler.java
+│   │
+│   └───resources
+└───test
+    └───java
+        └───learn
+            └───mastery
+                ├───data
+                │       UserRepositoryTest.java
+                │       UserRepositoryDouble.java
+                │       RoomRepositoryTest.java
+                │       RoomRepositoryDouble.java
+                │       GameRepositoryTest.java
+                │       GameRepositoryDouble.java
+                │
+                └───domain
+                        UserServiceTest.java
+                        RoomServiceTest.java
+                        GameServiceTest.java
+```
+
+## Class methods and fields
+
+#### src.main.java.learn.poker
+* [ ] `App.java` -- @SpringBootApplication
+* [ ] `AppConfig.java` -- @Configuration
+    * `public PasswordEncoder getPasswordEncoder()` -- @Bean
+    * `public WebMvcConfigurer corsConfigurer()` -- @Bean
+* [ ] `WebSocketConfig.java` -- @Configuration, @EnableWebSocketMessageBroker
+    * `public void configureMessageBroker(MessageBrokerRegistry config)` -- @Override
+    * `public void registerStompEndpoints(StompEndpointRegistry registry)` --@Override
+
+#### src.main.java.learn.poker.security
+* [ ] `Player.java` -- implements UserDetails
+    * `int id`
+    * `private String displayName`
+    * `private final String username`
+    * `private final String password`
+    * `int accountBalance`
+    * `Collection <GrantedAuthorities> roles`
+    * `List<Card> holeCards`
+    * `Position position`
+    * `boolean isPlayersAction`
+    * `public AppUser(int appUserId, String username, String password, List<String> roles)`
+    * constructor, getters and setters, as well as override methods to implement UserDetails contract
+* [ ] `PlayerService.java` 
+    * `private PlayerRepository repository`
+    * `public Player(PlayerRepository)`
+    * `public Player getPlayerById(int)`
+    * `public Result add(Player)`
+    * `public Result update(Player)`
+    * `public Result delete(Player)`
+    * `private Result validate(Player)`
+* [ ] `Credentials.java` 
+    * `private String username`
+    * `private String password`
+    * constructor, getters and setters
+* [ ] `JwtConverter.java` 
+    * `private Key key`
+    * `private final String ISSUER`
+    * `private final int EXPIRATION_MINUTES`
+    * `private final int EXPIRATION_MILLIS`
+
+* [ ] `JwtRequestFilter.java` 
+* [ ] `SecurityConfig.java` 
+
+#### src.main.java.learn.poker.data
+
+* [ ] `DataException.java` 
+* [ ] `RoomJdbcTemplateRepository.java` 
+* [ ] `RoomRepository.java` 
+* [ ] `PlayerJdbcTemplateRepository.java` 
+* [ ] `PlayerRepository.java` 
+* [ ] `GameJdbcTemplateRepository.java` 
+* [ ] `GameRepository.java` 
+
+#### src.main.java.learn.poker.data.mappers
+* [ ] `PlayerMapper.java` 
+* [ ] `RoomMapper.java` 
+* [ ] `GameMapper.java` 
+
+#### src.main.java.learn.poker.domain
+* [ ] `RoomService.java` 
+* [ ] `GameService.java` 
+* [ ] `ResultType.java` 
+* [ ] `Result.java` 
+
+#### src.main.java.learn.poker.models
+* [ ] `Room.java` 
+* [ ] `Game.java` 
+* [ ] `Board.java` 
+* [ ] `Position.java` 
+* [ ] `Action.java` 
+
+#### src.main.java.learn.poker.controller
+* [ ] `PlayerController.java` 
+* [ ] `RoomController.java` 
+* [ ] `GameController.java` 
+* [ ] `AuthController.java` 
+* [ ] `GlobalExceptionHandler.java` 
+
+### test.java.learn.mastery.data
+* [ ] `UserRepositoryTest.java` 
+* [ ] `UserRepositoryDouble.java` 
+* [ ] `RoomRepositoryTest.java` 
+* [ ] `RoomRepositoryDouble.java` 
+* [ ] `GameRepositoryTest.java` 
+* [ ] `GameRepositoryDouble.java` 
+
+### test.java.learn.mastery.domain
+* [ ] `UserServiceTest.java` 
+* [ ] `RoomServiceTest.java` 
+* [ ] `GameServiceTest.java` 
+
