@@ -1,12 +1,14 @@
-# Team "Code Counters" Development Plan
+# Development Plan
+
+## Team Name: Code Counters
 
 ## User Stories
 
-### Player User Story
-* As a player, I want to be able to create an account, deposit (fake) money, choose a Room, and play a game.
+* Player User Story
+    * As a player, I want to be able to create an account, deposit (fake) money, choose a Room, and play a game.
 
-### Admin User Story
-* As admin, I want to be able to create new Rooms, update existing Room settings (such as stakes), and delete Rooms
+* Admin User Story
+    * As admin, I want to be able to create new Rooms, update existing Room settings (such as stakes), and delete Rooms
 
 ## Models
 * Player
@@ -145,7 +147,7 @@ src
     * `List<Card> holeCards`
     * `Position position`
     * `boolean isPlayersAction`
-    * `public AppUser(int appUserId, String username, String password, List<String> roles)`
+    * `public Player(int playerId, String username, String password, List<String> roles)`
     * constructor, getters and setters, as well as override methods to implement UserDetails contract
 * [ ] `PlayerService.java` 
     * `private PlayerRepository repository`
@@ -164,19 +166,55 @@ src
     * `private final String ISSUER`
     * `private final int EXPIRATION_MINUTES`
     * `private final int EXPIRATION_MILLIS`
-
-* [ ] `JwtRequestFilter.java` 
-* [ ] `SecurityConfig.java` 
+    * `public String getTokenFromPlayer(Player user)`
+    * `public Player getPlayerFromToken(String token)`
+* [ ] `JwtRequestFilter.java` -- extends BasicAuthenticationFilter
+    * `private final JwtConverter converter`
+    * `public JwtRequestFilter(AuthenticationManager authenticationManager, JwtConverter converter)`
+    * `protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException ` -- @Override
+* [ ] `SecurityConfig.java` -- @Configuration, @ConditionalOnWebApplication
+    * `private final JwtConverter jwtConverter`
+    * `public SecurityConfig(JwtConverter jwtConverter)`
+    * `public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationConfiguration authConfig) throws Exception` -- @Bean
+    * `public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception` -- @Bean
 
 #### src.main.java.learn.poker.data
 
 * [ ] `DataException.java` 
+    * `public DataException(String, Throwable)`
 * [ ] `RoomJdbcTemplateRepository.java` 
+    * `private final JdbcTemplate jdbcTemplate`
+    * `private final RowMapper<Room> rowMapper = new RoomMapper()`
+    * `public RoomJdbcTemplateRepository(JdbcTemplate jdbcTemplate)`
+    * `public List<Room> findAll()` -- @Override
+    * `public Room findById()` -- @Override
+    * `public Room create(Room)` -- @Override
+    * `public boolean update(Room)` -- @Override
+    * `public boolean delete(Room)` -- @Override
 * [ ] `RoomRepository.java` 
+    * extract interface from RoomJdbcTemplateRepository
 * [ ] `PlayerJdbcTemplateRepository.java` 
+    * `private final JdbcTemplate jdbcTemplate`
+    * `public PlayerJdbcTemplateRepository(JdbcTemplate jdbcTemplate)`
+    * `public Player findByUsername(String username)` -- @Override
+    * `public Player create(Player player)` -- @Override
+    * `public boolean update(Player player)` -- @Override
+    * `public boolean delete(Player player)` -- @Override 
+    * `private void updateRoles(Player player)`
+    * `private List<String> getRolesByUsername(String username)`
 * [ ] `PlayerRepository.java` 
+    * extract interface from PlayerJdbcTemplateRepository
 * [ ] `GameJdbcTemplateRepository.java` 
+    * `private final JdbcTemplate jdbcTemplate`
+    * `private final RowMapper<Game> rowMapper = new GameMapper()`
+    * `public GameJdbcTemplateRepository(JdbcTemplate jdbcTemplate)`
+    * `public Game findById(int gameId)` -- @Override
+    * `public Game create(Game)` -- @Override
+    * `public boolean update(Game)` -- @Override
+    * `public boolean delete(Game)` -- @Override
+    * we might need a helper function to get players from the game here, TBD
 * [ ] `GameRepository.java` 
+    * extract interface from GameJdbcTemplateRepository
 
 #### src.main.java.learn.poker.data.mappers
 * [ ] `PlayerMapper.java` 
