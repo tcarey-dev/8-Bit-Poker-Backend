@@ -14,7 +14,7 @@
 
 ## Models
 * Player
-  * int id
+  * int playerId
   * String displayName
   * String username
   * String password
@@ -25,12 +25,12 @@
   * boolean isPlayersAction
 
 * Room
-  * int id
+  * int roomId
   * double stake
   * int[] seats
 
 * Game
-  * int id
+  * int gameId
   * Room room
   * int pot
   * Board board
@@ -38,7 +38,7 @@
   * Player winner
 
 * Board
-  * int id
+  * int boardId
   * List<Card> flop
   * Card turn
   * Card river
@@ -133,9 +133,11 @@ src
 
 #### src.main.java.learn.poker
 * [ ] `App.java` -- @SpringBootApplication
+
 * [ ] `AppConfig.java` -- @Configuration
     * `public PasswordEncoder getPasswordEncoder()` -- @Bean
     * `public WebMvcConfigurer corsConfigurer()` -- @Bean
+
 * [ ] `WebSocketConfig.java` -- @Configuration, @EnableWebSocketMessageBroker
     * `public void configureMessageBroker(MessageBrokerRegistry config)` -- @Override
     * `public void registerStompEndpoints(StompEndpointRegistry registry)` --@Override
@@ -145,6 +147,7 @@ src
     * `private String username`
     * `private String password`
     * constructor, getters and setters
+
 * [ ] `JwtConverter.java` 
     * `private Key key`
     * `private final String ISSUER`
@@ -152,10 +155,12 @@ src
     * `private final int EXPIRATION_MILLIS`
     * `public String getTokenFromPlayer(Player user)`
     * `public Player getPlayerFromToken(String token)`
+
 * [ ] `JwtRequestFilter.java` -- extends BasicAuthenticationFilter
     * `private final JwtConverter converter`
     * `public JwtRequestFilter(AuthenticationManager authenticationManager, JwtConverter converter)`
     * `protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException ` -- @Override
+
 * [ ] `SecurityConfig.java` -- @Configuration, @ConditionalOnWebApplication
     * `private final JwtConverter jwtConverter`
     * `public SecurityConfig(JwtConverter jwtConverter)`
@@ -166,6 +171,7 @@ src
 
 * [ ] `DataException.java` 
     * `public DataException(String, Throwable)`
+
 * [ ] `RoomJdbcTemplateRepository.java` 
     * `private final JdbcTemplate jdbcTemplate`
     * `private final RowMapper<Room> rowMapper = new RoomMapper()`
@@ -174,20 +180,24 @@ src
     * `public Room findById()` -- @Override
     * `public Room create(Room)` -- @Override
     * `public boolean update(Room)` -- @Override
-    * `public boolean delete(Room)` -- @Override
+    * `public boolean delete(int id)` -- @Override
+
 * [ ] `RoomRepository.java` 
     * extract interface from RoomJdbcTemplateRepository
+
 * [ ] `PlayerJdbcTemplateRepository.java` 
     * `private final JdbcTemplate jdbcTemplate`
     * `public PlayerJdbcTemplateRepository(JdbcTemplate jdbcTemplate)`
-    * `public Player findByUsername(String username)` -- @Override
+    * `public Player findById(int id)` -- @Override
     * `public Player create(Player player)` -- @Override
     * `public boolean update(Player player)` -- @Override
-    * `public boolean delete(Player player)` -- @Override 
+    * `public boolean delete(int id)` -- @Override 
     * `private void updateRoles(Player player)`
     * `private List<String> getRolesByUsername(String username)`
+
 * [ ] `PlayerRepository.java` 
     * extract interface from PlayerJdbcTemplateRepository
+
 * [ ] `GameJdbcTemplateRepository.java` 
     * `private final JdbcTemplate jdbcTemplate`
     * `private final RowMapper<Game> rowMapper = new GameMapper()`
@@ -195,8 +205,9 @@ src
     * `public Game findById(int gameId)` -- @Override
     * `public Game create(Game)` -- @Override
     * `public boolean update(Game)` -- @Override
-    * `public boolean delete(Game)` -- @Override
+    * `public boolean delete(int id)` -- @Override
     * we might need methods to get the room, board and list of players from the Game
+
 * [ ] `GameRepository.java` 
     * extract interface from GameJdbcTemplateRepository
 
@@ -205,8 +216,10 @@ src
     * `private final List<String> roles`
     * `public PlayerMapper(List<String> roles)`
     * `public Player mapRow(ResultSet rs, int i) throws SQLException` -- @Override
+
 * [ ] `RoomMapper.java` -- implements RowMapper<Room>
     * `public Room mapRow(ResultSet rs, int rowNum) throws SQLException` -- @Override
+
 * [ ] `GameMapper.java` -- implements RowMapper<Game>
     * `public Game mapRow(ResultSet rs, int rowNum) throws SQLException` -- @Override
 
@@ -215,10 +228,11 @@ src
     * `private PlayerRepository repository`
     * `public Player(PlayerRepository)`
     * `public Player getPlayerById(int)`
-    * `public Result add(Player)`
-    * `public Result update(Player)`
-    * `public Result delete(Player)`
+    * `public Result<Player> add(Player)`
+    * `public Result<Player> update(Player)`
+    * `public boolean deleteById(int id)`
     * `private Result validate(Player)`
+
 * [ ] `RoomService.java` 
     * `private final RoomRepository repository`
     * `public RoomService(RoomRepository repository)`
@@ -228,10 +242,10 @@ src
     * `public Result<Room> update(Room)`
     * `public boolean deleteById(int)`
     * `private Result<Room> validate(Room)`
+
 * [ ] `GameService.java` 
     * `private final GameRepository repository`
     * `public GameService(GameRepository repository)`
-    * `public List<Game> findAll()`
     * `public Game findById(int)`
     * `public Player getWinner(List<Player> players, Board board)`
     * `public Result<Game> add(Game)`
@@ -240,8 +254,10 @@ src
     * `private Result<Game> validate(Game)`
     * add game init and loop methods here, along with any helper methods
     * we might need methods to get the room, board and list of players from the Game
+
 * [ ] `ResultType.java`  -- Enum
     * SUCCESS,INVALID,NOT_FOUND
+
 * [ ] `Result.java` 
     * `private final ArrayList<String> messages`
     * `private ResultType type`
@@ -251,7 +267,7 @@ src
 
 #### src.main.java.learn.poker.models
 * [ ] `Player.java` -- implements UserDetails
-    * `int id`
+    * `int playerId`
     * `private String displayName`
     * `private final String username`
     * `private final String password`
@@ -262,10 +278,12 @@ src
     * `boolean isPlayersAction`
     * `public Player(int playerId, String username, String password, List<String> roles)`
     * constructor, getters and setters, as well as override methods to implement UserDetails contract
+
 * [ ] `Room.java` 
     * `int roomId`
     * `double stake`
     * `int seats`
+
 * [ ] `Game.java` 
     * `int gameId`
     * `int pot`
@@ -273,31 +291,61 @@ src
     * `Room room`
     * `Board board`
     * `Player player`
+
 * [ ] `Board.java` 
     * `int boardId`
     * `List<Card> flop`
     * `Card turn`
     * `Card river`
+
 * [ ] `Position.java` -- Enum
     * SMALL_BLIND, BIG_BLIND
+
 * [ ] `Action.java` -- Enum
     * BET, CHECK, FOLD, RAISE
+
 * [ ] `Card.java` -- Enum
     * 2C, 3C, 4C, 5C, 6C, 7C, 8C, 9C, 10C, JC, QC, KC, AC, 2D, 3D, 4D, 5D, 6D, 7D, 8D, 9D, 10D, JD, QD, KD, AD, 2H, 3H, 4H, 5H, 6H, 7H, 8H, 9H, 10H, JH, QH, KH, AH, 2S, 3S, 4S, 5S, 6S, 7S, 8S, 9S, 10S, JS, QS, KS, AS
 
 #### src.main.java.learn.poker.controller
-* [ ] `PlayerController.java` 
-    * ``
-* [ ] `RoomController.java` 
-    * ``
-* [ ] `GameController.java` 
-    * ``
-    * ``
-    * ``
-* [ ] `AuthController.java` 
-    * ``
-* [ ] `GlobalExceptionHandler.java` 
-    * ``
+* [ ] `PlayerController.java` -- @RestController, @RequestMapping("/api/player"), @CrossOrigin(origins ={"http://localhost:3000"})
+    * `private final PlayerService service`
+    * `public PlayerController(PlayerService service)`
+    * `public ResponseEntity<?> getPlayerById(int)` -- @GetMapping("/{username}")
+    * `public ResponseEntity<?> add(@RequestBody Player player)` -- @PostMapping
+    * `public ResponseEntity<?> update(@RequestBody Player player)` -- @PutMapping("/{id}")
+    * `public ResponseEntity<?> delete(@PathVariable int id)` -- @DeleteMapping("/{id}")
+
+* [ ] `RoomController.java` -- @RestController, @RequestMapping("/api/player"), @CrossOrigin(origins ={"http://localhost:3000"})
+    * `public List<Room> findAll()` -- @GetMapping
+    * `public ResponseEntity<?> findById(int)` -- @GetMapping("/{id}")
+    * `public ResponseEntity<?> add(@RequestBody Room room)` -- @PostMapping
+    * `public ResponseEntity<?> update(@RequestBody Room room)` -- @PutMapping("/{id}")
+    * `public ResponseEntity<?> delete(@PathVariable int id)` -- @DeleteMapping("/{id}")
+
+* [ ] `AuthController.java` -- @RestController, @RequestMapping("/security"), @ConditionalOnWebApplication
+    * `private final AuthenticationManager authenticationManager`
+    * `private final JwtConverter jwtConverter`
+    * `private final PlayerService PlayerService`
+    * `public AuthController(AuthenticationManager authenticationManager, JwtConverter jwtConverter, PlayerService PlayerService)`
+    * `public ResponseEntity<Object> authenticate(@RequestBody Credentials credentials)` -- @PostMapping("/authenticate")
+    * `public ResponseEntity<Object> refreshToken(@AuthenticationPrincipal Player player)` -- @PostMapping("/refresh-token")
+    * `public ResponseEntity<Object> create(@RequestBody Credentials credentials)` -- @PostMapping("/create-account")
+    * `private HashMap<String, String> makePlayerTokenMap(Player player)`
+
+* [ ] `GlobalExceptionHandler.java` -- @ControllerAdvice
+    * `public ResponseEntity<?> handleException(DuplicateKeyException ex)` -- @ExceptionHandler
+    * `public ResponseEntity<?> handleException(HttpMessageNotReadableException ex)` -- @ExceptionHandler
+    * `public ResponseEntity<?> handleException(Exception ex)` -- @ExceptionHandler
+    * `private ResponseEntity<?> reportException(String message) `
+
+* [ ] `GameController.java` -- @Controller
+    * `public Game startGame(@DestinationVariable int roomId)` -- @MessageMapping("/start"), @SendTo("/topic/room/{id}")
+    * `public Game bet(@DestinationVariable int roomId, @DestinationVariable int amount)` -- @MessageMapping("/bet/{amount}"), @SendTo("/topic/room/{id}")
+    * `public Game raise(@DestinationVariable int roomId, @DestinationVariable int amount)` -- @MessageMapping("/raise/{amount}"), @SendTo("/topic/room/{id}")
+    * `public Game check(@DestinationVariable int roomId)` -- @MessageMapping("/check"), @SendTo("/topic/room/{id}")
+    * `public Game fold(@DestinationVariable int roomId)` -- @MessageMapping("/fold"), @SendTo("/topic/room/{id}")
+    * `public Game endGame(@DestinationVariable int roomId)` -- @MessageMapping("/end"), @SendTo("/topic/room/{id}")
 
 ### test.java.learn.mastery.data
 * [ ] `UserRepositoryTest.java` 
@@ -376,7 +424,7 @@ GAME LOGIC
     * `<Route path='*' element={<NotFound />} />`
 
 ### index.js
-* boilerplate code
+* TBD
 
 ### Index.css
 * TBD
@@ -437,7 +485,7 @@ GAME LOGIC
 * TBD
 
 ### contexts/AuthContext.js
-* boilerplate
+* TBD
 
 ### services/AuthApi.js
 * TBD
@@ -446,7 +494,7 @@ GAME LOGIC
 ### Tuesday
 * Together (1 hour)
     * setup backend repo with Maven project, spring boot mvc, websockets, and junit dependencies 
-    * setup frontend repo with React App project, install stompjs dependencies
+    * setup frontend repo with React App project, install stomp and sockjs dependencies
     * create App.java and App.js
     * create development branches and individual working branches for both repos
 * Xiao
