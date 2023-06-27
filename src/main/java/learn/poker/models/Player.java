@@ -1,7 +1,9 @@
 package learn.poker.models;
 
+import java.util.Collection;
 import java.util.List;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.GrantedAuthority;
 
 public class Player {
     private int playerId;
@@ -9,12 +11,12 @@ public class Player {
     private final String username;
     private final String password;
     private int accountBalance;
-    private Collection <GrantedAuthorities> roles;
+    private Collection <GrantedAuthority> roles;
     private List<Card> holeCards;
     private Position position;
     private boolean isPlayersAction;
 
-    public Player(String displayName, int accountBalance, List<Card> holeCards, boolean isPlayersAction, int playerId, String username, String password, Collection<GrantedAuthorities> roles, Position position) {
+    public Player(String displayName, int accountBalance, List<Card> holeCards, boolean isPlayersAction, int playerId, String username, String password, Collection<GrantedAuthority> roles, Position position) {
         this.displayName = displayName;
         this.accountBalance = accountBalance;
         this.holeCards = holeCards;
@@ -26,7 +28,7 @@ public class Player {
         this.position = position;
     }
 
-    public Player(int playerId, String username, String password, Collection<GrantedAuthorities> roles) {
+    public Player(int playerId, String username, String password, Collection<GrantedAuthority> roles) {
         this.playerId = playerId;
         this.username = username;
         this.password = password;
@@ -70,11 +72,11 @@ public class Player {
         this.accountBalance = accountBalance;
     }
 
-    public Collection<GrantedAuthorities> getRoles() {
+    public Collection<GrantedAuthority> getRoles() {
         return roles;
     }
 
-    public void setRoles(Collection<GrantedAuthorities> roles) {
+    public void setRoles(Collection<GrantedAuthority> roles) {
         this.roles = roles;
     }
 
