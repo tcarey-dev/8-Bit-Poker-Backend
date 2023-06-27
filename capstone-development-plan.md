@@ -10,6 +10,8 @@
 * Admin User Story
     * As admin, I want to be able to create new Rooms, update existing Room settings (such as stakes), and delete Rooms
 
+## Back End
+
 ## Models
 * Player
   * int id
@@ -219,7 +221,7 @@ src
     * `private Result validate(Player)`
 * [ ] `RoomService.java` 
     * `private final RoomRepository repository`
-    * ` public RoomService(RoomRepository repository)
+    * `public RoomService(RoomRepository repository)`
     * `public List<Room> findAll()`
     * `public Room findById(int)`
     * `public Result<Room> add(Room)`
@@ -285,11 +287,17 @@ src
 
 #### src.main.java.learn.poker.controller
 * [ ] `PlayerController.java` 
-    * 
+    * ``
 * [ ] `RoomController.java` 
+    * ``
 * [ ] `GameController.java` 
+    * ``
+    * ``
+    * ``
 * [ ] `AuthController.java` 
+    * ``
 * [ ] `GlobalExceptionHandler.java` 
+    * ``
 
 ### test.java.learn.mastery.data
 * [ ] `UserRepositoryTest.java` 
@@ -317,5 +325,199 @@ GAME LOGIC
     * if action is ending (meaning the player who is last flat calls, or checks) then deal next street (flop, turn, river) 
     * if action is fold, restart game loop
 
+## Front End
+```
+/
+├───public
+├───src
+│   │   App.js
+│   |   index.js
+|   |   index.css
+|   |
+│   ├───components  
+|   |   |   Navbar.js
+|   |   |   Landing.js
+|   |   |   Lobby.js
+|   |   |   Room.js
+|   |   |   RoomList.js
+|   |   |   RoomForm.js
+|   |   |   NotFound.js
+|   |   |   LoginForm.js
+|   |   |   RegistrationForm.js
+|   |   |   Errors.js
+|   |    
+│   ├───contexts
+|   |   |   AuthContext.js
+|   |   
+│   ├───services
+|   |   |   AuthApi.js
 
+```
 
+### App.js
+* `const EMPTY_USER`
+* `const WAIT_TIME`
+* [ ] `App()`
+    <!-- Variables and methods -->
+    * `const [user, setUser]`
+    * `const refreshUser = useCallback(() => {}, [])`
+    * `useEffect(() => { refreshUser(); }, [refreshUser])`
+    * `const auth = {}`
+    * `const maybeRedirect = (component, role) => {}`
+    <!-- JSX Auth and Routes -->
+    * `<AuthContext.Provider value={auth}>`
+    * `<Route path='/' element={<Landing />} />`
+    * `<Route path="/login" element={<LoginForm />} />`
+    * `<Route path="/register" element={<RegistrationForm />} />`
+    * `<Route path='/lobby' element={<Lobby />} />`
+    * `<Route path='/room/add' element={<Room />} />`
+    * `<Route path='/room/edit/:id' element={<Room />} />`
+    * `<Route path='/room' element={<Room />} />`
+    * `<Route path='*' element={<NotFound />} />`
+
+### index.js
+* boilerplate code
+
+### Index.css
+* TBD
+
+### components/Navbar.js
+* TBD
+
+### components/Landing.js
+* TBD
+
+### components/Lobby.js
+* `const EMPTY_ROOM`
+* [ ] `Lobby()`
+    * `const [room, setRoom]`
+    * `const [rooms, setRooms]`
+    * `const url`
+    * `useEffect(()=> {fetch(url) => {}}, [])` -- http
+    * `const handleDeleteRoom = (roomId) => {}` -- admin only
+    <!-- JSX -->
+    * return Navbar component followed by grid displaying rooms
+    * hover over should expose Join button for players
+    * hover over should expose Edit and Delete buttons for Admin
+    * Edit should navigate to RoomForm
+
+### components/Room.js
+* `const EMPTY_GAME`
+* [ ] `Room()`
+    * `const [connected, setConnected]` -- to track websocket connection
+    * `const [game, setGame]` -- track game state
+    * `const navigate = useNavigate()`
+    * `const connect = useCallback(() => {})` -- websocket connection, wrapped in callback so we can use in useEffect
+    * `const disconnect = () => {}`
+    * `const useEffect = () => {}, [connect]` -- establish websocket connection
+    * `const handleChange = (event) => {}` -- to capture slider value
+    * `const handleSubmit = (event) => {}` -- will contain a switch statement to call handler functions for bet/raise, check, and fold buttons
+    * `const handleStartGame = () => {}` -- websocket request to initialize game, and start game loop
+    * `const handleBet = () => {}` -- websocket request for betting/raising, takes value from a slider
+    * `const handleCheck = () => {}` -- websocket request for checking
+    * `const handleFold = () => {}` -- websocket request for folding
+    * `const handleLeave = () => {}` -- websocket request to end game loop, then calls disconnect, and redirects to Lobby
+    <!-- JSX -->
+    * Leave button, triggers handleLeave
+    * Start Game button underneath Leave button, disappears after game starts, triggers handleStartGame
+    * form buttons for betting/raising/checking/folding with html range slider to capture bet/raise amount
+        * slider should have a default value of the minimum bet (stored in room object, may need to pass from parent as a prop)
+    * render board, player icons and stacks, player cards, and pot based on game state
+
+### components/NotFound.js
+* TBD
+
+### components/LoginForm.js
+* TBD
+
+### components/RegistrationForm.js
+* TBD
+
+### components/Errors.js
+* TBD
+
+### contexts/AuthContext.js
+* boilerplate
+
+### services/AuthApi.js
+* TBD
+
+## Task Delegation with Time Estimates
+### Tuesday
+* Together (1 hour)
+    * setup backend repo with Maven project, spring boot mvc, websockets, and junit dependencies 
+    * setup frontend repo with React App project, install stompjs dependencies
+    * create App.java and App.js
+    * create development branches and individual working branches for both repos
+* Xiao
+    * create model classes (45 minutes)
+    * create Result, ResultType (15 minutes)
+    * create PlayerService, PlayerService tests (2.5 hours)
+    * create RoomService, RoomService tests (2.5 hours)
+    * HW 
+        * any leftover tests
+* Aaron
+    * Write SQL scripts to setup production and test databases (2 hours)
+    * DataException class (5 minutes)
+    * PlayerJdbcTemplateRepository, PlayerRepository, PlayerMapper (1.5 hours)
+    * RoomJdbcTemplateRepository, RoomRepository, RoomMapper (1.5 hours)
+    * GameJdbcTemplateRepository, GameRepository, GameMapper (1.5 hours)
+    * HW
+        * Data layer tests
+* Tom
+    * create WebsocketConfig (15 minutes)
+    * setup CI/CD pipeline using Github Actions and Azure (1 hour)
+    * create GameService CRUD and validation (not the game logic yet), tests (2.5 hours)
+    * create GameController (3 hour)
+    * HW 
+        * complete any unfinished tasks, help others with tests
+
+### Wednesday
+* Together  (3 hours)
+    * add game logic to Game Service
+* Xiao 
+    * RoomController (1 hour)
+    * any leftover tasks
+* Aaron 
+    * PlayerController (1 hour)
+    * any leftover tasks
+* Tom: 
+    * create AppConfig, JwtConverter, JwtRequestFilter, SecurityConfig, AuthController, GlobalExceptionHandler (3 hours)
+
+### Thursday
+* Together (4 hours)
+    * create Navbar, Lobby, RoomForm
+* Xiao & Aaron
+    * Landing, NotFound, Errors (2.5 hours)
+* Tom
+    * LoginForm, RegistrationForm, AuthContext, AuthApi (2.5 hours)
+
+### Friday
+* Together in the morning (3 hours)
+    * wire up websocket connection functionality (connect, disconnect, useEffect, start game button, leave button)
+* Together after lunch (3 hours)
+    * finish visual layout of room (html and css)
+
+### Saturday
+* Together (as much as needed)
+    * add basic game flow functionality (bet, raise, check, fold)
+
+### Sunday
+* Together (as much as needed)
+    * add complete game flow functionality (player turns, updating balances, displaying winner, game rounds)
+
+### Monday
+* Bug hunt and fix all day
+
+### Tuesday
+* hopefully take the day off, mostly
+
+### Wednesday
+* Spend morning finishing bug fixes
+* Prepare powerpoint in afternoon
+
+### Thursday
+* practice run of presentations
+
+### Friday
+* presentations
