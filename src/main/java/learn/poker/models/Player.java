@@ -28,6 +28,13 @@ public class Player implements UserDetails {
         this.authorities = convertRolesToAuthorities(roles);
     }
 
+    public Player(int playerId, String username, String password, boolean enabled) {
+        this.playerId = playerId;
+        this.username = username;
+        this.password = password;
+        this.enabled = enabled;
+    }
+
     public Player(String username, String password){
         this.username = username;
         this.password = password;
@@ -42,6 +49,10 @@ public class Player implements UserDetails {
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
         return new ArrayList<>(authorities);
+    }
+
+    public void setAuthorities(List<String> roles) {
+        this.authorities = convertRolesToAuthorities(roles);
     }
 
     @Override

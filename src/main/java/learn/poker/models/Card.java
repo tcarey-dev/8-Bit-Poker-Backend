@@ -54,13 +54,21 @@ public enum Card {
     KING_OF_SPADES("KS"),
     ACE_OF_SPADES("AS");
 
-
-    private final String formatted;
-    Card(String formatted) {
-        this.formatted = formatted;
+    private final String abbr;
+    Card(String abbr) {
+        this.abbr = abbr;
     }
     public String getFormatted() {
-        return formatted;
+        return abbr;
     }
 
+    public static Card getCardFromAbbreviation(String abbreviation) {
+        for (Card card : Card.values()) {
+            if(card.abbr.equalsIgnoreCase(abbreviation)) {
+                return card;
+            }
+        }
+        String message = String.format("No Card with value: %s.", abbreviation);
+        throw new RuntimeException(message);
+    }
 }

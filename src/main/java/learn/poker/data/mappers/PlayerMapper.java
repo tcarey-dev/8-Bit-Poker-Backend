@@ -8,11 +8,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class PlayerMapper implements RowMapper<Player> {
-    private final List<String> roles;
-
-    public PlayerMapper(List<String> roles) {
-        this.roles = roles;
-    }
 
     @Override
     public Player mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -20,7 +15,6 @@ public class PlayerMapper implements RowMapper<Player> {
                 rs.getInt("player_id"),
                 rs.getString("username"),
                 rs.getString("password_hash"),
-                rs.getBoolean("enabled"),
-                roles);
+                rs.getBoolean("enabled"));
     }
 }

@@ -15,15 +15,6 @@ public class GameMapper implements RowMapper<Game> {
         game.setGameId(rs.getInt("game_id"));
         game.setPot(rs.getInt("pot"));
         game.setWinner(rs.getString("winner"));
-        RoomMapper roomMapper = new RoomMapper();
-        game.setRoom(roomMapper.mapRow(rs, rowNum));
-
-        return new Game(
-
-                rs.getInt("board_id"),
-                List.of(rs.getInt("player_one_id"),
-                rs.getInt("player_two_id"));
+        return game;
     }
-
-
 }

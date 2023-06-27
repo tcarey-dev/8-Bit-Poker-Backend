@@ -31,7 +31,7 @@ create table board (
 create table game (
 	game_id int primary key auto_increment,
     pot int null,
-    winner varchar(150) not null,
+    winner varchar(150) null,
     room_id int not null,
     board_id int not null,
     player_one_id int not null,
@@ -72,7 +72,20 @@ insert into role (`name`) values
     ('USER'),
     ('ADMIN');
     
-insert into player (username, password_hash, enabled)
+insert into player (player_id, username, password_hash, enabled)
     values
-    ('john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1),
-    ('sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1);
+    (1, 'john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1),
+    (2, 'sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1);
+    
+
+insert into room (room_id, stake, seats) 
+	values 
+    (1, 0.5, 2);
+
+insert into board (board_id, flop, turn, river)
+	values 
+    (1, 'AH,KD,10C', '3S', '9D');
+    
+insert into game (game_id, pot, winner, room_id, board_id, player_one_id, player_two_id)
+	values
+    (1, 200, null, 1, 1, 1, 2)
