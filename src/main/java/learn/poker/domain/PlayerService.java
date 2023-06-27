@@ -23,7 +23,7 @@ public class PlayerService {
         }
 
         if(player.getPlayerId() != 0){
-            result.addMessage("playerId should not be set", ResultType.INVALID);
+            result.addMessage("playerId should not be set for add", ResultType.INVALID);
         }
 
         player = repository.create(player);
@@ -37,7 +37,13 @@ public class PlayerService {
             return result;
         }
 
-        if()
+        if(player.getPlayerId() <= 0){
+            result.addMessage("playerId must be set for update", ResultType.INVALID);
+        }
+
+        if(!repository.update(player))
+
+        return result;
     }
 
 
