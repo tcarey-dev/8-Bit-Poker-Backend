@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PlayerService {
 
+
     private final PlayerRepository repository;
 
     public PlayerService(PlayerRepository repository) {
@@ -41,15 +42,25 @@ public class PlayerService {
             result.addMessage("playerId must be set for update", ResultType.INVALID);
         }
 
-        if(!repository.update(player))
+        if(!repository.update(player)){
+            String msg = String.format("playerId %s was not found", player.getPlayerId());
+            result.addMessage(msg, ResultType.NOT_FOUND);
+        }
 
         return result;
     }
 
+    public boolean deleteById(int playerId){
+        return repository.delete(playerId);
+    }
 
+    private Result<Player> validate(Player player){
+        Result<Player> result = new Result<>();
 
-    private Result validate(Player player){
-        Result result = new Result();
+        if(player == null){
+            result.addMessage("Player cannot be null", ResultType.INVALID);
+            return result;
+        }
 
         return result;
     }
