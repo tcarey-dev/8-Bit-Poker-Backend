@@ -68,13 +68,11 @@ create table player_role (
         references role(role_id)
 );
 
--- insert into `role` (`name`) values
---     ('USER'),
---     ('ADMIN');
---     
--- insert into player (username, password_hash, enabled)
---     values
---     ('john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1);
+insert into `role` (`name`) values
+    ('USER'),
+    ('ADMIN');
     
-    
+insert into player (username, password_hash, enabled)
+    values
+    ('john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1),
     ('sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1);
