@@ -16,15 +16,31 @@ public class PlayerService {
         return repository.findById(playerId);
     }
 
-    public Result<Player> add(Player){
+    public Result<Player> add(Player player){
         Result<Player> result = validate(player);
         if(!result.isSuccess()){
             return result;
         }
 
+        if(player.getPlayerId() != 0){
+            result.addMessage("playerId should not be set", ResultType.INVALID);
+        }
 
-
+        player = repository.create(player);
+        result.setPayload(player);
+        return result;
     }
+
+    public Result<Player> update(Player player){
+        Result<Player> result = validate(player);
+        if(!result.isSuccess()){
+            return result;
+        }
+
+        if()
+    }
+
+
 
     private Result validate(Player player){
         Result result = new Result();
