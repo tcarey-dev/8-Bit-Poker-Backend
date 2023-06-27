@@ -1,5 +1,9 @@
 package learn.poker.controllers;
 
+import learn.poker.domain.Result;
+import learn.poker.models.Game;
+import learn.poker.models.Greeting;
+import learn.poker.models.HelloMessage;
 import netscape.javascript.JSObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -14,19 +18,12 @@ import org.springframework.web.util.HtmlUtils;
 @Controller
 public class GameController {
 
-//    @Autowired
-//    SimpMessagingTemplate simpMessagingTemplate;
-
-    // this is a placeholder method for testing, will need to be modified according to dev plan spec once rest of backend is complete
-//    @MessageMapping("/welcome")
-//    @SendTo("/topic/room")
-//    public void welcomeSubscribers(@Payload String message) throws Exception {
-//        Thread.sleep(1000);
-//        this.simpMessagingTemplate.convertAndSend("/topic/room", message);
-//    }
-
-    @SubscribeMapping("/subscribe")
-    public String sendOneTimeMessage() {
-        return "server one-time message via the application";
+    // TODO: this endpoint is for testing websockets only, to be deleted
+    @MessageMapping("/hello")
+    @SendTo("/topic/greetings")
+    public Greeting greeting(HelloMessage message) throws Exception {
+        Thread.sleep(1000); // simulated delay
+        return new Greeting("Hello, " + HtmlUtils.htmlEscape(message.getName()) + "!");
     }
+
 }
