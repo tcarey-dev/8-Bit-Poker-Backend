@@ -1,5 +1,6 @@
 package learn.poker.domain;
 
+import learn.poker.data.RoomRepository;
 import learn.poker.models.Room;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +53,7 @@ public class RoomService {
     }
 
     public boolean deleteById(int roomId){
-        return repository.delete(roomId);
+        return repository.deleteById(roomId);
     }
 
     private Result<Room> validate(Room room){
