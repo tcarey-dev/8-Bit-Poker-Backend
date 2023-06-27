@@ -1,5 +1,6 @@
 package learn.poker.domain;
 
+import learn.poker.data.RoomRepository;
 import learn.poker.models.Room;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +53,7 @@ public class RoomService {
     }
 
     public boolean deleteById(int roomId){
-        return repository.delete(roomId);
+        return repository.deleteById(roomId);
     }
 
     private Result<Room> validate(Room room){
@@ -65,8 +66,8 @@ public class RoomService {
         if(room.getSeats() <= 0){
             result.addMessage("Number of seats must be greater than 0", ResultType.INVALID);
         }
-        if(room.getStake() <= 0) {
-            result.addMessage("Stakes must be greater than 0", ResultType.INVALID);
+        if(room.getStake() <= 0.02) {
+            result.addMessage("Stakes must be greater than 0.02", ResultType.INVALID);
         }
         if(room.getStake() % 2 != 0){
             result.addMessage("Stakes must be an even number", ResultType.INVALID);
