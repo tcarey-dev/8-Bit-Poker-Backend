@@ -31,6 +31,11 @@ public class Result<T> {
         return new ArrayList<>(messages);
     }
 
+    public void addMessage(String message) {
+        messages.add(message);
+        this.type = type;
+    }
+
     public void addMessage(String message, ResultType type) {
         messages.add(message);
         this.type = type;
