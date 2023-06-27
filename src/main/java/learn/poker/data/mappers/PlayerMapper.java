@@ -1,4 +1,4 @@
-package learn.poker.controllers.mappers;
+package learn.poker.data.mappers;
 
 import learn.poker.models.Player;
 import org.springframework.jdbc.core.RowMapper;

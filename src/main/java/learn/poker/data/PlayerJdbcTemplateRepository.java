@@ -1,6 +1,6 @@
 package learn.poker.data;
 
-import learn.poker.controllers.mappers.PlayerMapper;
+import learn.poker.data.mappers.PlayerMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.security.core.GrantedAuthority;
