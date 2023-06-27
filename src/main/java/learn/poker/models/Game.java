@@ -1,5 +1,7 @@
 package learn.poker.models;
 
+import java.util.List;
+
 public class Game {
 
     private int gameId;
@@ -7,15 +9,15 @@ public class Game {
     private String winner;
     private Room room;
     private Board board;
-    private Player player;
+    private List<Player> players;
 
-    public Game(int gameId, int pot, String winner, Room room, Board board, Player player) {
+    public Game(int gameId, int pot, String winner, Room room, Board board, List<Player> players) {
         this.gameId = gameId;
         this.pot = pot;
         this.winner = winner;
         this.room = room;
         this.board = board;
-        this.player = player;
+        this.players = players;
     }
 
     public Game(){}
@@ -60,11 +62,11 @@ public class Game {
         this.board = board;
     }
 
-    public Player getPlayer() {
-        return player;
+    public List<Player> getPlayers() {
+        return players;
     }
 
-    public void setPlayer(Player player) {
-        this.player = player;
+    public void setPlayers(List<Player> players) {
+        this.players = players;
     }
 }
