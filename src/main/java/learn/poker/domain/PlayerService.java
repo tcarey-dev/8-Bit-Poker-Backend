@@ -15,6 +15,7 @@ import java.util.List;
 @Service
 public class PlayerService implements UserDetailsService {
 
+
     private final PlayerRepository repository;
     private final PasswordEncoder encoder;
 
@@ -40,6 +41,10 @@ public class PlayerService implements UserDetailsService {
             return result;
         }
 
+
+        if(player.getPlayerId() != 0){
+            result.addMessage("playerId should not be set for add", ResultType.INVALID);
+
         String hashedPassword = encoder.encode(credentials.getPassword());
 
         Player player = new Player(0, credentials.getUsername(),
@@ -50,6 +55,7 @@ public class PlayerService implements UserDetailsService {
             result.setPayload(player);
         } catch (DuplicateKeyException e) {
             result.addMessage("The provided username already exists", ResultType.INVALID);
+
         }
 
         return result;
@@ -61,6 +67,30 @@ public class PlayerService implements UserDetailsService {
             result.addMessage("username is required");
             return result;
         }
+
+
+        if(player.getPlayerId() <= 0){
+            result.addMessage("playerId must be set for update", ResultType.INVALID);
+        }
+
+        if(!repository.update(player)){
+            String msg = String.format("playerId %s was not found", player.getPlayerId());
+            result.addMessage(msg, ResultType.NOT_FOUND);
+        }
+
+        return result;
+    }
+
+    public boolean deleteById(int playerId){
+        return repository.delete(playerId);
+    }
+
+    private Result<Player> validate(Player player){
+        Result<Player> result = new Result<>();
+
+        if(player == null){
+            result.addMessage("Player cannot be null", ResultType.INVALID);
+            return result;
 
         if (credentials.getPassword() == null) {
             result.addMessage("password is required");
@@ -75,6 +105,7 @@ public class PlayerService implements UserDetailsService {
             result.addMessage(
                     "password must be at least 8 character and contain a digit," +
                             " a letter, and a non-digit/non-letter");
+
         }
 
         return result;
