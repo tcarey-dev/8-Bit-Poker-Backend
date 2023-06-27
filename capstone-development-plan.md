@@ -45,11 +45,13 @@
   * SMALL_BLIND
   * BIG_BLIND
 
-* Action(enum)
+* Action (enum)
   * BET
   * CHECK
   * FOLD
   * RAISE
+
+* Card (enum)
 
 ## Validation rules/business logic
 * Room stake must be even and greater or equal to 2 cents (consider creating drop down for stakes)
@@ -234,6 +236,7 @@ src
     * `public Result<Game> update(Game)`
     * `public boolean deleteById(int)`
     * `private Result<Game> validate(Game)`
+    * add game init and loop methods here, along with any helper methods
     * we might need methods to get the room, board and list of players from the Game
 * [ ] `ResultType.java`  -- Enum
     * SUCCESS,INVALID,NOT_FOUND
@@ -269,21 +272,20 @@ src
     * `Board board`
     * `Player player`
 * [ ] `Board.java` 
-    * ``
-    * ``
-    * ``
-    * ``
-* [ ] `Position.java` 
-    * ``
-    * ``
-* [ ] `Action.java` 
-    * ``
-    * ``
-    * ``
-    * ``
+    * `int boardId`
+    * `List<Card> flop`
+    * `Card turn`
+    * `Card river`
+* [ ] `Position.java` -- Enum
+    * SMALL_BLIND, BIG_BLIND
+* [ ] `Action.java` -- Enum
+    * BET, CHECK, FOLD, RAISE
+* [ ] `Card.java` -- Enum
+    * 2C, 3C, 4C, 5C, 6C, 7C, 8C, 9C, 10C, JC, QC, KC, AC, 2D, 3D, 4D, 5D, 6D, 7D, 8D, 9D, 10D, JD, QD, KD, AD, 2H, 3H, 4H, 5H, 6H, 7H, 8H, 9H, 10H, JH, QH, KH, AH, 2S, 3S, 4S, 5S, 6S, 7S, 8S, 9S, 10S, JS, QS, KS, AS
 
 #### src.main.java.learn.poker.controller
 * [ ] `PlayerController.java` 
+    * 
 * [ ] `RoomController.java` 
 * [ ] `GameController.java` 
 * [ ] `AuthController.java` 
@@ -301,4 +303,19 @@ src
 * [ ] `UserServiceTest.java` 
 * [ ] `RoomServiceTest.java` 
 * [ ] `GameServiceTest.java` 
+
+
+GAME LOGIC
+ * init game 
+    * initialize the game, room, players (i.e. set initial state) -- Database call
+    * return game state to all subscibers -- Push to UI
+    * trigger game loop
+* game loop
+    * get deck of cards, deal cards to players -- API call, push to UI
+    * do small blinds action
+    * do big blinds action 
+    * if action is ending (meaning the player who is last flat calls, or checks) then deal next street (flop, turn, river) 
+    * if action is fold, restart game loop
+
+
 
