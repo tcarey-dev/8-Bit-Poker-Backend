@@ -45,11 +45,13 @@
   * SMALL_BLIND
   * BIG_BLIND
 
-* Action(enum)
+* Action (enum)
   * BET
   * CHECK
   * FOLD
   * RAISE
+
+* Card (enum)
 
 ## Validation rules/business logic
 * Room stake must be even and greater or equal to 2 cents (consider creating drop down for stakes)
@@ -66,8 +68,6 @@ src
 │   │           │   WebSocketConfig.java
 │   │           │
 │   │           ├───security
-│   │           │       Player.java
-│   │           │       PlayerService.java
 │   │           │       Credentials.java
 │   │           │       JwtConverter.java
 │   │           │       JwtRequestFilter.java
@@ -87,12 +87,14 @@ src
 │   │           │       GameRepository.java
 │   │           │
 │   │           ├───domain
+│   │           │       PlayerService.java
 │   │           │       RoomService.java
 │   │           │       GameService.java
 │   │           │       ResultType.java
 │   │           │       Result.java
 │   │           │
 │   │           ├───models
+│   │           │       Player.java
 │   │           │       Room.java
 │   │           │       Game.java
 │   │           │       Board.java
@@ -137,26 +139,6 @@ src
     * `public void registerStompEndpoints(StompEndpointRegistry registry)` --@Override
 
 #### src.main.java.learn.poker.security
-* [ ] `Player.java` -- implements UserDetails
-    * `int id`
-    * `private String displayName`
-    * `private final String username`
-    * `private final String password`
-    * `int accountBalance`
-    * `Collection <GrantedAuthorities> roles`
-    * `List<Card> holeCards`
-    * `Position position`
-    * `boolean isPlayersAction`
-    * `public Player(int playerId, String username, String password, List<String> roles)`
-    * constructor, getters and setters, as well as override methods to implement UserDetails contract
-* [ ] `PlayerService.java` 
-    * `private PlayerRepository repository`
-    * `public Player(PlayerRepository)`
-    * `public Player getPlayerById(int)`
-    * `public Result add(Player)`
-    * `public Result update(Player)`
-    * `public Result delete(Player)`
-    * `private Result validate(Player)`
 * [ ] `Credentials.java` 
     * `private String username`
     * `private String password`
@@ -212,30 +194,98 @@ src
     * `public Game create(Game)` -- @Override
     * `public boolean update(Game)` -- @Override
     * `public boolean delete(Game)` -- @Override
-    * we might need a helper function to get players from the game here, TBD
+    * we might need methods to get the room, board and list of players from the Game
 * [ ] `GameRepository.java` 
     * extract interface from GameJdbcTemplateRepository
 
 #### src.main.java.learn.poker.data.mappers
-* [ ] `PlayerMapper.java` 
-* [ ] `RoomMapper.java` 
-* [ ] `GameMapper.java` 
+* [ ] `PlayerMapper.java` -- implements RowMapper<Player>
+    * `private final List<String> roles`
+    * `public PlayerMapper(List<String> roles)`
+    * `public Player mapRow(ResultSet rs, int i) throws SQLException` -- @Override
+* [ ] `RoomMapper.java` -- implements RowMapper<Room>
+    * `public Room mapRow(ResultSet rs, int rowNum) throws SQLException` -- @Override
+* [ ] `GameMapper.java` -- implements RowMapper<Game>
+    * `public Game mapRow(ResultSet rs, int rowNum) throws SQLException` -- @Override
 
 #### src.main.java.learn.poker.domain
+* [ ] `PlayerService.java` 
+    * `private PlayerRepository repository`
+    * `public Player(PlayerRepository)`
+    * `public Player getPlayerById(int)`
+    * `public Result add(Player)`
+    * `public Result update(Player)`
+    * `public Result delete(Player)`
+    * `private Result validate(Player)`
 * [ ] `RoomService.java` 
+    * `private final RoomRepository repository`
+    * ` public RoomService(RoomRepository repository)
+    * `public List<Room> findAll()`
+    * `public Room findById(int)`
+    * `public Result<Room> add(Room)`
+    * `public Result<Room> update(Room)`
+    * `public boolean deleteById(int)`
+    * `private Result<Room> validate(Room)`
 * [ ] `GameService.java` 
-* [ ] `ResultType.java` 
+    * `private final GameRepository repository`
+    * `public GameService(GameRepository repository)`
+    * `public List<Game> findAll()`
+    * `public Game findById(int)`
+    * `public Player getWinner(List<Player> players, Board board)`
+    * `public Result<Game> add(Game)`
+    * `public Result<Game> update(Game)`
+    * `public boolean deleteById(int)`
+    * `private Result<Game> validate(Game)`
+    * add game init and loop methods here, along with any helper methods
+    * we might need methods to get the room, board and list of players from the Game
+* [ ] `ResultType.java`  -- Enum
+    * SUCCESS,INVALID,NOT_FOUND
 * [ ] `Result.java` 
+    * `private final ArrayList<String> messages`
+    * `private ResultType type`
+    * `private T payload`
+    * `public boolean isSuccess()`
+    * get and set payload, get type, get and add message
 
 #### src.main.java.learn.poker.models
+* [ ] `Player.java` -- implements UserDetails
+    * `int id`
+    * `private String displayName`
+    * `private final String username`
+    * `private final String password`
+    * `int accountBalance`
+    * `Collection <GrantedAuthorities> roles`
+    * `List<Card> holeCards`
+    * `Position position`
+    * `boolean isPlayersAction`
+    * `public Player(int playerId, String username, String password, List<String> roles)`
+    * constructor, getters and setters, as well as override methods to implement UserDetails contract
 * [ ] `Room.java` 
+    * `int roomId`
+    * `double stake`
+    * `int seats`
 * [ ] `Game.java` 
+    * `int gameId`
+    * `int pot`
+    * `String winner`
+    * `Room room`
+    * `Board board`
+    * `Player player`
 * [ ] `Board.java` 
-* [ ] `Position.java` 
-* [ ] `Action.java` 
+    * `int boardId`
+    * `List<Card> flop`
+    * `Card turn`
+    * `Card river`
+* [ ] `Position.java` -- Enum
+    * SMALL_BLIND, BIG_BLIND
+* [ ] `Action.java` -- Enum
+    * BET, CHECK, FOLD, RAISE
+* [ ] `Card.java` -- Enum
+    * 2C, 3C, 4C, 5C, 6C, 7C, 8C, 9C, 10C, JC, QC, KC, AC, 2D, 3D, 4D, 5D, 6D, 7D, 8D, 9D, 10D, JD, QD, KD, AD, 2H, 3H, 4H, 5H, 6H, 7H, 8H, 9H, 10H, JH, QH, KH, AH, 2S, 3S, 4S, 5S, 6S, 7S, 8S, 9S, 10S, JS, QS, KS, AS
 
 #### src.main.java.learn.poker.controller
 * [ ] `PlayerController.java` 
+    * 
 * [ ] `RoomController.java` 
 * [ ] `GameController.java` 
 * [ ] `AuthController.java` 
@@ -253,4 +303,19 @@ src
 * [ ] `UserServiceTest.java` 
 * [ ] `RoomServiceTest.java` 
 * [ ] `GameServiceTest.java` 
+
+
+GAME LOGIC
+ * init game 
+    * initialize the game, room, players (i.e. set initial state) -- Database call
+    * return game state to all subscibers -- Push to UI
+    * trigger game loop
+* game loop
+    * get deck of cards, deal cards to players -- API call, push to UI
+    * do small blinds action
+    * do big blinds action 
+    * if action is ending (meaning the player who is last flat calls, or checks) then deal next street (flop, turn, river) 
+    * if action is fold, restart game loop
+
+
 
