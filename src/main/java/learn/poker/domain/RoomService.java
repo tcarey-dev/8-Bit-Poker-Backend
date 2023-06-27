@@ -59,10 +59,18 @@ public class RoomService {
         Result<Room> result = new Result<>();
 
         if(room == null){
-            result.addMessage("room cannot be null", ResultType.INVALID);
+            result.addMessage("Room cannot be null", ResultType.INVALID);
             return result;
         }
-
+        if(room.getSeats() <= 0){
+            result.addMessage("Number of seats must be greater than 0", ResultType.INVALID);
+        }
+        if(room.getStake() <= 0) {
+            result.addMessage("Stakes must be greater than 0", ResultType.INVALID);
+        }
+        if(room.getStake() % 2 != 0){
+            result.addMessage("Stakes must be an even number", ResultType.INVALID);
+        }
         return result;
     }
 }
