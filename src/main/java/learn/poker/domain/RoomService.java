@@ -65,8 +65,8 @@ public class RoomService {
         if(room.getSeats() <= 0){
             result.addMessage("Number of seats must be greater than 0", ResultType.INVALID);
         }
-        if(room.getStake() <= 0) {
-            result.addMessage("Stakes must be greater than 0", ResultType.INVALID);
+        if(room.getStake() <= 0.02) {
+            result.addMessage("Stakes must be greater than 0.02", ResultType.INVALID);
         }
         if(room.getStake() % 2 != 0){
             result.addMessage("Stakes must be an even number", ResultType.INVALID);
