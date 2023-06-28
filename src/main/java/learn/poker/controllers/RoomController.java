@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/player")
+@RequestMapping("/api/room")
 @CrossOrigin(origins = {"http://localhost:3000"})
 public class RoomController {
     private final RoomService service;
