@@ -30,8 +30,7 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
     public List<Room> findAll() {
        final String sql = "select room_id" +
                 " stake," +
-                " seats," +
-                " game_ id" +
+                " seats" +
                 " from room;";
 
         return jdbcTemplate.query(sql, rowMapper);
@@ -60,14 +59,13 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
     @Override
     public Room create(Room room) {
         final String sql = "insert into room " +
-                "(stake, seats, game_id) values (?,?,?);";
+                "(stake, seats) values (?,?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setDouble(1, room.getStake());
             ps.setInt(2, room.getSeats());
-            ps.setInt(3, room.getGame().getGameId());
             return ps;
         }, keyHolder);
 
