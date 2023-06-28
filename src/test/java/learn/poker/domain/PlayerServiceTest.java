@@ -265,7 +265,7 @@ public class PlayerServiceTest {
         credential.setPassword("P@ssw0rd!");
 
         Player player = new Player(0,"username", "$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa", true);
-        when(repository.findByUsername("sally@jones.com")).thenReturn(player);
+        when(repository.findByUsername("username")).thenReturn(player);
 
        UserDetails userDetails = service.loadUserByUsername(credential.getUsername());
        assertNotNull(userDetails);
