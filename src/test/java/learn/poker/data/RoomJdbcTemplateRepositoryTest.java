@@ -40,9 +40,6 @@ class RoomJdbcTemplateRepositoryTest {
         assertEquals(1, room.getRoomId());
         assertEquals(0.25, room.getStake());
         assertEquals(2, room.getSeats());
-        //assertEquals(2, room.getGame().getGameId());
-
-        //System.out.println(rooms.get(0).getGame());//returning null cuz game_id not called in sql in findAll function
     }
 
     @Test
@@ -61,22 +58,28 @@ class RoomJdbcTemplateRepositoryTest {
         assertNull(repository.findById(9999));
     }
 
-//come back to this later
     @Test
     void shouldCreate(){
         Room room = new Room();
         room.setStake(1.00);
         room.setSeats(2);
-        //room.setGame(new Game());
         Room result = repository.create(room);
         assertNotNull(result);
         assertEquals(4, result.getRoomId());
-
         assertEquals(result, repository.findById(4));
     }
 
     @Test
-    void shouldDelete(){
+    void shouldUpdate(){
+        Room room = repository.findById(3);
+        room.setStake(2.00);
+        room.setSeats(8);
+        assertTrue(repository.update(room));
+        assertEquals(room, repository.findById(3));
+    }
+
+    @Test
+    void willDelete(){
         assertTrue(repository.deleteById(3));
     }
 
