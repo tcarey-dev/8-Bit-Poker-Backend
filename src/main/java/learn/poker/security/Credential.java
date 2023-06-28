@@ -1,6 +1,6 @@
 package learn.poker.security;
 
-public class Credentials {
+public class Credential {
 
     private String username;
     private String password;
