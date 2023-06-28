@@ -493,19 +493,19 @@ GAME LOGIC
 ## Task Delegation with Time Estimates
 ### Tuesday
 * Together (1 hour)
-    * setup backend repo with Maven project, spring boot mvc, websockets, and junit dependencies 
-    * setup frontend repo with React App project, install stomp and sockjs dependencies
-    * create App.java and App.js
-    * create development branches and individual working branches for both repos
+    * [x] setup backend repo with Maven project, spring boot mvc, websockets, and junit dependencies 
+    * [x] setup frontend repo with React App project, install stomp and sockjs dependencies
+    * [x] create App.java and App.js
+    * [x] create development branches and individual working branches for both repos
 * Xiao
-    * create model classes (45 minutes)
-    * create Result, ResultType (15 minutes)
+    * [x] create model classes (45 minutes)
+    * [x] create Result, ResultType (15 minutes)
     * create PlayerService, PlayerService tests (2.5 hours)
-    * create RoomService, RoomService tests (2.5 hours)
+    * [x] create RoomService, RoomService tests (2.5 hours)
     * HW 
         * any leftover tests
 * Aaron
-    * Write SQL scripts to setup production and test databases (2 hours)
+    * [x] Write SQL scripts to setup production and test databases (2 hours)
     * DataException class (5 minutes)
     * PlayerJdbcTemplateRepository, PlayerRepository, PlayerMapper (1.5 hours)
     * RoomJdbcTemplateRepository, RoomRepository, RoomMapper (1.5 hours)
@@ -513,41 +513,45 @@ GAME LOGIC
     * HW
         * Data layer tests
 * Tom
-    * create WebsocketConfig (15 minutes)
-    * setup CI/CD pipeline using Github Actions and Azure (1 hour)
-    * create GameService CRUD and validation (not the game logic yet), tests (2.5 hours)
+    * [x] create WebsocketConfig (15 minutes)
     * create GameController (3 hour)
+    * [x] create AppConfig, JwtConverter, JwtRequestFilter, SecurityConfig, AuthController, GlobalExceptionHandler (3 hours)
     * HW 
         * complete any unfinished tasks, help others with tests
 
 ### Wednesday
-* Together  (3 hours)
-    * add game logic to Game Service
 * Xiao 
+    * finish RoomJdbcTemplateRepository
     * RoomController (1 hour)
     * any leftover tasks
 * Aaron 
-    * PlayerController (1 hour)
+    * [] GameService
     * any leftover tasks
 * Tom: 
-    * create AppConfig, JwtConverter, JwtRequestFilter, SecurityConfig, AuthController, GlobalExceptionHandler (3 hours)
+    * finish GameJdbcTemplateRepository, PlayerJdbcTemplateRepository
+    * finish PlayerService, PlayerService tests (2.5 hours)
+    * PlayerController (1 hour)
+    * setup CI/CD pipeline using Github Actions and Azure (1 hour)
 
 ### Thursday
+* Together  (3 hours)
+    * add game logic to Game Service
+* Tom
+    * finish GameController
+    * create GameService CRUD and validation (not the game logic yet), tests (2.5 hours)
+    * LoginForm, RegistrationForm, AuthContext, AuthApi (2.5 hours)
+
+### Friday
 * Together (4 hours)
     * create Navbar, Lobby, RoomForm
 * Xiao & Aaron
     * Landing, NotFound, Errors (2.5 hours)
-* Tom
-    * LoginForm, RegistrationForm, AuthContext, AuthApi (2.5 hours)
-
-### Friday
-* Together in the morning (3 hours)
+* Tom (3 hours)
     * wire up websocket connection functionality (connect, disconnect, useEffect, start game button, leave button)
-* Together after lunch (3 hours)
-    * finish visual layout of room (html and css)
-
+   
 ### Saturday
 * Together (as much as needed)
+    * finish visual layout of room (html and css)
     * add basic game flow functionality (bet, raise, check, fold)
 
 ### Sunday
