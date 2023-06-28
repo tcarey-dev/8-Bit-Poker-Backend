@@ -30,7 +30,8 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
     public List<Room> findAll() {
        final String sql = "select room_id" +
                 " stake," +
-                " seats" +
+                " seats," +
+                " game_ id" +
                 " from room;";
 
         return jdbcTemplate.query(sql, rowMapper);
@@ -40,7 +41,8 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
     public Room findById(int roomId) {
         final String sql = "select room_id" +
                 " stake," +
-                " seats" +
+                " seats," +
+                " game_id" +
                 " from room" +
                 " where room_id = ?;";
 
