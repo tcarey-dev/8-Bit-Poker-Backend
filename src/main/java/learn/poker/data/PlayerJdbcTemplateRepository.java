@@ -47,13 +47,14 @@ public class PlayerJdbcTemplateRepository implements PlayerRepository {
     @Transactional
     public Player create(Player user) {
 
-        final String sql = "insert into player (username, password_hash) values (?, ?);";
+        final String sql = "insert into player (username, password_hash, enabled) values (?, ?, ?);";
 
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getPassword());
+            ps.setBoolean(3, user.isEnabled());
             return ps;
         }, keyHolder);
 

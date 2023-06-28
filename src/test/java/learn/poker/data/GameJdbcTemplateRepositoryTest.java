@@ -49,7 +49,7 @@ class GameJdbcTemplateRepositoryTest {
                 Card.EIGHT_OF_CLUBS,
                 Card.ACE_OF_HEARTS);
 
-        Player player = new Player("john@smith.com", "$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa");
+        Player player = new Player("keanu@reeves.com", "$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa");
         player.setPlayerId(0);
         player.setAuthorities(List.of());
         player.setEnabled(true);

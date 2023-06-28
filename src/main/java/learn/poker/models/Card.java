@@ -58,7 +58,7 @@ public enum Card {
     Card(String abbr) {
         this.abbr = abbr;
     }
-    public String getFormatted() {
+    public String getAbbr() {
         return abbr;
     }
 

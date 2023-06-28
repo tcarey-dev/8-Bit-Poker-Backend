@@ -4,6 +4,7 @@ import learn.poker.data.mappers.BoardMapper;
 import learn.poker.data.mappers.GameMapper;
 import learn.poker.data.mappers.PlayerMapper;
 import learn.poker.models.Board;
+import learn.poker.models.Card;
 import learn.poker.models.Game;
 import learn.poker.models.Player;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,7 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class GameJdbcTemplateRepository implements GameRepository {
@@ -23,8 +26,9 @@ public class GameJdbcTemplateRepository implements GameRepository {
     private PlayerRepository playerRepository;
     private final RowMapper<Game> rowMapper = new GameMapper();
 
-    public GameJdbcTemplateRepository(JdbcTemplate jdbcTemplate) {
+    public GameJdbcTemplateRepository(JdbcTemplate jdbcTemplate, PlayerRepository playerRepository) {
         this.jdbcTemplate = jdbcTemplate;
+        this.playerRepository = playerRepository;
     }
 
 
@@ -53,14 +57,21 @@ public class GameJdbcTemplateRepository implements GameRepository {
         KeyHolder boardKeyHolder = new GeneratedKeyHolder();
         int boardRowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(boardSql, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, game.getBoard().getFlop().toString()); // TODO need to create a method to convert cards to strings
-            ps.setString(2, game.getBoard().getTurn().toString());
-            ps.setString(2, game.getBoard().getRiver().toString());
+            ps.setString(1, game.getBoard().getFlop().stream()
+                    .map(Card::getAbbr).collect(Collectors.joining()));
+            ps.setString(2, game.getBoard().getTurn().getAbbr());
+            ps.setString(3, game.getBoard().getRiver().getAbbr());
             return ps;
         }, boardKeyHolder);
 
-        Player player1 = playerRepository.create(game.getPlayers().get(0));
-        Player player2 = playerRepository.create(game.getPlayers().get(1));
+        if (game.getPlayers() ) 
+
+        if (player1 != null) {
+            player1 = playerRepository.create(player1);
+        }
+        if (player2 != null) {
+            player2 = playerRepository.create(player2);
+        }
 
         int sqlParams = 1;
 
@@ -95,34 +106,40 @@ public class GameJdbcTemplateRepository implements GameRepository {
             }, keyHolder);
         }
         if (sqlParams == 4 && boardRowsAffected <= 0) {
+            final Player finalPlayer1 = player1;
+            final Player finalPlayer2 = player2;
             rowsAffected = jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 ps.setInt(1, game.getPot());
                 ps.setString(2, game.getWinner());
-                ps.setInt(3, player1.getPlayerId());
-                ps.setInt(4, player2.getPlayerId());
+                ps.setInt(3, finalPlayer1.getPlayerId());
+                ps.setInt(4, finalPlayer2.getPlayerId());
                 return ps;
             }, keyHolder);
         }
         if (sqlParams == 5) {
+            final Player finalPlayer1 = player1;
+            final Player finalPlayer2 = player2;
             rowsAffected = jdbcTemplate.update(connection -> {
                 PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                 ps.setInt(1, game.getPot());
                 ps.setString(2, game.getWinner());
                 ps.setInt(3, boardKeyHolder.getKey().intValue());
-                ps.setInt(4, player1.getPlayerId());
-                ps.setInt(5, player2.getPlayerId());
+                ps.setInt(4, finalPlayer1.getPlayerId());
+                ps.setInt(5, finalPlayer2.getPlayerId());
                 return ps;
             }, keyHolder);
         }
         if (sqlParams == 4 && boardRowsAffected > 0) {
+            final Player finalPlayer1 = player1;
+            final Player finalPlayer2 = player2;
             if (player1 == null) {
                 rowsAffected = jdbcTemplate.update(connection -> {
                     PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
                     ps.setInt(1, game.getPot());
                     ps.setString(2, game.getWinner());
                     ps.setInt(3, boardKeyHolder.getKey().intValue());
-                    ps.setInt(4, player2.getPlayerId());
+                    ps.setInt(4, finalPlayer2.getPlayerId());
                     return ps;
                 }, keyHolder);
             } else {
@@ -131,7 +148,7 @@ public class GameJdbcTemplateRepository implements GameRepository {
                     ps.setInt(1, game.getPot());
                     ps.setString(2, game.getWinner());
                     ps.setInt(3, boardKeyHolder.getKey().intValue());
-                    ps.setInt(4, player1.getPlayerId());
+                    ps.setInt(4, finalPlayer1.getPlayerId());
                     return ps;
                 }, keyHolder);
             }
