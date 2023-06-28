@@ -1,7 +1,7 @@
 package learn.poker.domain;
 
 import learn.poker.models.Player;
-import learn.poker.security.Credentials;
+import learn.poker.security.Credential;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -34,15 +34,15 @@ public class PlayerService implements UserDetailsService {
         return player;
     }
 
-    public Result<Player> create(Credentials credentials) {
-        Result<Player> result = validate(credentials);
+    public Result<Player> create(Credential credential) {
+        Result<Player> result = validate(credential);
         if (!result.isSuccess()) {
             return result;
         }
 
-        String hashedPassword = encoder.encode(credentials.getPassword());
+        String hashedPassword = encoder.encode(credential.getPassword());
 
-        Player player = new Player(0, credentials.getUsername(),
+        Player player = new Player(0, credential.getUsername(),
                 hashedPassword, true, List.of("USER"));
 
         try {
@@ -55,26 +55,26 @@ public class PlayerService implements UserDetailsService {
         return result;
     }
 
-    private Result<Player> validate(Credentials credentials) {
+    private Result<Player> validate(Credential credential) {
         Result<Player> result = new Result<>();
-        if (credentials.getUsername() == null || credentials.getUsername().isBlank()) {
-            result.addMessage("username is required");
+        if (credential.getUsername() == null || credential.getUsername().isBlank()) {
+            result.addMessage("username is required", ResultType.INVALID);
             return result;
         }
 
-        if (credentials.getPassword() == null) {
-            result.addMessage("password is required");
+        if (credential.getPassword() == null) {
+            result.addMessage("password is required", ResultType.INVALID);
             return result;
         }
 
-        if (credentials.getUsername().length() > 50) {
-            result.addMessage("username must be less than 50 characters");
+        if (credential.getUsername().length() > 50) {
+            result.addMessage("username must be less than 50 characters", ResultType.INVALID);
         }
 
-        if (!isValidPassword(credentials.getPassword())) {
+        if (!isValidPassword(credential.getPassword())) {
             result.addMessage(
                     "password must be at least 8 character and contain a digit," +
-                            " a letter, and a non-digit/non-letter");
+                            " a letter, and a non-digit/non-letter", ResultType.INVALID);
         }
 
         return result;
