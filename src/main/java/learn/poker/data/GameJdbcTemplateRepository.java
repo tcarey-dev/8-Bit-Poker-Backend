@@ -72,7 +72,8 @@ public class GameJdbcTemplateRepository implements GameRepository {
     public boolean update(Game game) {
 
         final String sql = "update game set " +
-                "pot, winner = ?, " +
+                "pot = ?, " +
+                "winner = ?, " +
                 "board_id = ?, " +
                 "player_one_id = ?, " +
                 "player_two_id = ? " +
@@ -80,6 +81,7 @@ public class GameJdbcTemplateRepository implements GameRepository {
 
         return jdbcTemplate.update(sql,
                 game.getPot(),
+                game.getWinner(),
                 game.getBoard().getBoardId(),
                 game.getPlayers().get(0).getPlayerId(),
                 game.getPlayers().get(1).getPlayerId(),
