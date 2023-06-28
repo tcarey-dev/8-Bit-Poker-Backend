@@ -19,9 +19,6 @@ class RoomJdbcTemplateRepositoryTest {
     private RoomJdbcTemplateRepository repository;
 
     @Autowired
-    private GameJdbcTemplateRepository gameRepository;
-
-    @Autowired
     KnownGoodState knownGoodState;
 
     @BeforeEach
@@ -50,7 +47,6 @@ class RoomJdbcTemplateRepositoryTest {
         assertEquals(2, room.getRoomId());
         assertEquals(0.5, room.getStake());
         assertEquals(2, room.getSeats());
-        //assertEquals(3, room.getGame().getGameId());
     }
 
     @Test
