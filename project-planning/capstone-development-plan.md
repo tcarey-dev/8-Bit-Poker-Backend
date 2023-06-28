@@ -508,8 +508,8 @@ GAME LOGIC
     * [x] Write SQL scripts to setup production and test databases (2 hours)
     * DataException class (5 minutes)
     * PlayerJdbcTemplateRepository, PlayerRepository, PlayerMapper (1.5 hours)
-    * RoomJdbcTemplateRepository, RoomRepository, RoomMapper (1.5 hours)
-    * GameJdbcTemplateRepository, GameRepository, GameMapper (1.5 hours)
+    * [x] RoomJdbcTemplateRepository, RoomRepository, RoomMapper (1.5 hours)
+    * [x] GameJdbcTemplateRepository, GameRepository, GameMapper (1.5 hours)
     * HW
         * Data layer tests
 * Tom
