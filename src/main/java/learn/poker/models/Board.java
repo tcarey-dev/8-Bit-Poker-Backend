@@ -16,6 +16,13 @@ public class Board {
         this.river = river;
     }
 
+    public Board(List<Card> flop, Card turn, Card river) {
+        this.flop = flop;
+        this.turn = turn;
+        this.river = river;
+    }
+
+
     public Board(){}
 
     public int getBoardId() {
