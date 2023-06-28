@@ -68,23 +68,54 @@ create table player_role (
         references role(role_id)
 );
 
-insert into role (`name`) values
-    ('USER'),
-    ('ADMIN');
+delimiter //
+create procedure set_known_good_state()
+begin
+	set sql_safe_updates = 0;
     
-insert into player (player_id, username, password_hash, enabled)
-    values
-    (1, 'john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1),
-    (2, 'sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1);
+	delete from `role`;
+	alter table `role` auto_increment = 1;
+	delete from room;
+	alter table room auto_increment = 1;
+	delete from game;
+	alter table game auto_increment = 1;
+	delete from board;
+	alter table board auto_increment = 1;
+	delete from player;
+	alter table player auto_increment = 1;
     
-insert into board (board_id, flop, turn, river)
-	values 
-    (1, 'AH,KD,10C', '3S', '9D');
+	insert into `role` (`name`) values
+		('USER'),
+		('ADMIN');
+		
+	insert into player (player_id, username, password_hash, enabled)
+		values
+		(1, 'john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1),
+		(2, 'sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1),
+        (3, 'fred@astair.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1),
+        (4, 'billy@bob.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1),
+        (5, 'sam@stone.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1),
+        (6, 'lisa@simpson.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1);
+		
+	insert into board (board_id, flop, turn, river)
+		values 
+		(1, 'AH,KD,10C', '3S', '9D'),
+        (2, '10C,3D,QS', 'AC', '5S'),
+        (3, '7H,QS,8S', '6D', '2D');
+		
+	insert into game (game_id, pot, winner, board_id, player_one_id, player_two_id)
+		values
+		(1, 200, 'sally@jones.com', 3, 1, 2),
+        (2, 250, 'fred@astair.com', 2, 3, 4),
+        (3, 300, 'john@smith.com', 1, 5, 6);
+	 
+	 insert into room (room_id, stake, seats, game_id) 
+		values 
+		(1, 0.25, 2, 2),
+        (2, 0.5, 2, 3),
+        (3, 0.75, 2, 1);
+	
+    set sql_safe_updates = 1;
     
-insert into game (game_id, pot, winner, board_id, player_one_id, player_two_id)
-	values
-    (1, 200, null, 1, 1, 2);
- 
- insert into room (room_id, stake, seats, game_id) 
-	values 
-    (1, 0.5, 2, 1);
+    end //
+delimiter ;
