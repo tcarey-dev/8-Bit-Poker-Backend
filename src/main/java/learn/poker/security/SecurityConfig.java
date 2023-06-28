@@ -34,11 +34,11 @@ public class SecurityConfig {
         // as they're evaluated in the order that they're added
         http.authorizeRequests()
                 // new...
-                .antMatchers("/authenticate").permitAll()
-                .antMatchers("/refresh_token").authenticated()
-                .antMatchers("/create_account").permitAll()
+//                .antMatchers("/authenticate").permitAll()
+//                .antMatchers("/refresh_token").authenticated()
+//                .antMatchers("/create_account").permitAll()
                 // if we get to this point, let's deny all requests
-                .antMatchers("/**").denyAll()
+                .antMatchers("/**").permitAll()
                 .and()
                 .addFilter(new JwtRequestFilter(authenticationManager(authConfig), converter))
                 .sessionManagement()
