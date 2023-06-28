@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class GameJdbcTemplateRepository implements GameRepository {
     private final JdbcTemplate jdbcTemplate;
     private PlayerRepository playerRepository;
-    private final RowMapper<Game> rowMapper = new GameMapper();
 
     public GameJdbcTemplateRepository(JdbcTemplate jdbcTemplate, PlayerRepository playerRepository) {
         this.jdbcTemplate = jdbcTemplate;
