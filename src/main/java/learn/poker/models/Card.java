@@ -52,7 +52,8 @@ public enum Card {
     JACK_OF_SPADES("JS"),
     QUEEN_OF_SPADES("QS"),
     KING_OF_SPADES("KS"),
-    ACE_OF_SPADES("AS");
+    ACE_OF_SPADES("AS"),
+    EMPTY("");
 
     private final String abbr;
     Card(String abbr) {

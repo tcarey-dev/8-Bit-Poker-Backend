@@ -2,6 +2,7 @@ package learn.poker.domain;
 
 import learn.poker.data.GameRepository;
 import learn.poker.models.Board;
+import learn.poker.models.Card;
 import learn.poker.models.Game;
 import learn.poker.models.Player;
 
@@ -22,6 +23,7 @@ public class GameService {
 
     public Player getWinner(List<Player> players, Board board) {
         //TODO call pokerApi to determine winner
+        return null;
     }
 
     public Result<Game> add(Game game) {
@@ -35,6 +37,12 @@ public class GameService {
             result.addMessage("Cannot create an existing game.");
             return result;
         }
+
+        Board board = new Board();
+        board.setFlop(List.of(Card.EMPTY, Card.EMPTY, Card.EMPTY));
+        board.setTurn(Card.EMPTY);
+        board.setRiver(Card.EMPTY);
+        game.setBoard(board);
 
         game = repository.create(game);
         result.setPayload(game);
