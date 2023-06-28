@@ -29,7 +29,7 @@ public class RoomService {
             return result;
         }
 
-        if(room.getRoomId() !=0 ){
+        if(room.getRoomId() != 0 ){
             result.addMessage("roomId should not be set for add", ResultType.INVALID);
         }
 
@@ -45,6 +45,11 @@ public class RoomService {
         }
 
         if(room.getRoomId() <= 0){
+            result.addMessage("roomId must be set for update", ResultType.INVALID);
+            return result;
+        }
+
+        if(!repository.update(room)){
             String msg = String.format("roomId %s not found", room.getRoomId());
             result.addMessage(msg, ResultType.NOT_FOUND);
         }
@@ -69,7 +74,8 @@ public class RoomService {
         if(room.getStake() <= 0.02) {
             result.addMessage("Stakes must be greater than 0.02", ResultType.INVALID);
         }
-        if(room.getStake() % 2 != 0){
+        double stakeInCents = room.getStake() * 100;
+        if(stakeInCents % 2 != 0){
             result.addMessage("Stakes must be an even number", ResultType.INVALID);
         }
         return result;
