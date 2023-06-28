@@ -9,9 +9,10 @@ import java.sql.SQLException;
 public class RoomMapper implements RowMapper<Room> {
     @Override
     public Room mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new Room(
-                rs.getInt("room_id"),
-                rs.getDouble("stake"),
-                rs.getInt("seats"));
+        Room room = new Room();
+        room.setRoomId(rs.getInt("room_id"));
+        room.setStake(rs.getDouble("stake"));
+        room.setSeats(rs.getInt("seats"));
+        return room;
     }
 }

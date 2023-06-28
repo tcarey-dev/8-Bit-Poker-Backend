@@ -7,15 +7,13 @@ public class Game {
     private int gameId;
     private int pot;
     private String winner;
-    private Room room;
     private Board board;
     private List<Player> players;
 
-    public Game(int gameId, int pot, String winner, Room room, Board board, List<Player> players) {
+    public Game(int gameId, int pot, String winner, Board board, List<Player> players) {
         this.gameId = gameId;
         this.pot = pot;
         this.winner = winner;
-        this.room = room;
         this.board = board;
         this.players = players;
     }
@@ -44,14 +42,6 @@ public class Game {
 
     public void setWinner(String winner) {
         this.winner = winner;
-    }
-
-    public Room getRoom() {
-        return room;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
     }
 
     public Board getBoard() {

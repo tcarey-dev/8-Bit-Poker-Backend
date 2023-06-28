@@ -15,12 +15,6 @@ create table player (
     is_player_action bit null
 );
 
-create table room (
-	room_id int primary key auto_increment,
-    stake double null,
-    seats int null
-);
-
 create table board (
 	board_id int primary key auto_increment,
     flop varchar(50) null,
@@ -31,14 +25,10 @@ create table board (
 create table game (
 	game_id int primary key auto_increment,
     pot int null,
-    winner varchar(150) not null,
-    room_id int not null,
+    winner varchar(150) null,
     board_id int not null,
     player_one_id int not null,
     player_two_id int not null,
-    constraint fk_game_room_id
-		foreign key (room_id)
-        references room(room_id),
 	constraint fk_game_board_id
 		foreign key (board_id)
         references board(board_id),
@@ -48,6 +38,16 @@ create table game (
 	constraint fk_game_player_two_id
 		foreign key (player_two_id)
         references player(player_id)
+);
+
+create table room (
+	room_id int primary key auto_increment,
+    stake double null,
+    seats int null,
+    game_id int null,
+	constraint fk_room_game_id
+		foreign key (game_id)
+        references game(game_id)
 );
 
 create table role (
@@ -72,7 +72,19 @@ insert into role (`name`) values
     ('USER'),
     ('ADMIN');
     
-insert into player (username, password_hash, enabled)
+insert into player (player_id, username, password_hash, enabled)
     values
-    ('john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1),
-    ('sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1);
+    (1, 'john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1),
+    (2, 'sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1);
+    
+insert into board (board_id, flop, turn, river)
+	values 
+    (1, 'AH,KD,10C', '3S', '9D');
+    
+insert into game (game_id, pot, winner, board_id, player_one_id, player_two_id)
+	values
+    (1, 200, null, 1, 1, 2);
+ 
+ insert into room (room_id, stake, seats, game_id) 
+	values 
+    (1, 0.5, 2, 1);

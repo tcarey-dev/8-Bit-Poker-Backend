@@ -5,11 +5,13 @@ public class Room {
     private int roomId;
     private double stake;
     private int seats;
+    private Game game;
 
-    public Room(int roomId, double stake, int seats) {
+    public Room(int roomId, double stake, int seats, Game game) {
         this.roomId = roomId;
         this.stake = stake;
         this.seats = seats;
+        this.game = game;
     }
 
     public Room(){}
@@ -36,5 +38,13 @@ public class Room {
 
     public void setSeats(int seats) {
         this.seats = seats;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 }

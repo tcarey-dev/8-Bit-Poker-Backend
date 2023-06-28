@@ -33,9 +33,14 @@ public class PlayerJdbcTemplateRepository implements PlayerRepository {
                 where username = ?;
                 """;
 
-        return jdbcTemplate.query(sql, new PlayerMapper(roles), username)
+        Player player = jdbcTemplate.query(sql, new PlayerMapper(), username)
                 .stream()
                 .findFirst().orElse(null);
+
+        if(player != null){
+            player.setAuthorities(roles);
+        }
+        return player;
     }
 
     @Override
