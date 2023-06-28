@@ -28,7 +28,7 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
 
     @Override
     public List<Room> findAll() {
-       final String sql = "select room_id" +
+       final String sql = "select room_id," +
                 " stake," +
                 " seats" +
                 " from room;";
@@ -38,7 +38,7 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
 
     @Override
     public Room findById(int roomId) {
-        final String sql = "select room_id" +
+        final String sql = "select room_id," +
                 " stake," +
                 " seats," +
                 " game_id" +
@@ -82,12 +82,14 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
         final String sql = "update room set " +
                 "stake = ?, " +
                 "seats = ?, " +
-                "game_id = ?;";
+                "game_id = ? " +
+                "where room_id = ?;";
 
         int rowsUpdated = jdbcTemplate.update(sql,
                 room.getStake(),
                 room.getSeats(),
-                room.getGame().getGameId());
+                room.getGame().getGameId(),
+                room.getRoomId());
 
         return rowsUpdated > 0;
     }
@@ -105,8 +107,10 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
                 "where r.room_id = ?;";
         Game game = jdbcTemplate.query(sql, new GameMapper(), room.getRoomId()).stream()
                 .findFirst().orElse(null);
-        game = gameRepository.findById(game.getGameId());
-        room.setGame(game);
+        if(game != null){
+            game = gameRepository.findById(game.getGameId());
+            room.setGame(game);
+        }
     }
 
 }
