@@ -42,32 +42,38 @@ class GameJdbcTemplateRepositoryTest {
     @Test
     void shouldCreate() {
         Board board = new Board(
-                1,
                 List.of(Card.ACE_OF_CLUBS,
                         Card.ACE_OF_DIAMONDS,
                         Card.ACE_OF_SPADES),
                 Card.EIGHT_OF_CLUBS,
                 Card.ACE_OF_HEARTS);
 
-        Player player = new Player("keanu@reeves.com", "$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa");
-        player.setPlayerId(0);
-        player.setAuthorities(List.of());
-        player.setEnabled(true);
-        player.setPlayersAction(true);
-        player.setPosition(Position.SMALL_BLIND);
-        player.setAccountBalance(50);
-        player.setDisplayName("theDude");
-        player.setHoleCards(List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS));
+        Player player1 = new Player("keanu@reeves.com", "$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa");
+        player1.setAuthorities(List.of());
+        player1.setEnabled(true);
+        player1.setPlayersAction(true);
+        player1.setPosition(Position.SMALL_BLIND);
+        player1.setAccountBalance(50);
+        player1.setDisplayName("theDude");
+        player1.setHoleCards(List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS));
 
-        Game game = new Game(
-            1, 350,"lisa@simpson.com", board, List.of(player));
+        Player player2 = new Player("matt@damon.com", "$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa");
+        player2.setAuthorities(List.of());
+        player2.setEnabled(true);
+        player2.setPlayersAction(false);
+        player2.setPosition(Position.BIG_BLIND);
+        player2.setAccountBalance(75);
+        player2.setDisplayName("choppyChad");
+        player2.setHoleCards(List.of(Card.KING_OF_DIAMONDS, Card.JACK_OF_HEARTS));
+
+        Game game = new Game(350,"matt@damon.com", board, List.of(player1, player2));
 
         Game actual = repository.create(game);
-        assertEquals(1, actual.getGameId());
+        assertEquals(4, actual.getGameId());
         assertEquals(350, actual.getPot());
-        assertEquals("lisa@simpson.com", actual.getWinner());
+        assertEquals("matt@damon.com", actual.getWinner());
         assertEquals(board, actual.getBoard());
-        assertEquals(List.of(player), actual.getPlayers());
+        assertEquals(List.of(player1, player2), actual.getPlayers());
     }
 
     @Test
