@@ -34,7 +34,8 @@ Content-Type: application/json
 {
     "roomId": 1,
     "stake": 4.00,
-    "seats": 2
+    "seats": 2,
+    "game_id": 100
 }
 
 ###
