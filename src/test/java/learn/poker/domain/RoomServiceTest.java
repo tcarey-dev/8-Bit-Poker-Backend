@@ -217,7 +217,7 @@ public class RoomServiceTest {
     }
 
     @Test
-    void shouldNotAddUpdateStakesAreEqualToTwoCents(){
+    void shouldNotUpdateStakesAreEqualToTwoCents(){
         Room room = new Room();
         room.setRoomId(1);
         room.setSeats(2);
@@ -234,7 +234,7 @@ public class RoomServiceTest {
     }
 
     @Test
-    void shouldNotAddUpdateStakesAreLessThanTwoCents(){
+    void shouldNotUpdateStakesAreLessThanTwoCents(){
         Room room = new Room();
         room.setRoomId(1);
         room.setSeats(2);
@@ -243,7 +243,7 @@ public class RoomServiceTest {
         Game game = new Game();
         room.setGame(game);
 
-        Result<Room> result = service.add(room);
+        Result<Room> result = service.update(room);
 
         assertFalse(result.isSuccess());
         assertEquals(1, result.getMessages().size());
@@ -251,7 +251,7 @@ public class RoomServiceTest {
     }
 
     @Test
-    void shouldNotAddUpdateStakesInCentsAreNotAnEvenNumber(){
+    void shouldNotUpdateStakesInCentsAreNotAnEvenNumber(){
         Room room = new Room();
         room.setRoomId(1);
         room.setSeats(2);
@@ -260,7 +260,7 @@ public class RoomServiceTest {
         Game game = new Game();
         room.setGame(game);
 
-        Result<Room> result = service.add(room);
+        Result<Room> result = service.update(room);
 
         assertFalse(result.isSuccess());
         assertEquals(1, result.getMessages().size());

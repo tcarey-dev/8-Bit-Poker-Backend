@@ -40,7 +40,7 @@ public class PlayerController {
 
     @GetMapping("/{username}")
     public ResponseEntity<?> getPlayerByUserName(@PathVariable String username){
-        Player player = (Player) service.loadUserByUsername(username);
+        Player player = service.loadUserByUsername(username);
         if(player == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
