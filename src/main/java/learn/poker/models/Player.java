@@ -13,14 +13,27 @@ import java.util.stream.Collectors;
 public class Player implements UserDetails {
     private int playerId;
     private String displayName;
-    private final String username;
-    private final String password;
+    private String username;
+    private String password;
     private boolean enabled;
     private int accountBalance;
     private Collection <GrantedAuthority> authorities;
     private List<Card> holeCards;
     private Position position;
     private boolean isPlayersAction;
+
+    public Player(int playerId, String displayName, String username, String password, boolean enabled, int accountBalance, List<String> roles, List<Card> holeCards, Position position, boolean isPlayersAction) {
+        this.playerId = playerId;
+        this.displayName = displayName;
+        this.username = username;
+        this.password = password;
+        this.enabled = enabled;
+        this.accountBalance = accountBalance;
+        this.authorities = convertRolesToAuthorities(roles);
+        this.holeCards = holeCards;
+        this.position = position;
+        this.isPlayersAction = isPlayersAction;
+    }
 
     public Player(int playerId, String username, String password, boolean enabled, List<String> roles) {
         this.playerId = playerId;
@@ -41,6 +54,8 @@ public class Player implements UserDetails {
         this.username = username;
         this.password = password;
     }
+
+    public Player(){}
 
     private static Collection<GrantedAuthority> convertRolesToAuthorities(List<String> roles) {
         return roles.stream()

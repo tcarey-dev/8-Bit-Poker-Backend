@@ -33,7 +33,13 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
                 " seats" +
                 " from room;";
 
-        return jdbcTemplate.query(sql, rowMapper);
+        List<Room> rooms = jdbcTemplate.query(sql, rowMapper);
+
+        for(Room room : rooms) {
+            addGame(room);
+        }
+
+        return rooms;
     }
 
     @Override

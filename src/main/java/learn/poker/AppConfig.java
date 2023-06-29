@@ -1,5 +1,12 @@
 package learn.poker;
 
+import learn.poker.models.Player;
+import learn.poker.security.PlayerSerializer;
+import learn.poker.security.PlayerModule;
+
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,7 +21,6 @@ public class AppConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // new...
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -27,4 +33,18 @@ public class AppConfig {
             }
         };
     }
+
+    @Bean
+    public StdSerializer<Player> playerSerializer() {
+        return new PlayerSerializer();
+    }
+
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new PlayerModule());
+        return objectMapper;
+    }
+
 }
