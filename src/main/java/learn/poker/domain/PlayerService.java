@@ -75,23 +75,26 @@ public class PlayerService implements UserDetailsService {
 
     private Result<Player> validate(Player player) {
         Result<Player> result = new Result<>();
-
         if (player == null) {
             result.addMessage("Player cannot be null.", ResultType.INVALID);
             return result;
         }
 
-        Credential playerCredential = new Credential();
-        playerCredential.setUsername(player.getUsername());
-        playerCredential.setPassword(player.getPassword());
-        result = validate(playerCredential);
+        if (player.getPlayerId() <= 0) {
+            result.addMessage(String.format("Player %s not found.", player.getUsername()), ResultType.NOT_FOUND);
+        }
 
-        if (!result.isSuccess()) {
+        Credential credential = new Credential();
+        credential.setUsername(player.getUsername());
+        credential.setPassword(player.getPassword());
+
+        if (credential.getUsername() == null || credential.getUsername().isBlank()) {
+            result.addMessage("username is required", ResultType.INVALID);
             return result;
         }
 
-        if (player.getPlayerId() <= 0) {
-            result.addMessage(String.format("Player %s not found.", player.getUsername()), ResultType.NOT_FOUND);
+        if (credential.getUsername().length() > 50) {
+            result.addMessage("username must be less than 50 characters", ResultType.INVALID);
         }
 
         if (player.getAccountBalance() < 0) {
@@ -102,7 +105,7 @@ public class PlayerService implements UserDetailsService {
             result.addMessage("Player must be either User or Admin", ResultType.INVALID);
         }
 
-        if (player.getHoleCards().size() != 0 || player.getHoleCards().size() != 2) {
+        if (player.getHoleCards() != null && player.getHoleCards().size() != 0 && player.getHoleCards().size() != 2) {
             result.addMessage("Player must have either zero or exactly two hole cards", ResultType.INVALID);
         }
 

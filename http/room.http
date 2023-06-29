@@ -24,7 +24,7 @@ Content-Type: application/json
 
 ###
 
-GET {{url}}/1 HTTP/1.1
+GET {{url}}/2 HTTP/1.1
 
 ###
 
@@ -79,7 +79,7 @@ Content-Type: application/json
 
 ###
 
-DELETE {{url}}/1 HTTP/1.1
+DELETE {{url}}/4 HTTP/1.1
 
 ###
 

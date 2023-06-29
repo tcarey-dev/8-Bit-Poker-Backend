@@ -11,7 +11,7 @@ create table player (
     account_balance int null,
     roles varchar(50) null,
     hole_cards varchar(150) null,
-    position varchar(50) null,
+    position varchar(150) null,
     is_player_action bit null
 );
 
@@ -90,15 +90,15 @@ begin
 	insert into `role` (`name`) values
 		('USER'),
 		('ADMIN');
-		
-	insert into player (player_id, username, password_hash, enabled, roles)
+    
+	insert into player (player_id, username, password_hash, display_name, account_balance, enabled, roles, hole_cards, `position`, is_player_action)
 		values
-		(1, 'john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 'USER'),
-		(2, 'sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 'USER'),
-        (3, 'fred@astair.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 'USER'),
-        (4, 'billy@bob.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 'ADMIN'),
-        (5, 'sam@stone.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 'USER'),
-        (6, 'lisa@simpson.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 'USER');
+		(1, 'john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 100, 1, 'USER', 'AH,KD', 'SMALLBLIND', true),
+		(2, 'sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 50, 1, 'USER', 'J10,9H', 'BIGBLIND', true),
+        (3, 'fred@astair.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 25, 1, 'USER', '8S,6S', 'SMALLBLIND', false),
+        (4, 'billy@bob.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 80, 1, 'ADMIN', '7H,2D', 'SMALLBLIND', true),
+        (5, 'sam@stone.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 150, 1, 'USER', 'AC,5D', 'BIGBLIND', true),
+        (6, 'lisa@simpson.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 225, 1, 'USER', 'QH,QS', 'BIGBLIND', false);
         
 	insert into player_role (player_id, role_id)
 		values
