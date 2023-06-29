@@ -49,4 +49,4 @@ Content-Type: application/json
 ###
 
 POST {{url}}/refresh-token HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI4LWJpdC1wb2tlciIsInN1YiI6ImJvYkBqb25lcy5jb20iLCJhcHBfdXNlcl9pZCI6NywiYXV0aG9yaXRpZXMiOiJVU0VSIiwiZXhwIjoxNjg4MDc3MDg0fQ.1JwSkryzgJeHFfW5uALSN6Q8cLg-wHpJResP0bz2Zd0
+Authorization: Bearer

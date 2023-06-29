@@ -102,10 +102,11 @@ public class PlayerService implements UserDetailsService {
         }
 
         if (player.getAuthorities().isEmpty()) {
-            result.addMessage("Player must be either User or Admin", ResultType.INVALID);
+            result.addMessage("Player must be either User and/or Admin", ResultType.INVALID);
         }
 
         if (player.getHoleCards() != null && player.getHoleCards().size() != 0 && player.getHoleCards().size() != 2) {
+
             result.addMessage("Player must have either zero or exactly two hole cards", ResultType.INVALID);
         }
 
