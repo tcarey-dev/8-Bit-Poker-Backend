@@ -29,18 +29,29 @@ public class PlayerMapper implements RowMapper<Player> {
                 rs.getString("password_hash"),
                 rs.getBoolean("enabled"));
 
-        player.setDisplayName("");
+        String displayName = rs.getString("display_name");
+        if (displayName != null) {
+            player.setDisplayName(displayName);
+        }
+
         player.setAccountBalance(rs.getInt("account_balance"));
 
         if(roles != null) {
             player.setAuthorities(roles);
         }
 
-        List<Card> holeCards = Arrays.stream(rs.getString("hole_cards").split(","))
-                .map(Card::getCardFromAbbreviation).toList();
-        player.setHoleCards(holeCards);
+        String holeCards = rs.getString("hole_cards");
+        if (holeCards != null) {
+            List<Card> holeCardsList = Arrays.stream(holeCards.split(","))
+                    .map(Card::getCardFromAbbreviation).toList();
+            player.setHoleCards(holeCardsList);
+        }
 
-        player.setPosition(Position.valueOf(rs.getString("position")));
+        String position = rs.getString("position");
+        if (position != null) {
+            player.setPosition(Position.valueOf(position));
+        }
+
         player.setPlayersAction(rs.getBoolean("is_player_action"));
         return player;
     }

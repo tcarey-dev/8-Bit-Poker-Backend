@@ -139,13 +139,15 @@ public class GameJdbcTemplateRepository implements GameRepository {
     @Transactional
     private void addPlayers(Game game) {
         final String player1sql = "select " +
-                "p.player_id, p.username, p.password_hash, p.enabled  " +
+                "p.player_id, p.username, p.password_hash, p.enabled, p.display_name, " +
+                "p.account_balance, p.roles, p.hole_cards, p.position, p.is_player_action  " +
                 "from player p " +
                 "inner join game g on p.player_id = g.player_one_id " +
                 "where g.game_id = ?;";
 
         final String player2sql = "select " +
-                "p.player_id, p.username, p.password_hash, p.enabled  " +
+                "p.player_id, p.username, p.password_hash, p.enabled,  p.display_name, " +
+                "p.account_balance, p.roles, p.hole_cards, p.position, p.is_player_action  " +
                 "from player p " +
                 "inner join game g on p.player_id = g.player_two_id " +
                 "where g.game_id = ?;";
