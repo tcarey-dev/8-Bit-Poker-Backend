@@ -73,8 +73,11 @@ create procedure set_known_good_state()
 begin
 	set sql_safe_updates = 0;
     
-	delete from `role`;
-	alter table `role` auto_increment = 1;
+    
+	delete from player_role;
+	alter table player_role auto_increment = 1;
+	delete from role;
+	alter table role auto_increment = 1;
 	delete from room;
 	alter table room auto_increment = 1;
 	delete from game;
@@ -83,19 +86,28 @@ begin
 	alter table board auto_increment = 1;
 	delete from player;
 	alter table player auto_increment = 1;
-    
+		
 	insert into `role` (`name`) values
 		('USER'),
 		('ADMIN');
 		
 	insert into player (player_id, username, password_hash, enabled, roles)
 		values
-		(1, 'john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 1),
-		(2, 'sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 2),
-        (3, 'fred@astair.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 1),
-        (4, 'billy@bob.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 2),
-        (5, 'sam@stone.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 1),
-        (6, 'lisa@simpson.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 2);
+		(1, 'john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 'USER'),
+		(2, 'sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 'USER'),
+        (3, 'fred@astair.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 'USER'),
+        (4, 'billy@bob.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 'ADMIN'),
+        (5, 'sam@stone.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 'USER'),
+        (6, 'lisa@simpson.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', 1, 'USER');
+        
+	insert into player_role (player_id, role_id)
+		values
+        (1, 1),
+        (2, 1),
+        (3, 1),
+        (4, 2),
+        (5, 1),
+        (6, 1);
 		
 	insert into board (board_id, flop, turn, river)
 		values 
