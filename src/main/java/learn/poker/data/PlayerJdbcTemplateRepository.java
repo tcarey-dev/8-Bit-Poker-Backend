@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class PlayerJdbcTemplateRepository implements PlayerRepository {
@@ -77,12 +78,27 @@ public class PlayerJdbcTemplateRepository implements PlayerRepository {
         final String sql = """
                 update player set
                     username = ?,
-                    enabled = ?
+                    enabled = ?,
+                    display_name = ?,
+                    account_balance = ?,
+                    roles = ?,
+                    hole_cards = ?,
+                    position = ?,
+                    is_player_action = ?
                 where player_id = ?
                 """;
 
         int rowsReturned = jdbcTemplate.update(sql,
-                player.getUsername(), player.isEnabled(), player.getPlayerId());
+                player.getUsername(),
+                player.isEnabled(),
+                player.getDisplayName(),
+                player.getAccountBalance(),
+                player.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority).collect(Collectors.joining()),
+                player.getHoleCards(),
+                player.getPosition(),
+                player.isPlayersAction(),
+                player.getPlayerId());
 
         if (rowsReturned > 0) {
             updateRoles(player);
