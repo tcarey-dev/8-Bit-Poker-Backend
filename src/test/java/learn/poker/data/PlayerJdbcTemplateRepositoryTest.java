@@ -41,7 +41,8 @@ class PlayerJdbcTemplateRepositoryTest {
 
     @Test
     void shouldCreate() {
-        Player player = new Player("miracle@test.com", "$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa");
+        Player player = new Player(0,"miracle@test.com", "$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa", true, List.of("USER"));
+
         Player result = repository.create(player);
         assertNotNull(result);
         assertEquals(7, result.getPlayerId());
