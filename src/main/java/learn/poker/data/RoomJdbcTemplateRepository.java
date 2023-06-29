@@ -79,19 +79,33 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
 
     @Override
     public boolean update(Room room) {
-        final String sql = "update room set " +
-                "stake = ?, " +
-                "seats = ?, " +
-                "game_id = ? " +
-                "where room_id = ?;";
+        if(room.getGame() != null){
+            final String sql = "update room set " +
+                    "stake = ?, " +
+                    "seats = ?, " +
+                    "game_id = ? " +
+                    "where room_id = ?;";
 
-        int rowsUpdated = jdbcTemplate.update(sql,
-                room.getStake(),
-                room.getSeats(),
-                room.getGame().getGameId(),
-                room.getRoomId());
+            int rowsUpdated = jdbcTemplate.update(sql,
+                    room.getStake(),
+                    room.getSeats(),
+                    room.getGame().getGameId(),
+                    room.getRoomId());
 
-        return rowsUpdated > 0;
+            return rowsUpdated > 0;
+        }else{
+            final String sql = "update room set " +
+                    "stake = ?, " +
+                    "seats = ?, " +
+                    "where room_id = ?;";
+
+            int rowsUpdated = jdbcTemplate.update(sql,
+                    room.getStake(),
+                    room.getSeats(),
+                    room.getRoomId());
+
+            return rowsUpdated > 0;
+        }
     }
 
     @Override
