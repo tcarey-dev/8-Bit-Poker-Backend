@@ -328,9 +328,9 @@ src
     * `private final JwtConverter jwtConverter`
     * `private final PlayerService PlayerService`
     * `public AuthController(AuthenticationManager authenticationManager, JwtConverter jwtConverter, PlayerService PlayerService)`
-    * `public ResponseEntity<Object> authenticate(@RequestBody Credentials credentials)` -- @PostMapping("/authenticate")
+    * `public ResponseEntity<Object> authenticate(@RequestBody Credentials credential)` -- @PostMapping("/authenticate")
     * `public ResponseEntity<Object> refreshToken(@AuthenticationPrincipal Player player)` -- @PostMapping("/refresh-token")
-    * `public ResponseEntity<Object> create(@RequestBody Credentials credentials)` -- @PostMapping("/create-account")
+    * `public ResponseEntity<Object> create(@RequestBody Credentials credential)` -- @PostMapping("/create-account")
     * `private HashMap<String, String> makePlayerTokenMap(Player player)`
 
 * [ ] `GlobalExceptionHandler.java` -- @ControllerAdvice
