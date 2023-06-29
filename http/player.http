@@ -6,17 +6,6 @@ GET {{url}}/john@smith.com HTTP/1.1
 
 ###
 
-#   "playerId": 1,
-#   "displayName": null,
-#   "username": "john@smith.com",
-#   "password": "$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa",
-#   "enabled": true,
-#   "accountBalance": 0,
-#   "authorities": [],
-#   "holeCards": null,
-#   "position": null,
-#   "playersAction": false,
-
 PUT {{url}}/1 HTTP/1.1
 Content-Type: application/json
 
@@ -60,4 +49,4 @@ Content-Type: application/json
 ###
 
 POST {{url}}/refresh-token HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI4LWJpdC1wb2tlciIsInN1YiI6ImJvYkBqb25lcy5jb20iLCJhcHBfdXNlcl9pZCI6MywiYXV0aG9yaXRpZXMiOiJVU0VSIiwiZXhwIjoxNjg4MDU5ODMxfQ.Dm7_szRnxGm9xKORnvWcyTucDHc2nqVvFrAoyWZ0VZw
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI4LWJpdC1wb2tlciIsInN1YiI6ImJvYkBqb25lcy5jb20iLCJhcHBfdXNlcl9pZCI6NywiYXV0aG9yaXRpZXMiOiJVU0VSIiwiZXhwIjoxNjg4MDc3MDg0fQ.1JwSkryzgJeHFfW5uALSN6Q8cLg-wHpJResP0bz2Zd0
