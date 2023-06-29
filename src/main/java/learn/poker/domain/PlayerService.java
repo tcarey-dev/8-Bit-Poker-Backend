@@ -130,7 +130,6 @@ public class PlayerService implements UserDetailsService {
                     "password must be at least 8 character and contain a digit," +
                             " a letter, and a non-digit/non-letter", ResultType.INVALID);
         }
-
         return result;
     }
 

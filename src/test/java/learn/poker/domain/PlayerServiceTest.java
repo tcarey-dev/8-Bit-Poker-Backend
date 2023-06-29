@@ -245,6 +245,7 @@ public class PlayerServiceTest {
 //                " a letter, and a non-digit/non-letter", result.getMessages().get(0));
 //    }
 
+
    @Test
     void shouldLoadUserByUserName(){
         Credential credential = new Credential();
@@ -254,8 +255,8 @@ public class PlayerServiceTest {
         Player player = new Player(0,"username", "$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa", true);
         when(repository.findByUsername("username")).thenReturn(player);
 
-       UserDetails userDetails = service.loadUserByUsername(credential.getUsername());
-       assertNotNull(userDetails);
-   }
+        UserDetails userDetails = service.loadUserByUsername(credential.getUsername());
+        assertNotNull(userDetails);
+    }
 
 }
