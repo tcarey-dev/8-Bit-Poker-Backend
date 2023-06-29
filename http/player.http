@@ -1,0 +1,63 @@
+@url = http://localhost:8080/api/player
+
+GET {{url}}/john@smith.com HTTP/1.1
+
+###
+
+#   "playerId": 1,
+#   "displayName": null,
+#   "username": "john@smith.com",
+#   "password": "$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa",
+#   "enabled": true,
+#   "accountBalance": 0,
+#   "authorities": [],
+#   "holeCards": null,
+#   "position": null,
+#   "playersAction": false,
+#   "accountNonExpired": true,
+#   "credentialsNonExpired": true,
+#   "accountNonLocked": true
+
+PUT {{url}}/1 HTTP/1.1
+Content-Type: application/json
+
+{
+    "playerId": 1,
+    "displayName": null,
+    "username": "john@smith.com",
+    "password": "$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa",
+    "enabled": true,
+    "accountBalance": 0,
+    "authorities": [],
+    "holeCards": null,
+    "position": null,
+    "playersAction": false,
+    "accountNonExpired": true,
+    "credentialsNonExpired": true,
+    "accountNonLocked": true
+}
+
+###
+
+POST {{url}}/create_account HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "bob@jones.com",
+    "password": "P@ssw0rd!"
+}
+
+###
+
+POST {{url}}/authenticate HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "john@smith.com",
+    "password": "P@ssw0rd!"
+}
+
+###
+
+POST {{url}}/refresh-token HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI4LWJpdC1wb2tlciIsInN1YiI6ImpvaG5Ac21pdGguY29tIiwiYXBwX3VzZXJfaWQiOjEsImF1dGhvcml0aWVzIjoiIiwiZXhwIjoxNjg4MDU5MjYyfQ.mcGTqakIpSqRk4KE5GiLD-v1yBc8-x-KooYtBrsXC9Y
