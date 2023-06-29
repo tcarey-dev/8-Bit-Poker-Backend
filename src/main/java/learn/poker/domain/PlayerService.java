@@ -55,6 +55,60 @@ public class PlayerService implements UserDetailsService {
         return result;
     }
 
+    public Result<Player> update(Player player) {
+        Result<Player> result = validate(player);
+        if (!result.isSuccess()) {
+            return result;
+        }
+
+        boolean success = repository.update(player);
+
+        if (success) {
+            result.setPayload(player);
+        } else {
+            result.addMessage(String.format("Player %s not found.", player.getUsername()), ResultType.NOT_FOUND);
+        }
+
+        return result;
+
+    }
+
+    private Result<Player> validate(Player player) {
+        Result<Player> result = new Result<>();
+
+        if (player == null) {
+            result.addMessage("Player cannot be null.", ResultType.INVALID);
+            return result;
+        }
+
+        Credential playerCredential = new Credential();
+        playerCredential.setUsername(player.getUsername());
+        playerCredential.setPassword(player.getPassword());
+        result = validate(playerCredential);
+
+        if (!result.isSuccess()) {
+            return result;
+        }
+
+        if (player.getPlayerId() <= 0) {
+            result.addMessage(String.format("Player %s not found.", player.getUsername()), ResultType.NOT_FOUND);
+        }
+
+        if (player.getAccountBalance() < 0) {
+            result.addMessage("Account balance cannot be negative", ResultType.INVALID);
+        }
+
+        if (player.getAuthorities().isEmpty()) {
+            result.addMessage("Player must be either User or Admin", ResultType.INVALID);
+        }
+
+        if (player.getHoleCards().size() != 0 || player.getHoleCards().size() != 2) {
+            result.addMessage("Player must have either zero or exactly two hole cards", ResultType.INVALID);
+        }
+
+        return result;
+    }
+
     private Result<Player> validate(Credential credential) {
         Result<Player> result = new Result<>();
         if (credential.getUsername() == null || credential.getUsername().isBlank()) {
