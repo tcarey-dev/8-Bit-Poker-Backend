@@ -28,12 +28,13 @@ public class PlayerJdbcTemplateRepository implements PlayerRepository {
         List<String> roles = getRolesByUsername(username);
 
         final String sql = """
-                select player_id, username, password_hash, enabled
+                select player_id, username, password_hash, enabled, display_name, 
+                account_balance, roles, hole_cards, position, is_player_action
                 from player
                 where username = ?;
                 """;
 
-        Player player = jdbcTemplate.query(sql, new PlayerMapper(), username)
+        Player player = jdbcTemplate.query(sql, new PlayerMapper(roles), username)
                 .stream()
                 .findFirst().orElse(null);
 
@@ -110,7 +111,8 @@ public class PlayerJdbcTemplateRepository implements PlayerRepository {
         }
     }
 
-    private List<String> getRolesByUsername(String username) {
+    @Override
+    public List<String> getRolesByUsername(String username) {
         final String sql = """
                 select r.name
                 from player_role ur
