@@ -15,8 +15,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -147,8 +150,16 @@ public class GameJdbcTemplateRepository implements GameRepository {
                 "from player p " +
                 "inner join game g on p.player_id = g.player_two_id " +
                 "where g.game_id = ?;";
+
         Player player1 = jdbcTemplate.query(player1sql, new PlayerMapper(), game.getGameId()).stream().findFirst().orElse(null);
         Player player2 = jdbcTemplate.query(player2sql, new PlayerMapper(), game.getGameId()).stream().findFirst().orElse(null);
+
+        List<String> player1Roles = playerRepository.getRolesByUsername(player1.getUsername());
+        List<String> player2Roles = playerRepository.getRolesByUsername(player2.getUsername());
+
+        player1.setAuthorities(player1Roles);
+        player2.setAuthorities(player2Roles);
+
         List<Player> players = List.of(player1, player2);
         game.setPlayers(players);
     }
