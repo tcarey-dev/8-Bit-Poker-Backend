@@ -308,13 +308,28 @@ src
     * 2C, 3C, 4C, 5C, 6C, 7C, 8C, 9C, 10C, JC, QC, KC, AC, 2D, 3D, 4D, 5D, 6D, 7D, 8D, 9D, 10D, JD, QD, KD, AD, 2H, 3H, 4H, 5H, 6H, 7H, 8H, 9H, 10H, JH, QH, KH, AH, 2S, 3S, 4S, 5S, 6S, 7S, 8S, 9S, 10S, JS, QS, KS, AS
 
 #### src.main.java.learn.poker.controller
-* [ ] `PlayerController.java` -- @RestController, @RequestMapping("/api/player"), @CrossOrigin(origins ={"http://localhost:3000"})
+
+* [ ] `PlayerController.java` -- @RestController, @RequestMapping("/api/player"), @CrossOrigin(origins ={"http://localhost:3000"}), @ConditionalOnWebApplication
+    * `private final AuthenticationManager authenticationManager`
+    * `private final JwtConverter jwtConverter`
+    * `private final PlayerService service`
+    * `public PlayerController(AuthenticationManager authenticationManager, JwtConverter jwtConverter, PlayerService service)`
+    * `public ResponseEntity<?> getPlayerById(int)` -- @GetMapping("/{username}")
+    * `public ResponseEntity<?> add(@RequestBody Player player)` -- @PostMapping
+    * `public ResponseEntity<?> update(@RequestBody Player player)` -- @PutMapping("/{id}")
+    * `public ResponseEntity<?> delete(@PathVariable int id)` -- @DeleteMapping("/{id}")
+    * `public ResponseEntity<Object> authenticate(@RequestBody Credentials credential)` -- @PostMapping("/authenticate")
+    * `public ResponseEntity<Object> refreshToken(@AuthenticationPrincipal Player player)` -- @PostMapping("/refresh-token")
+    * `public ResponseEntity<Object> create(@RequestBody Credentials credential)` -- @PostMapping("/create-account")
+    * `private HashMap<String, String> makePlayerTokenMap(Player player)`
+
+<!-- * [ ] `PlayerController.java` -- @RestController, @RequestMapping("/api/player"), @CrossOrigin(origins ={"http://localhost:3000"})
     * `private final PlayerService service`
     * `public PlayerController(PlayerService service)`
     * `public ResponseEntity<?> getPlayerById(int)` -- @GetMapping("/{username}")
     * `public ResponseEntity<?> add(@RequestBody Player player)` -- @PostMapping
     * `public ResponseEntity<?> update(@RequestBody Player player)` -- @PutMapping("/{id}")
-    * `public ResponseEntity<?> delete(@PathVariable int id)` -- @DeleteMapping("/{id}")
+    * `public ResponseEntity<?> delete(@PathVariable int id)` -- @DeleteMapping("/{id}") -->
 
 * [ ] `RoomController.java` -- @RestController, @RequestMapping("/api/player"), @CrossOrigin(origins ={"http://localhost:3000"})
     * `public List<Room> findAll()` -- @GetMapping
@@ -323,7 +338,7 @@ src
     * `public ResponseEntity<?> update(@RequestBody Room room)` -- @PutMapping("/{id}")
     * `public ResponseEntity<?> delete(@PathVariable int id)` -- @DeleteMapping("/{id}")
 
-* [ ] `AuthController.java` -- @RestController, @RequestMapping("/security"), @ConditionalOnWebApplication
+<!-- * [ ] `AuthController.java` -- @RestController, @RequestMapping("/security"), @ConditionalOnWebApplication
     * `private final AuthenticationManager authenticationManager`
     * `private final JwtConverter jwtConverter`
     * `private final PlayerService PlayerService`
@@ -331,7 +346,7 @@ src
     * `public ResponseEntity<Object> authenticate(@RequestBody Credentials credential)` -- @PostMapping("/authenticate")
     * `public ResponseEntity<Object> refreshToken(@AuthenticationPrincipal Player player)` -- @PostMapping("/refresh-token")
     * `public ResponseEntity<Object> create(@RequestBody Credentials credential)` -- @PostMapping("/create-account")
-    * `private HashMap<String, String> makePlayerTokenMap(Player player)`
+    * `private HashMap<String, String> makePlayerTokenMap(Player player)` -->
 
 * [ ] `GlobalExceptionHandler.java` -- @ControllerAdvice
     * `public ResponseEntity<?> handleException(DuplicateKeyException ex)` -- @ExceptionHandler
