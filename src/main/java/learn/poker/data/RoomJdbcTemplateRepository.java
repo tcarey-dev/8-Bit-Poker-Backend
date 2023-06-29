@@ -96,7 +96,7 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
         }else{
             final String sql = "update room set " +
                     "stake = ?, " +
-                    "seats = ?, " +
+                    "seats = ? " +
                     "where room_id = ?;";
 
             int rowsUpdated = jdbcTemplate.update(sql,
