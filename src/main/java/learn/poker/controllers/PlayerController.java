@@ -48,14 +48,14 @@ public class PlayerController {
 
     }
 
-    @PostMapping
-    public ResponseEntity<?> add(@RequestBody Player player){
-        Result<Room> result = service.create(player);
-        if(result.isSuccess()){
-            return new ResponseEntity<>(result.getPayload(), HttpStatus.CREATED);
-        }
-        return ErrorResponse.build(result);
-    }
+//    @PostMapping
+//    public ResponseEntity<?> create(@RequestBody Credential credential){
+//        Result<Player> result = service.create(credential);
+//        if(result.isSuccess()){
+//            return new ResponseEntity<>(result.getPayload(), HttpStatus.CREATED);
+//        }
+//        return ErrorResponse.build(result);
+//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@RequestBody Player player){
@@ -111,6 +111,7 @@ public class PlayerController {
 
         return new ResponseEntity<>(map, HttpStatus.CREATED);
     }
+
     private HashMap<String, String> makePlayerTokenMap(Player player){
         HashMap<String, String> map = new HashMap<>();
         String jwtToken = jwtConverter.getTokenFromUser(player);

@@ -134,7 +134,7 @@ public class PlayerServiceTest {
                 " a letter, and a non-digit/non-letter", result.getMessages().get(0));
     }
 
-//    //happy path -- update
+    //happy path -- update
 //    @Test
 //    void shouldUpdate(){
 //        Credential credential = new Credential();
@@ -243,19 +243,6 @@ public class PlayerServiceTest {
 //        assertEquals(1, result.getMessages().size());
 //        assertEquals("password must be at least 8 character and contain a digit," +
 //                " a letter, and a non-digit/non-letter", result.getMessages().get(0));
-//    }
-//
-//    //happy path -- delete
-//    @Test
-//    void shouldDelete(){
-//        when(respository.deleteById(1)).thenReturn(true);
-//        assertTrue(service.deleteById(1));
-//    }
-//
-//    //unhappy path -- delete
-//    @Test
-//    void shouldNotDeleteNonExistentRoom(){
-//        assertFalse(service.deleteById(999));
 //    }
 
    @Test
