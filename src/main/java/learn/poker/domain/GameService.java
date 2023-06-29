@@ -5,9 +5,10 @@ import learn.poker.models.Board;
 import learn.poker.models.Card;
 import learn.poker.models.Game;
 import learn.poker.models.Player;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class GameService {
 
     private final GameRepository repository;
@@ -74,17 +75,14 @@ public class GameService {
     }
 
     private Result<Game> validate(Game game) {
-        // gameId is not required (no need to write code)
-        // pot must be greater than or equal to zero
-        // size of List<Player> players must be two players
         Result<Game> result = new Result<>();
         if (game.getPot() < 0) {
-            result.addMessage("pot must be greater than or equal to zero");
+            result.addMessage("pot must be greater than or equal to zero", ResultType.INVALID);
             return result;
         }
 
         if (game.getPlayers().size() != 2) {
-            result.addMessage("two players are required to start a game");
+            result.addMessage("two players are required to start a game", ResultType.INVALID);
             return result;
         }
 
