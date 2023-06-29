@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class PlayerJdbcTemplateRepository implements PlayerRepository {
@@ -46,16 +47,16 @@ public class PlayerJdbcTemplateRepository implements PlayerRepository {
 
     @Override
     @Transactional
-    public Player create(Player user) {
+    public Player create(Player player) {
 
         final String sql = "insert into player (username, password_hash, enabled) values (?, ?, ?);";
 
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, user.getUsername());
-            ps.setString(2, user.getPassword());
-            ps.setBoolean(3, user.isEnabled());
+            ps.setString(1, player.getUsername());
+            ps.setString(2, player.getPassword());
+            ps.setBoolean(3, player.isEnabled());
             return ps;
         }, keyHolder);
 
@@ -63,29 +64,44 @@ public class PlayerJdbcTemplateRepository implements PlayerRepository {
             return null;
         }
 
-        user.setPlayerId(keyHolder.getKey().intValue());
+        player.setPlayerId(keyHolder.getKey().intValue());
 
-        updateRoles(user);
+        updateRoles(player);
 
-        return user;
+        return player;
     }
 
     @Override
     @Transactional
-    public boolean update(Player user) {
+    public boolean update(Player player) {
 
         final String sql = """
                 update player set
                     username = ?,
-                    enabled = ?
+                    enabled = ?,
+                    display_name = ?,
+                    account_balance = ?,
+                    roles = ?,
+                    hole_cards = ?,
+                    position = ?,
+                    is_player_action = ?
                 where player_id = ?
                 """;
 
         int rowsReturned = jdbcTemplate.update(sql,
-                user.getUsername(), user.isEnabled(), user.getPlayerId());
+                player.getUsername(),
+                player.isEnabled(),
+                player.getDisplayName(),
+                player.getAccountBalance(),
+                player.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority).collect(Collectors.joining()),
+                player.getHoleCards(),
+                player.getPosition(),
+                player.isPlayersAction(),
+                player.getPlayerId());
 
         if (rowsReturned > 0) {
-            updateRoles(user);
+            updateRoles(player);
             return true;
         }
 
