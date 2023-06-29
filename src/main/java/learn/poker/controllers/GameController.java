@@ -13,9 +13,11 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.util.HtmlUtils;
 
 @Controller
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class GameController {
 
     // TODO: this endpoint is for testing websockets only, to be deleted
