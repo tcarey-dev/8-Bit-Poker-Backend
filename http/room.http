@@ -33,9 +33,48 @@ Content-Type: application/json
 
 {
     "roomId": 1,
-    "stake": 4.00,
+    "stake": 14.0,
     "seats": 2,
-    "game_id": 100
+    "game": {
+        "gameId": 2,
+        "pot": 250,
+        "winner": "fred@astair.com",
+        "board": {
+        "boardId": 2,
+        "flop": [
+        ],
+        "turn": "ACE_OF_CLUBS",
+        "river": "FIVE_OF_SPADES"
+        },
+        "players": [
+        {
+            "playerId": 3,
+            "username": "fred@astair.com",
+            "displayName": null,
+            "enabled": true,
+            "accountBalance": 0,
+            "authorities": [
+            "USER"
+            ],
+            "holeCards": null,
+            "position": null,
+            "playersAction": false
+        },
+        {
+            "playerId": 4,
+            "username": "billy@bob.com",
+            "displayName": null,
+            "enabled": true,
+            "accountBalance": 0,
+            "authorities": [
+            "ADMIN"
+            ],
+            "holeCards": null,
+            "position": null,
+            "playersAction": false
+        }
+        ]
+    }
 }
 
 ###
