@@ -4,6 +4,7 @@ import learn.poker.data.mappers.BoardMapper;
 import learn.poker.data.mappers.GameMapper;
 import learn.poker.data.mappers.PlayerMapper;
 import learn.poker.models.Board;
+import learn.poker.models.Card;
 import learn.poker.models.Game;
 import learn.poker.models.Player;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,17 +15,22 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class GameJdbcTemplateRepository implements GameRepository {
     private final JdbcTemplate jdbcTemplate;
     private PlayerRepository playerRepository;
-    private final RowMapper<Game> rowMapper = new GameMapper();
 
-    public GameJdbcTemplateRepository(JdbcTemplate jdbcTemplate) {
+    public GameJdbcTemplateRepository(JdbcTemplate jdbcTemplate, PlayerRepository playerRepository) {
         this.jdbcTemplate = jdbcTemplate;
+        this.playerRepository = playerRepository;
     }
 
 
@@ -45,97 +51,43 @@ public class GameJdbcTemplateRepository implements GameRepository {
     @Override
     @Transactional
     public Game create(Game game) {
+        if (game.getPlayers().size() < 2) {
+            return null;
+        }
+
         final String boardSql = "insert into board " +
                 "(flop, turn, river) " +
                 "values " +
                 "(?, ?, ?);";
 
         KeyHolder boardKeyHolder = new GeneratedKeyHolder();
-        int boardRowsAffected = jdbcTemplate.update(connection -> {
+        jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(boardSql, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, game.getBoard().getFlop().toString()); // TODO need to create a method to convert cards to strings
-            ps.setString(2, game.getBoard().getTurn().toString());
-            ps.setString(2, game.getBoard().getRiver().toString());
+            ps.setString(1, game.getBoard().getFlop().stream()
+                    .map(Card::getAbbr).collect(Collectors.joining()));
+            ps.setString(2, game.getBoard().getTurn().getAbbr());
+            ps.setString(3, game.getBoard().getRiver().getAbbr());
             return ps;
         }, boardKeyHolder);
 
         Player player1 = playerRepository.create(game.getPlayers().get(0));
         Player player2 = playerRepository.create(game.getPlayers().get(1));
 
-        int sqlParams = 1;
-
-        if (boardRowsAffected > 0) { sqlParams += 1; }
-        if (player1 != null) { sqlParams += 1; }
-        if (player2 != null) { sqlParams += 1; }
-
         final String sql = "insert into game " +
                 "(pot, winner, board_id, player_one_id, player_two_id) " +
                 "values "+
-                "(" + "?, ".repeat(sqlParams) + "?)" + ";";
+                "(?, ?, ?, ?, ?);";
 
-        sqlParams += 1;
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        int rowsAffected = 0;
-
-        if (sqlParams == 2) {
-            rowsAffected = jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                ps.setInt(1, game.getPot());
-                ps.setString(2, game.getWinner());
-                return ps;
-            }, keyHolder);
-        }
-        if (sqlParams == 3 && boardRowsAffected > 0) {
-            rowsAffected = jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                ps.setInt(1, game.getPot());
-                ps.setString(2, game.getWinner());
-                ps.setInt(3, boardKeyHolder.getKey().intValue());
-                return ps;
-            }, keyHolder);
-        }
-        if (sqlParams == 4 && boardRowsAffected <= 0) {
-            rowsAffected = jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                ps.setInt(1, game.getPot());
-                ps.setString(2, game.getWinner());
-                ps.setInt(3, player1.getPlayerId());
-                ps.setInt(4, player2.getPlayerId());
-                return ps;
-            }, keyHolder);
-        }
-        if (sqlParams == 5) {
-            rowsAffected = jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                ps.setInt(1, game.getPot());
-                ps.setString(2, game.getWinner());
-                ps.setInt(3, boardKeyHolder.getKey().intValue());
-                ps.setInt(4, player1.getPlayerId());
-                ps.setInt(5, player2.getPlayerId());
-                return ps;
-            }, keyHolder);
-        }
-        if (sqlParams == 4 && boardRowsAffected > 0) {
-            if (player1 == null) {
-                rowsAffected = jdbcTemplate.update(connection -> {
-                    PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                    ps.setInt(1, game.getPot());
-                    ps.setString(2, game.getWinner());
-                    ps.setInt(3, boardKeyHolder.getKey().intValue());
-                    ps.setInt(4, player2.getPlayerId());
-                    return ps;
-                }, keyHolder);
-            } else {
-                rowsAffected = jdbcTemplate.update(connection -> {
-                    PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                    ps.setInt(1, game.getPot());
-                    ps.setString(2, game.getWinner());
-                    ps.setInt(3, boardKeyHolder.getKey().intValue());
-                    ps.setInt(4, player1.getPlayerId());
-                    return ps;
-                }, keyHolder);
-            }
-        }
+        int rowsAffected = jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, game.getPot());
+            ps.setString(2, game.getWinner());
+            ps.setInt(3, boardKeyHolder.getKey().intValue());
+            ps.setInt(4, player1.getPlayerId());
+            ps.setInt(5, player2.getPlayerId());
+            return ps;
+        }, keyHolder);
 
         if (rowsAffected <= 0) {
             return null;
@@ -187,18 +139,28 @@ public class GameJdbcTemplateRepository implements GameRepository {
     @Transactional
     private void addPlayers(Game game) {
         final String player1sql = "select " +
-                "p.player_id, p.username, p.password_hash, p.enabled  " +
+                "p.player_id, p.username, p.password_hash, p.enabled, p.display_name, " +
+                "p.account_balance, p.roles, p.hole_cards, p.position, p.is_player_action  " +
                 "from player p " +
                 "inner join game g on p.player_id = g.player_one_id " +
                 "where g.game_id = ?;";
 
         final String player2sql = "select " +
-                "p.player_id, p.username, p.password_hash, p.enabled  " +
+                "p.player_id, p.username, p.password_hash, p.enabled,  p.display_name, " +
+                "p.account_balance, p.roles, p.hole_cards, p.position, p.is_player_action  " +
                 "from player p " +
                 "inner join game g on p.player_id = g.player_two_id " +
                 "where g.game_id = ?;";
+
         Player player1 = jdbcTemplate.query(player1sql, new PlayerMapper(), game.getGameId()).stream().findFirst().orElse(null);
         Player player2 = jdbcTemplate.query(player2sql, new PlayerMapper(), game.getGameId()).stream().findFirst().orElse(null);
+
+        List<String> player1Roles = playerRepository.getRolesByUsername(player1.getUsername());
+        List<String> player2Roles = playerRepository.getRolesByUsername(player2.getUsername());
+
+        player1.setAuthorities(player1Roles);
+        player2.setAuthorities(player2Roles);
+
         List<Player> players = List.of(player1, player2);
         game.setPlayers(players);
     }

@@ -19,6 +19,13 @@ public class Game {
         this.players = players;
     }
 
+    public Game(int pot, String winner, Board board, List<Player> players) {
+        this.pot = pot;
+        this.winner = winner;
+        this.board = board;
+        this.players = players;
+    }
+
     public Game(){}
 
     public int getGameId() {

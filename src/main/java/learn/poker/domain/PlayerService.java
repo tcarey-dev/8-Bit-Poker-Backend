@@ -58,25 +58,24 @@ public class PlayerService implements UserDetailsService {
     private Result<Player> validate(Credential credential) {
         Result<Player> result = new Result<>();
         if (credential.getUsername() == null || credential.getUsername().isBlank()) {
-            result.addMessage("username is required");
+            result.addMessage("username is required", ResultType.INVALID);
             return result;
         }
 
         if (credential.getPassword() == null) {
-            result.addMessage("password is required");
+            result.addMessage("password is required", ResultType.INVALID);
             return result;
         }
 
         if (credential.getUsername().length() > 50) {
-            result.addMessage("username must be less than 50 characters");
+            result.addMessage("username must be less than 50 characters", ResultType.INVALID);
         }
 
         if (!isValidPassword(credential.getPassword())) {
             result.addMessage(
                     "password must be at least 8 character and contain a digit," +
-                            " a letter, and a non-digit/non-letter");
+                            " a letter, and a non-digit/non-letter", ResultType.INVALID);
         }
-
         return result;
     }
 

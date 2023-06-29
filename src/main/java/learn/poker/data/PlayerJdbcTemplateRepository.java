@@ -28,12 +28,13 @@ public class PlayerJdbcTemplateRepository implements PlayerRepository {
         List<String> roles = getRolesByUsername(username);
 
         final String sql = """
-                select player_id, username, password_hash, enabled
+                select player_id, username, password_hash, enabled, display_name,
+                account_balance, roles, hole_cards, position, is_player_action
                 from player
                 where username = ?;
                 """;
 
-        Player player = jdbcTemplate.query(sql, new PlayerMapper(), username)
+        Player player = jdbcTemplate.query(sql, new PlayerMapper(roles), username)
                 .stream()
                 .findFirst().orElse(null);
 
@@ -47,13 +48,14 @@ public class PlayerJdbcTemplateRepository implements PlayerRepository {
     @Transactional
     public Player create(Player user) {
 
-        final String sql = "insert into player (username, password_hash) values (?, ?);";
+        final String sql = "insert into player (username, password_hash, enabled) values (?, ?, ?);";
 
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getPassword());
+            ps.setBoolean(3, user.isEnabled());
             return ps;
         }, keyHolder);
 
@@ -102,18 +104,19 @@ public class PlayerJdbcTemplateRepository implements PlayerRepository {
 
         for (GrantedAuthority role : authorities) {
             String sql = """
-                    insert into player_role (player_id, app_role_id)
-                        select ?, app_role_id from app_role where `name` = ?;
+                    insert into player_role (player_id, role_id)
+                        select ?, role_id from role where `name` = ?;
                     """;
             jdbcTemplate.update(sql, user.getPlayerId(), role.getAuthority());
         }
     }
 
-    private List<String> getRolesByUsername(String username) {
+    @Override
+    public List<String> getRolesByUsername(String username) {
         final String sql = """
                 select r.name
                 from player_role ur
-                inner join app_role r on ur.app_role_id = r.app_role_id
+                inner join role r on ur.role_id = r.role_id
                 inner join player pl on ur.player_id = pl.player_id
                 where pl.username = ?
                 """;

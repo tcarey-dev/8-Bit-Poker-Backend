@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Player implements UserDetails {
@@ -135,5 +137,18 @@ public class Player implements UserDetails {
 
     public void setPlayersAction(boolean playersAction) {
         isPlayersAction = playersAction;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return playerId == player.playerId && Objects.equals(username, player.username);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(playerId, username);
     }
 }

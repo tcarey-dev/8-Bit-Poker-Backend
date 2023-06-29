@@ -258,7 +258,8 @@ public class PlayerServiceTest {
 //        assertFalse(service.deleteById(999));
 //    }
 
-    @Test
+
+   @Test
     void shouldLoadUserByUserName(){
         Credential credential = new Credential();
         credential.setUsername("username");
