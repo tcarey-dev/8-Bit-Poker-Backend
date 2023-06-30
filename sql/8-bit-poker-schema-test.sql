@@ -18,8 +18,8 @@ create table player (
 create table board (
 	board_id int primary key auto_increment,
     flop varchar(50) null,
-    turn varchar(100) not null,
-    river varchar(200) not null
+    turn varchar(100) null,
+    river varchar(200) null
 );
 
 create table game (
@@ -27,8 +27,8 @@ create table game (
     pot int null,
     winner varchar(150) null,
     last_action varchar(50) null,
-    board_id int not null,
-    player_one_id int not null,
+    board_id int null,
+    player_one_id int null,
     player_two_id int null,
 	constraint fk_game_board_id
 		foreign key (board_id)
@@ -126,7 +126,8 @@ begin
 		values 
 		(1, 0.25, 2, 2),
         (2, 0.5, 2, 3),
-        (3, 0.75, 2, 1);
+        (3, 0.75, 2, 1),
+        (4, 2.00, 2, null);
 	
     set sql_safe_updates = 1;
     

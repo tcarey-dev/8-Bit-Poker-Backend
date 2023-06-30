@@ -51,39 +51,17 @@ public class GameJdbcTemplateRepository implements GameRepository {
     @Override
     @Transactional
     public Game create(Game game) {
-        if (game.getPlayers().size() < 2) {
-            return null;
-        }
-
-        final String boardSql = "insert into board " +
-                "(flop, turn, river) " +
-                "values " +
-                "(?, ?, ?);";
-
-        KeyHolder boardKeyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(boardSql, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, game.getBoard().getFlop().stream()
-                    .map(Card::getAbbr).collect(Collectors.joining()));
-            ps.setString(2, game.getBoard().getTurn().getAbbr());
-            ps.setString(3, game.getBoard().getRiver().getAbbr());
-            return ps;
-        }, boardKeyHolder);
-
-        Player player1 = playerRepository.create(game.getPlayers().get(0));
 
         final String sql = "insert into game " +
-                "(pot, winner, board_id, player_one_id) " +
+                "(pot, winner) " +
                 "values "+
-                "(?, ?, ?, ?);";
+                "(?, ?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, game.getPot());
             ps.setString(2, game.getWinner());
-            ps.setInt(3, boardKeyHolder.getKey().intValue());
-            ps.setInt(4, player1.getPlayerId());
             return ps;
         }, keyHolder);
 

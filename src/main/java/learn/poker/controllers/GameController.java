@@ -1,9 +1,11 @@
 package learn.poker.controllers;
 
 import learn.poker.domain.GameService;
+import learn.poker.domain.Result;
 import learn.poker.domain.RoomService;
 import learn.poker.models.Greeting;
 import learn.poker.models.HelloMessage;
+import learn.poker.models.Player;
 import learn.poker.models.Room;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -35,6 +37,30 @@ public class GameController {
     @SendTo("/topic/game")
     public Room bet(Room room) {
         return roomService.findById(room.getRoomId());
+    }
+
+    // TODO add error messages for unhappy paths
+
+    @MessageMapping("/init")
+    @SendTo("/topic/game")
+    public Room init(Room room) {
+        Result<Room> result = gameService.init(room);
+        if (result.isSuccess()) {
+            return result.getPayload();
+        } else {
+            return null;
+        }
+    }
+
+    @MessageMapping("/add-players")
+    @SendTo("/topic/game")
+    public Room addPlayer(Room room) {
+        Result<Room> result = roomService.update(room);
+        if (result.isSuccess()) {
+            return result.getPayload();
+        } else {
+            return null;
+        }
     }
 
 
