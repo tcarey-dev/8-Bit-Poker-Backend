@@ -8,7 +8,7 @@ create table player (
     username varchar(75) not null unique,
     password_hash varchar(2048) not null,
     display_name varchar(100) null,
-    account_balance int null,
+    account_balance double null,
     roles varchar(50) null,
     hole_cards varchar(150) null,
     position varchar(150) null,
@@ -95,7 +95,7 @@ begin
 	insert into player (player_id, username, password_hash, display_name, account_balance, enabled, roles, hole_cards, `position`, is_player_action)
 		values
 		(1, 'john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 100, 1, 'USER', 'AH,KD', 'SMALLBLIND', true),
-		(2, 'sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 50, 1, 'USER', 'JC,9H', 'BIGBLIND', true),
+		(2, 'sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 50.75, 1, 'USER', 'JC,9H', 'BIGBLIND', true),
         (3, 'fred@astair.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 25, 1, 'USER', null, null, false),
         (4, 'billy@bob.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 80, 1, 'ADMIN', '7H,2D', 'SMALLBLIND', true),
         (5, 'sam@stone.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 150, 1, 'USER', 'AC,5D', 'BIGBLIND', true),

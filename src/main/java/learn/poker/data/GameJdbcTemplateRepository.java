@@ -60,7 +60,7 @@ public class GameJdbcTemplateRepository implements GameRepository {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setInt(1, game.getPot());
+            ps.setDouble(1, game.getPot());
             ps.setString(2, game.getWinner());
             return ps;
         }, keyHolder);

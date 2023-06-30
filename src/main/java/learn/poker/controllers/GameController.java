@@ -30,14 +30,6 @@ public class GameController {
         return new Greeting("Hello, " + HtmlUtils.htmlEscape(message.getName()) + "!");
     }
 
-    @MessageMapping("/bet")
-    @SendTo("/topic/game")
-    public Room bet(Room room) {
-        return roomService.findById(room.getRoomId());
-    }
-
-    // TODO add error messages for unhappy paths
-
     @MessageMapping("/init")
     @SendTo("/topic/game")
     public Room init(Room room) {
@@ -45,7 +37,7 @@ public class GameController {
         if (result.isSuccess()) {
             return result.getPayload();
         } else {
-            return null;
+            return null;// TODO
         }
     }
 
@@ -57,19 +49,18 @@ public class GameController {
         if (gameResult.isSuccess()) {
             return roomService.findById(room.getRoomId());
         } else {
-            return null;
+            return null;// TODO
         }
     }
 
     @MessageMapping("/start-game")
     @SendTo("/topic/game")
     public Room startGame(Room room) {
-        Game game = room.getGame();
-        Result<Game> gameResult = gameService.start(game);
-        if (gameResult.isSuccess()) {
-            return roomService.findById(room.getRoomId());
+        Result<Room> roomResult = gameService.start(room);
+        if (roomResult.isSuccess()) {
+            return roomResult.getPayload();
         } else {
-            return null;
+            return null; // TODO
         }
     }
 

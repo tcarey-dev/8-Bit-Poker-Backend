@@ -11,12 +11,14 @@ public class GameService {
     private final GameRepository repository;
     private final RoomService roomService;
     private final DeckService deckService;
+    private final PlayerService playerService;
 
 
-    public GameService(GameRepository repository, RoomService roomService, DeckService deckService) {
+    public GameService(GameRepository repository, RoomService roomService, DeckService deckService, PlayerService playerService) {
         this.repository = repository;
         this.roomService = roomService;
         this.deckService = deckService;
+        this.playerService = playerService;
     }
 
     public Game findById(int gameId) {
@@ -94,13 +96,48 @@ public class GameService {
         }
     }
 
-    public Result<Game> start(Game game) {
-        Result<Game> gameResult = new Result<>();
+    public Result<Room> start(Room room) {
+        Game game = room.getGame();
+
+        double smallBlind = room.getStake()/2;
+        double bigBlind = room.getStake();
+
+        Player player1 = game.getPlayers().get(0);
+        Player player2 = game.getPlayers().get(1);
+
+        player1.setPosition(Position.SMALLBLIND);
+        player1.setPlayersAction(true);
+
+        player2.setPosition(Position.BIGBLIND);
+        player2.setPlayersAction(false);
+
+        player1.setAccountBalance(player1.getAccountBalance() - smallBlind);
+        player2.setAccountBalance(player2.getAccountBalance() - bigBlind);
+        game.setPot(smallBlind + bigBlind);
 
         Deck deck = deckService.drawCards(4);
         List<PokerApiCard> playerCards = deck.getCards();
 
-        return null;
+        List<Card> cards = playerCards.stream().map(pokerApiCard -> {
+            String code = pokerApiCard.getCode();
+            return Card.getCardFromAbbreviation(code);
+        }).toList();
+
+        player1.setHoleCards(cards.subList(0,1));
+        player2.setHoleCards(cards.subList(2,3));
+
+        playerService.update(player1);
+        playerService.update(player2);
+
+        game.setPlayers(List.of(player1, player2));
+        Result<Game> gameResult = update(game);
+
+        if (!gameResult.isSuccess()) {
+            // TODO error
+        }
+
+        room.setGame(game);
+        return roomService.update(room);
     }
 
     /**
