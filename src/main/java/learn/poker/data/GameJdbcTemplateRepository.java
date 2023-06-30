@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Repository
 public class GameJdbcTemplateRepository implements GameRepository {
     private final JdbcTemplate jdbcTemplate;
-    private PlayerRepository playerRepository;
+    private final PlayerRepository playerRepository;
 
     public GameJdbcTemplateRepository(JdbcTemplate jdbcTemplate, PlayerRepository playerRepository) {
         this.jdbcTemplate = jdbcTemplate;
@@ -36,7 +36,7 @@ public class GameJdbcTemplateRepository implements GameRepository {
 
     @Override
     public Game findById(int gameId) {
-        final String sql = "select game_id, pot, winner from game where game_id = ?;";
+        final String sql = "select game_id, pot, winner, last_action from game where game_id = ?;";
 
         Game game = jdbcTemplate.query(sql, new GameMapper(), gameId).stream().findFirst().orElse(null);
 
@@ -51,41 +51,17 @@ public class GameJdbcTemplateRepository implements GameRepository {
     @Override
     @Transactional
     public Game create(Game game) {
-        if (game.getPlayers().size() < 2) {
-            return null;
-        }
-
-        final String boardSql = "insert into board " +
-                "(flop, turn, river) " +
-                "values " +
-                "(?, ?, ?);";
-
-        KeyHolder boardKeyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(boardSql, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, game.getBoard().getFlop().stream()
-                    .map(Card::getAbbr).collect(Collectors.joining()));
-            ps.setString(2, game.getBoard().getTurn().getAbbr());
-            ps.setString(3, game.getBoard().getRiver().getAbbr());
-            return ps;
-        }, boardKeyHolder);
-
-        Player player1 = playerRepository.create(game.getPlayers().get(0));
-        Player player2 = playerRepository.create(game.getPlayers().get(1));
 
         final String sql = "insert into game " +
-                "(pot, winner, board_id, player_one_id, player_two_id) " +
+                "(pot, winner) " +
                 "values "+
-                "(?, ?, ?, ?, ?);";
+                "(?, ?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, game.getPot());
             ps.setString(2, game.getWinner());
-            ps.setInt(3, boardKeyHolder.getKey().intValue());
-            ps.setInt(4, player1.getPlayerId());
-            ps.setInt(5, player2.getPlayerId());
             return ps;
         }, keyHolder);
 
@@ -152,16 +128,23 @@ public class GameJdbcTemplateRepository implements GameRepository {
                 "inner join game g on p.player_id = g.player_two_id " +
                 "where g.game_id = ?;";
 
+
+        List<Player> players = new ArrayList<>();
+
         Player player1 = jdbcTemplate.query(player1sql, new PlayerMapper(), game.getGameId()).stream().findFirst().orElse(null);
+        if (player1 != null){
+            List<String> player1Roles = playerRepository.getRolesByUsername(player1.getUsername());
+            player1.setAuthorities(player1Roles);
+            players.add(player1);
+        }
+
         Player player2 = jdbcTemplate.query(player2sql, new PlayerMapper(), game.getGameId()).stream().findFirst().orElse(null);
+        if (player2 != null) {
+            List<String> player2Roles = playerRepository.getRolesByUsername(player2.getUsername());
+            player2.setAuthorities(player2Roles);
+            players.add(player2);
+        }
 
-        List<String> player1Roles = playerRepository.getRolesByUsername(player1.getUsername());
-        List<String> player2Roles = playerRepository.getRolesByUsername(player2.getUsername());
-
-        player1.setAuthorities(player1Roles);
-        player2.setAuthorities(player2Roles);
-
-        List<Player> players = List.of(player1, player2);
         game.setPlayers(players);
     }
 
