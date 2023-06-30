@@ -96,10 +96,10 @@ begin
 		values
 		(1, 'john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 100, 1, 'USER', 'AH,KD', 'SMALLBLIND', true),
 		(2, 'sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 50, 1, 'USER', 'JC,9H', 'BIGBLIND', true),
-        (3, 'fred@astair.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 25, 1, 'USER', '8S,6S', 'SMALLBLIND', false),
+        (3, 'fred@astair.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 25, 1, 'USER', null, null, false),
         (4, 'billy@bob.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 80, 1, 'ADMIN', '7H,2D', 'SMALLBLIND', true),
         (5, 'sam@stone.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 150, 1, 'USER', 'AC,5D', 'BIGBLIND', true),
-        (6, 'lisa@simpson.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 225, 1, 'USER', null, 'BIGBLIND', false);
+        (6, 'lisa@simpson.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 225, 1, 'USER', null, null, false);
         
 	insert into player_role (player_id, role_id)
 		values
