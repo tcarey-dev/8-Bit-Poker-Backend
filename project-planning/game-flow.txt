@@ -1,0 +1,183 @@
+```json
+{
+  "roomId": 1,
+  "stake": 2,
+  "seats": 2,
+  "game": {
+    "gameId": 2,
+    "pot": 250,
+    "winner": "fred@astair.com",
+    "board": {
+      "boardId": 2,
+      "flop": ["TEN_OF_CLUBS", "THREE_OF_DIAMONDS", "QUEEN_OF_SPADES"],
+      "turn": "ACE_OF_CLUBS",
+      "river": "FIVE_OF_SPADES"
+    },
+
+    "players": [
+      {
+        "playerId": 3,
+        "username": "fred@astair.com",
+        "displayName": null,
+        "enabled": true,
+        "accountBalance": 25,
+        "authorities": ["USER"],
+        "holeCards": ["EIGHT_OF_SPADES", "SIX_OF_SPADES"],
+        "position": "SMALLBLIND",
+        "playersAction": false
+      },
+      {
+        "playerId": 4,
+        "username": "billy@bob.com",
+        "displayName": null,
+        "enabled": true,
+        "accountBalance": 80,
+        "authorities": ["ADMIN"],
+        "holeCards": ["SEVEN_OF_HEARTS", "TWO_OF_DIAMONDS"],
+        "position": "SMALLBLIND",
+        "playersAction": true
+      }
+    ]
+  }
+}
+```
+
+GAME FLOW VS GAME STATE
+
+Step 0
+Player 1 joins a room, waits for a second player to join. A Game is instantiated.
+As the first player, they are assigned the position of small blind.
+
+(server: update player1, initialize game, update room to contain game)
+
+Game state is:
+
+```json
+{
+  "roomId": 1,
+  "stake": 2,
+  "seats": 2,
+  "game": {
+    "gameId": 4,
+    "pot": 0,
+    "winner": null,
+    "board": null,
+    "players": [
+      {
+        "playerId": 3,
+        "username": "fred@astair.com",
+        "displayName": "Tiny Tim",
+        "enabled": true,
+        "accountBalance": 25,
+        "authorities": ["USER"],
+        "holeCards": null,
+        "position": "SMALLBLIND",
+        "playersAction": false
+      }
+    ]
+  }
+}
+```
+
+Step 1
+Player 2 joins room and is assigned the big blind position. Start Game button appears.
+
+(server: update player2, update game to include player2)
+(frontend: if players > 1 : show Start Game button)
+
+Game state is:
+
+```json
+{
+  "roomId": 1,
+  "stake": 2,
+  "seats": 2,
+  "game": {
+    "gameId": 4,
+    "pot": 0,
+    "winner": null,
+    "board": null,
+    "players": [
+      {
+        "playerId": 3,
+        "username": "fred@astair.com",
+        "displayName": "Tiny Tim",
+        "enabled": true,
+        "accountBalance": 25,
+        "authorities": ["USER"],
+        "holeCards": null,
+        "position": "SMALLBLIND",
+        "playersAction": false
+      },
+      {
+        "playerId": 4,
+        "username": "billy@bob.com",
+        "displayName": null,
+        "enabled": true,
+        "accountBalance": 80,
+        "authorities": ["ADMIN"],
+        "holeCards": null,
+        "position": "BIGBLIND",
+        "playersAction": false
+      }
+    ]
+  }
+}
+```
+
+Step 3
+Player 1 clicks Start Game. The following chain of events occur:
+- The players are dealt hole cards
+- Player1 subtracts the small blind from his balance and adds it to the pot
+- Player2 subtracts the big blind from his balance and adds it to the pot
+- Player1 is given the option to call, raise, or fold
+
+(server: update player balances, hole cards, and playersAction, update game pot)
+
+The Game state is:
+```json
+{
+  "roomId": 1,
+  "stake": 2,
+  "seats": 2,
+  "game": {
+    "gameId": 4,
+    "pot": 3,
+    "winner": null,
+    "board": null,
+    "players": [
+      {
+        "playerId": 3,
+        "username": "fred@astair.com",
+        "displayName": "Tiny Tim",
+        "enabled": true,
+        "accountBalance": 24,
+        "authorities": ["USER"],
+        "holeCards": ["EIGHT_OF_SPADES", "SIX_OF_SPADES"],
+        "position": "SMALLBLIND",
+        "playersAction": true
+      },
+      {
+        "playerId": 4,
+        "username": "billy@bob.com",
+        "displayName": null,
+        "enabled": true,
+        "accountBalance": 78,
+        "authorities": ["ADMIN"],
+        "holeCards": ["SEVEN_OF_HEARTS", "TWO_OF_DIAMONDS"],
+        "position": "BIGBLIND",
+        "playersAction": false
+      }
+    ]
+  }
+}
+```
+
+Step 4
+Player1 chooses an action. In this case, to raise the minimum bet ($2).
+- Player1 subtracts from his balance and adds to pot
+
+(server: update player1 balance, switch playersAction for both players, update game pot)
+
+Step 5
+Player2 chooses an action. In this case, to call

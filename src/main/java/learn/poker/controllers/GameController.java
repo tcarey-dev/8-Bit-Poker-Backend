@@ -1,17 +1,12 @@
 package learn.poker.controllers;
 
-import learn.poker.domain.Result;
-import learn.poker.models.Game;
+import learn.poker.domain.GameService;
+import learn.poker.domain.RoomService;
 import learn.poker.models.Greeting;
 import learn.poker.models.HelloMessage;
-import netscape.javascript.JSObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
+import learn.poker.models.Room;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.util.HtmlUtils;
@@ -20,6 +15,14 @@ import org.springframework.web.util.HtmlUtils;
 @CrossOrigin(origins = {"http://localhost:3000"})
 public class GameController {
 
+    private final GameService gameService;
+    private final RoomService roomService;
+
+    public GameController(GameService gameService, RoomService roomService) {
+        this.gameService = gameService;
+        this.roomService = roomService;
+    }
+
     // TODO: this endpoint is for testing websockets only, to be deleted
     @MessageMapping("/hello")
     @SendTo("/topic/greetings")
@@ -27,5 +30,12 @@ public class GameController {
         Thread.sleep(1000); // simulated delay
         return new Greeting("Hello, " + HtmlUtils.htmlEscape(message.getName()) + "!");
     }
+
+    @MessageMapping("/bet")
+    @SendTo("/topic/game")
+    public Room bet(Room room) {
+        return roomService.findById(room.getRoomId());
+    }
+
 
 }
