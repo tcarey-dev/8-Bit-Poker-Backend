@@ -76,21 +76,97 @@ public class GameJdbcTemplateRepository implements GameRepository {
     @Override
     public boolean update(Game game) {
 
-        final String sql = "update game set " +
-                "pot = ?, " +
-                "winner = ?, " +
-                "board_id = ?, " +
-                "player_one_id = ?, " +
-                "player_two_id = ? " +
-                "where game_id = ?;";
+        if (game.getBoard() != null && game.getPlayers().size() == 2){
+            final String sql = "update game set " +
+                    "pot = ?, " +
+                    "winner = ?, " +
+                    "board_id = ?, " +
+                    "player_one_id = ?, " +
+                    "player_two_id = ? " +
+                    "where game_id = ?;";
 
-        return jdbcTemplate.update(sql,
-                game.getPot(),
-                game.getWinner(),
-                game.getBoard().getBoardId(),
-                game.getPlayers().get(0).getPlayerId(),
-                game.getPlayers().get(1).getPlayerId(),
-                game.getGameId()) > 0;
+            return jdbcTemplate.update(sql,
+                    game.getPot(),
+                    game.getWinner(),
+                    game.getBoard().getBoardId(),
+                    game.getPlayers().get(0).getPlayerId(),
+                    game.getPlayers().get(1).getPlayerId(),
+                    game.getGameId()) > 0;
+        }
+
+        if (game.getBoard() == null && game.getPlayers().size() == 2){
+            final String sql = "update game set " +
+                    "pot = ?, " +
+                    "winner = ?, " +
+                    "player_one_id = ?, " +
+                    "player_two_id = ? " +
+                    "where game_id = ?;";
+
+            return jdbcTemplate.update(sql,
+                    game.getPot(),
+                    game.getWinner(),
+                    game.getPlayers().get(0).getPlayerId(),
+                    game.getPlayers().get(1).getPlayerId(),
+                    game.getGameId()) > 0;
+        }
+
+        if (game.getBoard() != null && game.getPlayers().size() == 1){
+            final String sql = "update game set " +
+                    "pot = ?, " +
+                    "winner = ?, " +
+                    "board_id = ?, " +
+                    "player_one_id = ? " +
+                    "where game_id = ?;";
+
+            return jdbcTemplate.update(sql,
+                    game.getPot(),
+                    game.getWinner(),
+                    game.getBoard().getBoardId(),
+                    game.getPlayers().get(0).getPlayerId(),
+                    game.getGameId()) > 0;
+        }
+
+        if (game.getBoard() == null && game.getPlayers().size() == 1){
+            final String sql = "update game set " +
+                    "pot = ?, " +
+                    "winner = ?, " +
+                    "player_one_id = ? " +
+                    "where game_id = ?;";
+
+            return jdbcTemplate.update(sql,
+                    game.getPot(),
+                    game.getWinner(),
+                    game.getPlayers().get(0).getPlayerId(),
+                    game.getGameId()) > 0;
+        }
+
+        if (game.getBoard() != null && game.getPlayers().size() == 0){
+            final String sql = "update game set " +
+                    "pot = ?, " +
+                    "winner = ?, " +
+                    "board_id = ? " +
+                    "where game_id = ?;";
+
+            return jdbcTemplate.update(sql,
+                    game.getPot(),
+                    game.getWinner(),
+                    game.getBoard().getBoardId(),
+                    game.getGameId()) > 0;
+        }
+
+        if (game.getBoard() == null && game.getPlayers().size() == 0){
+            final String sql = "update game set " +
+                    "pot = ?, " +
+                    "winner = ? " +
+                    "where game_id = ?;";
+
+            return jdbcTemplate.update(sql,
+                    game.getPot(),
+                    game.getWinner(),
+                    game.getGameId()) > 0;
+        }
+
+        return false;
     }
 
     @Override

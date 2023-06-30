@@ -296,41 +296,42 @@ GAME LOGIC
     * [x] PlayerController (1 hour)
     * any leftover tasks
     * [x] create AppConfig, JwtConverter, JwtRequestFilter, SecurityConfig, AuthController, GlobalExceptionHandler (3 hours)
-
-### Thursday
-* Together (4 hours)
-* Xiao
-  * fix PlayerService update tests
-  * player controller http file
-  * Landing, NotFound, Errors (2.5 hours)
-  * create Navbar, Lobby, RoomForm
-* Tom & Aaron
-  * debug playerrepository tests, roomcontroller Put issue
-  * setup CI/CD pipeline using Github Actions and Azure (1 hour)
-  * create GameController and GameService game loop (3 hour)
+  * [x] debug playerrepository tests, roomcontroller Put issue
+  * [x] fix PlayerService update tests
+  * [x] player controller http file
+  * [x] Landing, NotFound, Errors (2.5 hours)
+  * [x] create Navbar, Lobby, 
 
 ### Friday
-* Together in the morning (3 hours)
-  * Room.js
-  * wire up websocket connection functionality (connect, disconnect, useEffect, start game button, leave button)
-* Together after lunch (3 hours)
-  * finish visual layout of room (html and css)
+* Xiao & Aaron
+  * RoomForm, LoginForm, RegistrationForm, NavBar, start on Room if time permits
+
 * Tom
-  * LoginForm, RegistrationForm, AuthContext, AuthApi (2.5 hours)
+  * finish game controller
+    * game flow functionality (start, bet, raise, check, fold, rounds, leave)
 
 ### Saturday
-* Together (as much as needed)
-  * add basic game flow functionality (bet, raise, check, fold)
+* Together
+  * setup CI/CD pipeline using Github Actions and Azure (1 hour)
+  * Room.js
+      * wire up websocket connection functionality (connect, disconnect, useEffect, start game button, leave button)
+  *  AuthContext, AuthApi (2.5 hours)
 
 ### Sunday
-* Together (as much as needed)
-  * add complete game flow functionality (player turns, updating balances, displaying winner, game rounds)
+* Together
+ * Room.js continued, suncomponents
+    * Card.js
+    * Board.js
+    * Options.js
+    * Player.js
 
 ### Monday
-* Bug hunt and fix all day
+* Finish Room.js
+* Bug hunt
 
 ### Tuesday
 * hopefully take the day off, mostly
+* Bug hunt
 
 ### Wednesday
 * Spend morning finishing bug fixes

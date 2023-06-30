@@ -3,10 +3,7 @@ package learn.poker.controllers;
 import learn.poker.domain.GameService;
 import learn.poker.domain.Result;
 import learn.poker.domain.RoomService;
-import learn.poker.models.Greeting;
-import learn.poker.models.HelloMessage;
-import learn.poker.models.Player;
-import learn.poker.models.Room;
+import learn.poker.models.*;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -55,13 +52,25 @@ public class GameController {
     @MessageMapping("/add-players")
     @SendTo("/topic/game")
     public Room addPlayer(Room room) {
-        Result<Room> result = roomService.update(room);
-        if (result.isSuccess()) {
-            return result.getPayload();
+        Game game = room.getGame();
+        Result<Game> gameResult = gameService.update(game);
+        if (gameResult.isSuccess()) {
+            return roomService.findById(room.getRoomId());
         } else {
             return null;
         }
     }
 
+    @MessageMapping("/start-game")
+    @SendTo("/topic/game")
+    public Room startGame(Room room) {
+        Game game = room.getGame();
+        Result<Game> gameResult = gameService.start(game);
+        if (gameResult.isSuccess()) {
+            return roomService.findById(room.getRoomId());
+        } else {
+            return null;
+        }
+    }
 
 }

@@ -10,11 +10,13 @@ public class GameService {
 
     private final GameRepository repository;
     private final RoomService roomService;
+    private final DeckService deckService;
 
 
-    public GameService(GameRepository repository, RoomService roomService) {
+    public GameService(GameRepository repository, RoomService roomService, DeckService deckService) {
         this.repository = repository;
         this.roomService = roomService;
+        this.deckService = deckService;
     }
 
     public Game findById(int gameId) {
@@ -90,6 +92,15 @@ public class GameService {
             room.setGame(gameResult.getPayload());
             return roomService.update(room);
         }
+    }
+
+    public Result<Game> start(Game game) {
+        Result<Game> gameResult = new Result<>();
+
+        Deck deck = deckService.drawCards(4);
+        List<PokerApiCard> playerCards = deck.getCards();
+
+        return null;
     }
 
     /**
