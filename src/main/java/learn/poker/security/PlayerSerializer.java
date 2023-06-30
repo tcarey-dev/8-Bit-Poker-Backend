@@ -3,6 +3,7 @@ package learn.poker.security;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import learn.poker.models.Card;
 import learn.poker.models.Player;
 import org.springframework.security.core.GrantedAuthority;
 

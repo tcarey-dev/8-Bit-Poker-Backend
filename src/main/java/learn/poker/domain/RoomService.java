@@ -54,6 +54,7 @@ public class RoomService {
             result.addMessage(msg, ResultType.NOT_FOUND);
         }
 
+        result.setPayload(room);
         return result;
     }
 

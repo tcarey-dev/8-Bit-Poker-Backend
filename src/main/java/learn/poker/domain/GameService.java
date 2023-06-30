@@ -1,10 +1,7 @@
 package learn.poker.domain;
 
 import learn.poker.data.GameRepository;
-import learn.poker.models.Board;
-import learn.poker.models.Card;
-import learn.poker.models.Game;
-import learn.poker.models.Player;
+import learn.poker.models.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,10 +9,12 @@ import java.util.List;
 public class GameService {
 
     private final GameRepository repository;
+    private final RoomService roomService;
 
 
-    public GameService(GameRepository repository) {
+    public GameService(GameRepository repository, RoomService roomService) {
         this.repository = repository;
+        this.roomService = roomService;
     }
 
     public Game findById(int gameId) {
@@ -38,12 +37,6 @@ public class GameService {
             result.addMessage("Cannot create an existing game.");
             return result;
         }
-
-        Board board = new Board();
-        board.setFlop(List.of(Card.EMPTY, Card.EMPTY, Card.EMPTY));
-        board.setTurn(Card.EMPTY);
-        board.setRiver(Card.EMPTY);
-        game.setBoard(board);
 
         game = repository.create(game);
         result.setPayload(game);
@@ -81,13 +74,82 @@ public class GameService {
             return result;
         }
 
-        if (game.getPlayers().size() != 2) {
-            result.addMessage("two players are required to start a game", ResultType.INVALID);
-            return result;
-        }
-
         return result;
     }
 
+    public Result<Room> init(Room room) {
+        Result<Room> roomResult = new Result<>();
+
+        Game game = new Game(0, null, null, null);
+        Result<Game> gameResult = add(game);
+
+        if (!gameResult.isSuccess()){
+            roomResult.addMessage("Something went wrong", ResultType.INVALID);
+            return roomResult;
+        } else {
+            room.setGame(gameResult.getPayload());
+            return roomService.update(room);
+        }
+    }
+
+    /**
+     *
+     handleAction(Game game) {
+
+     if current action == FOLD
+     set winner to the non-folding player
+     resetState(game)
+
+     // small blind opening call or raise
+     if lastAction == null && player.position == SMALLBLIND && currentAction == CALL || RAISE
+     update players balance and pot,
+     flip playersAction
+
+     // big blind check behind (terminal action)
+     if lastAction == CALL && player.position == BIGBLIND && currentAction == CHECK
+     flip playersAction and position
+
+     // big blind call behind (terminal action)
+     if lastAction == RAISE && player.position == BIGBLIND && currentAction == CALL
+     update players balance and pot,
+     flip playersAction and position
+
+     // raise
+     if lastAction == RAISE || CHECK && currentAction == RAISE
+     update players balance and pot,
+     flip playersAction
+
+     // terminating call (terminal action)
+     if lastAction == RAISE && current action == CALL (terminal action)
+     dealNext(game)
+     }
+
+     dealNext(game){
+     if (board.flop == null)
+     deal flop
+     else if (board.turn == null)
+     deal turn
+     else if (board.river == null)
+     deal river
+     else
+     determine winner
+     reset state(game)
+     flip playersAction and position
+     }
+
+     resetState() {
+     add pot to winning player's balance
+     set pot to zero
+     set winner, lastAction, board, and holeCards to null
+     }
+
+
+     /////////////////// UI layer rendering logic
+     if lastAction == CHECK && my playersAction == true
+     render BET/CHECK/FOLD
+
+     if lastAction == BET || RAISE && my playersAction == true
+     render CALL/RAISE/FOLD
+     */
 
 }

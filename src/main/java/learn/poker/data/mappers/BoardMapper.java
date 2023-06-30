@@ -15,6 +15,14 @@ public class BoardMapper implements RowMapper<Board> {
         Board board = new Board();
         board.setBoardId(rs.getInt("board_id"));
 
+        List<String> flopCards = Arrays.stream(rs.getString("flop").split(",")).toList();
+
+        for(String card : flopCards) {
+            if (card == null || card.isBlank()){
+                return null;
+            }
+        }
+
         List<Card> flop = Arrays.stream(rs.getString("flop").split(","))
                 .map(Card::getCardFromAbbreviation).toList();
 

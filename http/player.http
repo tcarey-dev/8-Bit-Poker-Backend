@@ -49,4 +49,5 @@ Content-Type: application/json
 ###
 
 POST {{url}}/refresh-token HTTP/1.1
+
 Authorization: Bearer

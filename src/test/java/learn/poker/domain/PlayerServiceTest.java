@@ -149,7 +149,7 @@ public class PlayerServiceTest {
         player.setAccountBalance(500);
         player.setHoleCards(List.of(Card.QUEEN_OF_HEARTS, Card.ACE_OF_SPADES));
         player.setPlayersAction(false);
-        player.setPosition(Position.SMALL_BLIND);
+        player.setPosition(Position.SMALLBLIND);
 
         when(repository.update(player)).thenReturn(true);
 
@@ -178,7 +178,7 @@ public class PlayerServiceTest {
         player.setAccountBalance(500);
         player.setHoleCards(List.of(Card.QUEEN_OF_HEARTS, Card.ACE_OF_SPADES));
         player.setPlayersAction(false);
-        player.setPosition(Position.SMALL_BLIND);
+        player.setPosition(Position.SMALLBLIND);
 
         Result<Player> result = service.update(player);
 
@@ -197,7 +197,7 @@ public class PlayerServiceTest {
         player.setAccountBalance(-500);
         player.setHoleCards(List.of(Card.QUEEN_OF_HEARTS, Card.ACE_OF_SPADES));
         player.setPlayersAction(false);
-        player.setPosition(Position.SMALL_BLIND);
+        player.setPosition(Position.SMALLBLIND);
 
         Result<Player> result = service.update(player);
 
@@ -216,7 +216,7 @@ public class PlayerServiceTest {
         player.setAccountBalance(500);
         player.setHoleCards(List.of(Card.QUEEN_OF_HEARTS, Card.ACE_OF_SPADES));
         player.setPlayersAction(false);
-        player.setPosition(Position.SMALL_BLIND);
+        player.setPosition(Position.SMALLBLIND);
 
         Result<Player> result = service.update(player);
 
@@ -235,7 +235,7 @@ public class PlayerServiceTest {
         player.setAccountBalance(500);
         player.setHoleCards(List.of(Card.QUEEN_OF_HEARTS));
         player.setPlayersAction(false);
-        player.setPosition(Position.SMALL_BLIND);
+        player.setPosition(Position.SMALLBLIND);
 
         Result<Player> result = service.update(player);
 

@@ -52,7 +52,7 @@ class GameJdbcTemplateRepositoryTest {
         player1.setAuthorities(List.of());
         player1.setEnabled(true);
         player1.setPlayersAction(true);
-        player1.setPosition(Position.SMALL_BLIND);
+        player1.setPosition(Position.SMALLBLIND);
         player1.setAccountBalance(50);
         player1.setDisplayName("theDude");
         player1.setHoleCards(List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS));
@@ -61,7 +61,7 @@ class GameJdbcTemplateRepositoryTest {
         player2.setAuthorities(List.of());
         player2.setEnabled(true);
         player2.setPlayersAction(false);
-        player2.setPosition(Position.BIG_BLIND);
+        player2.setPosition(Position.BIGBLIND);
         player2.setAccountBalance(75);
         player2.setDisplayName("choppyChad");
         player2.setHoleCards(List.of(Card.KING_OF_DIAMONDS, Card.JACK_OF_HEARTS));
@@ -106,7 +106,7 @@ class GameJdbcTemplateRepositoryTest {
         player1.setAuthorities(List.of());
         player1.setEnabled(true);
         player1.setPlayersAction(true);
-        player1.setPosition(Position.SMALL_BLIND);
+        player1.setPosition(Position.SMALLBLIND);
         player1.setAccountBalance(50);
         player1.setDisplayName("theDude");
         player1.setHoleCards(List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS));
@@ -115,7 +115,7 @@ class GameJdbcTemplateRepositoryTest {
         player2.setAuthorities(List.of());
         player2.setEnabled(true);
         player2.setPlayersAction(false);
-        player2.setPosition(Position.BIG_BLIND);
+        player2.setPosition(Position.BIGBLIND);
         player2.setAccountBalance(75);
         player2.setDisplayName("choppyChad");
         player2.setHoleCards(List.of(Card.KING_OF_DIAMONDS, Card.JACK_OF_HEARTS));

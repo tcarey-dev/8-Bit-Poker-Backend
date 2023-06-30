@@ -1,6 +1,8 @@
 package learn.poker.data;
 
+import learn.poker.models.Card;
 import learn.poker.data.mappers.PlayerMapper;
+import learn.poker.models.Position;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.security.core.GrantedAuthority;
@@ -88,6 +90,15 @@ public class PlayerJdbcTemplateRepository implements PlayerRepository {
                 where player_id = ?
                 """;
 
+        List<String> cards = player.getHoleCards().stream().map(Card::getAbbr).toList();
+        String serialized = "";
+        for (String card : cards){
+            serialized += card + ",";
+        }
+        final String holeCards = serialized.substring(0, serialized.length() -1);
+
+        final String position = player.getPosition().toString();
+
         int rowsReturned = jdbcTemplate.update(sql,
                 player.getUsername(),
                 player.isEnabled(),
@@ -95,8 +106,8 @@ public class PlayerJdbcTemplateRepository implements PlayerRepository {
                 player.getAccountBalance(),
                 player.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority).collect(Collectors.joining()),
-                player.getHoleCards(),
-                player.getPosition(),
+                holeCards,
+                position,
                 player.isPlayersAction(),
                 player.getPlayerId());
 
