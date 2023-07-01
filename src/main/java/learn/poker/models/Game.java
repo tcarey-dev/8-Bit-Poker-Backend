@@ -6,23 +6,24 @@ import java.util.Objects;
 public class Game {
 
     private int gameId;
-    private int pot;
+    private double pot;
     private String winner;
-
+    private double betAmount;
     private Action lastAction;
     private Board board;
     private List<Player> players;
 
-    public Game(int gameId, int pot, String winner, Action lastAction, Board board, List<Player> players) {
+    public Game(int gameId, double pot, String winner, double betAmount, Action lastAction, Board board, List<Player> players) {
         this.gameId = gameId;
         this.pot = pot;
         this.winner = winner;
+        this.betAmount = betAmount;
         this.lastAction = lastAction;
         this.board = board;
         this.players = players;
     }
 
-    public Game(int gameId, int pot, String winner, Board board, List<Player> players) {
+    public Game(int gameId, double pot, String winner, Board board, List<Player> players) {
         this.gameId = gameId;
         this.pot = pot;
         this.winner = winner;
@@ -30,7 +31,7 @@ public class Game {
         this.players = players;
     }
 
-    public Game(int pot, String winner, Board board, List<Player> players) {
+    public Game(double pot, String winner, Board board, List<Player> players) {
         this.pot = pot;
         this.winner = winner;
         this.board = board;
@@ -47,11 +48,11 @@ public class Game {
         this.gameId = gameId;
     }
 
-    public int getPot() {
+    public double getPot() {
         return pot;
     }
 
-    public void setPot(int pot) {
+    public void setPot(double pot) {
         this.pot = pot;
     }
 
@@ -85,6 +86,14 @@ public class Game {
 
     public void setLastAction(Action lastAction) {
         this.lastAction = lastAction;
+    }
+
+    public double getBetAmount() {
+        return betAmount;
+    }
+
+    public void setBetAmount(double betAmount) {
+        this.betAmount = betAmount;
     }
 
     @Override

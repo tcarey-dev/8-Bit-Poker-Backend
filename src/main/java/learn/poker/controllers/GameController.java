@@ -30,14 +30,6 @@ public class GameController {
         return new Greeting("Hello, " + HtmlUtils.htmlEscape(message.getName()) + "!");
     }
 
-    @MessageMapping("/bet")
-    @SendTo("/topic/game")
-    public Room bet(Room room) {
-        return roomService.findById(room.getRoomId());
-    }
-
-    // TODO add error messages for unhappy paths
-
     @MessageMapping("/init")
     @SendTo("/topic/game")
     public Room init(Room room) {
@@ -45,7 +37,7 @@ public class GameController {
         if (result.isSuccess()) {
             return result.getPayload();
         } else {
-            return null;
+            return null;// TODO
         }
     }
 
@@ -55,22 +47,79 @@ public class GameController {
         Game game = room.getGame();
         Result<Game> gameResult = gameService.update(game);
         if (gameResult.isSuccess()) {
-            return roomService.findById(room.getRoomId());
+            Room room1 = roomService.findById(room.getRoomId());
+            return room1;
         } else {
-            return null;
+            return null;// TODO
         }
     }
 
     @MessageMapping("/start-game")
     @SendTo("/topic/game")
     public Room startGame(Room room) {
-        Game game = room.getGame();
-        Result<Game> gameResult = gameService.start(game);
-        if (gameResult.isSuccess()) {
-            return roomService.findById(room.getRoomId());
+        Result<Room> roomResult = gameService.start(room);
+        if (roomResult.isSuccess()) {
+            return roomResult.getPayload();
         } else {
-            return null;
+            return null; // TODO
         }
     }
+
+    @MessageMapping("/bet")
+    @SendTo("/topic/game")
+    public Room bet(Room room) {
+        Result<Room> roomResult = gameService.handleAction(room, Action.BET);
+        if (roomResult.isSuccess()) {
+            return roomResult.getPayload();
+        } else {
+            return null; // TODO
+        }
+    }
+
+    @MessageMapping("/check")
+    @SendTo("/topic/game")
+    public Room check(Room room) {
+        Result<Room> roomResult = gameService.handleAction(room, Action.CHECK);
+        if (roomResult.isSuccess()) {
+            return roomResult.getPayload();
+        } else {
+            return null; // TODO
+        }
+    }
+
+    @MessageMapping("/raise")
+    @SendTo("/topic/game")
+    public Room raise(Room room) {
+        Result<Room> roomResult = gameService.handleAction(room, Action.RAISE);
+        if (roomResult.isSuccess()) {
+            return roomResult.getPayload();
+        } else {
+            return null; // TODO
+        }
+    }
+
+    @MessageMapping("/fold")
+    @SendTo("/topic/game")
+    public Room fold(Room room) {
+        Result<Room> roomResult = gameService.handleAction(room, Action.FOLD);
+        if (roomResult.isSuccess()) {
+            return roomResult.getPayload();
+        } else {
+            return null; // TODO
+        }
+    }
+//
+//    @MessageMapping("/end-game")
+//    @SendTo("/topic/game")
+//    public Room endGame(Room room) {
+//        Result<Room> roomResult = gameService.end(room);
+//        if (roomResult.isSuccess()) {
+//            return roomResult.getPayload();
+//        } else {
+//            return null; // TODO
+//        }
+//    }
+
+
 
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-@RestController
+@Service
 public class DeckService {
     @Autowired
     private WebClient.Builder client;
@@ -33,5 +33,6 @@ public class DeckService {
                 .block();
     }
 
+//    private Deck shuffle()
 
 }

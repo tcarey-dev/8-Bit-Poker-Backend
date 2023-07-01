@@ -16,13 +16,13 @@ public class Player implements UserDetails {
     private String username;
     private String password;
     private boolean enabled;
-    private int accountBalance;
+    private double accountBalance;
     private Collection <GrantedAuthority> authorities;
     private List<Card> holeCards;
     private Position position;
     private boolean isPlayersAction;
 
-    public Player(int playerId, String displayName, String username, String password, boolean enabled, int accountBalance, List<String> roles, List<Card> holeCards, Position position, boolean isPlayersAction) {
+    public Player(int playerId, String displayName, String username, String password, boolean enabled, double accountBalance, List<String> roles, List<Card> holeCards, Position position, boolean isPlayersAction) {
         this.playerId = playerId;
         this.displayName = displayName;
         this.username = username;
@@ -122,11 +122,11 @@ public class Player implements UserDetails {
         this.displayName = displayName;
     }
 
-    public int getAccountBalance() {
+    public double getAccountBalance() {
         return accountBalance;
     }
 
-    public void setAccountBalance(int accountBalance) {
+    public void setAccountBalance(double accountBalance) {
         this.accountBalance = accountBalance;
     }
 
