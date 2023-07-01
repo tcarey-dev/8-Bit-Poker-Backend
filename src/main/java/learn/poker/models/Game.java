@@ -8,15 +8,16 @@ public class Game {
     private int gameId;
     private double pot;
     private String winner;
-
+    private double betAmount;
     private Action lastAction;
     private Board board;
     private List<Player> players;
 
-    public Game(int gameId, double pot, String winner, Action lastAction, Board board, List<Player> players) {
+    public Game(int gameId, double pot, String winner, double betAmount, Action lastAction, Board board, List<Player> players) {
         this.gameId = gameId;
         this.pot = pot;
         this.winner = winner;
+        this.betAmount = betAmount;
         this.lastAction = lastAction;
         this.board = board;
         this.players = players;
@@ -85,6 +86,14 @@ public class Game {
 
     public void setLastAction(Action lastAction) {
         this.lastAction = lastAction;
+    }
+
+    public double getBetAmount() {
+        return betAmount;
+    }
+
+    public void setBetAmount(double betAmount) {
+        this.betAmount = betAmount;
     }
 
     @Override

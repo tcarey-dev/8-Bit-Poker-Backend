@@ -99,6 +99,7 @@ public class GameService {
     public Result<Room> start(Room room) {
         Result<Room> roomResult = new Result<>();
         Game game = room.getGame();
+        game.setLastAction(Action.NONE);
 
         double smallBlind = room.getStake()/2;
         double bigBlind = room.getStake();
@@ -124,8 +125,8 @@ public class GameService {
             return Card.getCardFromAbbreviation(code);
         }).toList();
 
-        player1.setHoleCards(cards.subList(0,1));
-        player2.setHoleCards(cards.subList(2,3));
+        player1.setHoleCards(cards.subList(0,2));
+        player2.setHoleCards(cards.subList(2,4));
 
         playerService.update(player1);
         playerService.update(player2);
@@ -138,8 +139,12 @@ public class GameService {
     public Result<Room> handleAction(Room room, Action action) {
         Result<Room> roomResult = new Result<>();
         Game game = room.getGame();
+        Action lastAction = game.getLastAction();
         Player player1 = game.getPlayers().get(0);
         Player player2 = game.getPlayers().get(1);
+        Player currentPlayer = game.getPlayers().stream().filter(Player::isPlayersAction).findFirst().orElse(null);
+        Player opponent = game.getPlayers().stream().filter(player -> !player.isPlayersAction()).findFirst().orElse(null);
+        double bet = game.getBetAmount();
 
         if (action.equals(Action.FOLD)) {
             String winner = null;
@@ -156,6 +161,37 @@ public class GameService {
             return roomResult;
         }
 
+        // small blind opening call or raise
+        if ((lastAction.equals(Action.NONE) && currentPlayer.getPosition().equals(Position.SMALLBLIND) && (action.equals(Action.CALL) || action.equals(Action.RAISE)))
+                || ((lastAction.equals(Action.RAISE) || lastAction.equals(Action.CHECK)) && action.equals(Action.RAISE))) {
+            currentPlayer.setAccountBalance(currentPlayer.getAccountBalance() - bet);
+            game.setPot(game.getPot() + bet);
+            currentPlayer.setPlayersAction(false);
+            opponent.setPlayersAction(true);
+            setGameState(room, game, List.of(currentPlayer, opponent));
+            roomResult.setPayload(room);
+            return roomResult;
+        }
+
+        // big blind check behind (terminal action)
+        if (lastAction.equals(Action.CALL) && currentPlayer.getPosition().equals(Position.BIGBLIND) && action.equals(Action.CHECK)) {
+            currentPlayer.setPlayersAction(false);
+            opponent.setPlayersAction(true);
+            dealNext(room, game, List.of(currentPlayer, opponent));
+            roomResult.setPayload(room);
+            return roomResult;
+        }
+
+        // call behind (terminal action)
+        if (lastAction.equals(Action.RAISE) && action.equals(Action.CALL)) {
+            currentPlayer.setAccountBalance(currentPlayer.getAccountBalance() - bet);
+            game.setPot(game.getPot() + bet);
+            currentPlayer.setPlayersAction(false);
+            opponent.setPlayersAction(true);
+            dealNext(room, game, List.of(currentPlayer, opponent));
+            roomResult.setPayload(room);
+            return roomResult;
+        }
 
 
         return roomResult;
@@ -167,8 +203,9 @@ public class GameService {
 
         game.setPot(0);
         game.setWinner(null);
-        game.setLastAction(null);
+        game.setLastAction(Action.NONE);
         game.setBoard(null);
+        game.setBetAmount(0);
 
         Player player1 = game.getPlayers().get(0);
         Player player2 = game.getPlayers().get(1);
@@ -191,11 +228,43 @@ public class GameService {
             player2.setPosition(Position.BIGBLIND);
         }
 
+// TODO        deckService.shuffle();
+
         setGameState(room, game, List.of(player1, player2));
     }
 
-    private void dealNext(){
+    private void dealNext(Room room, Game game, List<Player> players){
+        Board board = game.getBoard();
 
+        if (board == null || board.getFlop().isEmpty()) {
+            Deck apiCards = deckService.drawCards(3);
+            List<PokerApiCard> playerCards = apiCards.getCards();
+
+            List<Card> flop = playerCards.stream().map(pokerApiCard -> {
+                String code = pokerApiCard.getCode();
+                return Card.getCardFromAbbreviation(code);
+            }).toList();
+
+            board.setFlop(flop);
+            game.setBoard(board);
+            setGameState(room, game, players);
+
+        }else if (!board.getFlop().isEmpty() && board.getTurn() == null) {
+            Deck apiCard = deckService.drawCards(1);
+            Card turn = Card.getCardFromAbbreviation(apiCard.getCards().get(0).getCode());
+
+            board.setTurn(turn);
+            game.setBoard(board);
+            setGameState(room, game, players);
+
+        }else if (board.getTurn() != null && board.getRiver() == null) {
+            Deck apiCard = deckService.drawCards(1);
+            Card river = Card.getCardFromAbbreviation(apiCard.getCards().get(0).getCode());
+
+            board.setRiver(river);
+            game.setBoard(board);
+            setGameState(room, game, players);
+        }
     }
 
     private void setGameState(Room room, Game game, List<Player> players){
@@ -212,55 +281,6 @@ public class GameService {
 
     /**
      *
-     handleAction(Game game) {
-
-     if current action == FOLD
-     set winner to the non-folding player
-     resetState(game)
-
-     // small blind opening call or raise
-     if lastAction == null && player.position == SMALLBLIND && currentAction == CALL || RAISE
-     update players balance and pot,
-     flip playersAction
-
-     // big blind check behind (terminal action)
-     if lastAction == CALL && player.position == BIGBLIND && currentAction == CHECK
-     flip playersAction and position
-
-     // big blind call behind (terminal action)
-     if lastAction == RAISE && player.position == BIGBLIND && currentAction == CALL
-     update players balance and pot,
-     flip playersAction and position
-
-     // raise
-     if lastAction == RAISE || CHECK && currentAction == RAISE
-     update players balance and pot,
-     flip playersAction
-
-     // terminating call (terminal action)
-     if lastAction == RAISE && current action == CALL (terminal action)
-     dealNext(game)
-     }
-
-     dealNext(game){
-     if (board.flop == null)
-     deal flop
-     else if (board.turn == null)
-     deal turn
-     else if (board.river == null)
-     deal river
-     else
-     determine winner
-     reset state(game)
-     flip playersAction and position
-     }
-
-     resetState() {
-     add pot to winning player's balance
-     set pot to zero
-     set winner, lastAction, board, and holeCards to null
-     }
-
 
      /////////////////// UI layer rendering logic
      if lastAction == CHECK && my playersAction == true

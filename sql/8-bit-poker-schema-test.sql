@@ -26,6 +26,7 @@ create table game (
 	game_id int primary key auto_increment,
     pot int null,
     winner varchar(150) null,
+    bet_amount double null,
     last_action varchar(50) null,
     board_id int null,
     player_one_id int null,
@@ -116,11 +117,11 @@ begin
         (2, '10C,3D,QS', 'AC', '5S'),
         (3, '7H,QS,8S', '6D', '2D');
 		
-	insert into game (game_id, pot, winner, last_action, board_id, player_one_id, player_two_id)
+	insert into game (game_id, pot, winner, bet_amount, last_action, board_id, player_one_id, player_two_id)
 		values
-		(1, 200, 'sally@jones.com', 'RAISE', 3, 1, 2),
-        (2, 250, 'fred@astair.com', 'FOLD', 2, 3, 4),
-        (3, 300, 'john@smith.com', 'CHECK', 1, 5, 6);
+		(1, 200, 'sally@jones.com', null, 'RAISE', 3, 1, 2),
+        (2, 250, 'fred@astair.com', null, 'FOLD', 2, 3, 4),
+        (3, 300, 'john@smith.com', null, 'CHECK', 1, 5, 6);
 	 
 	 insert into room (room_id, stake, seats, game_id) 
 		values 
