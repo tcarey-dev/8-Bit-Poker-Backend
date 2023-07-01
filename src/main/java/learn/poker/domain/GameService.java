@@ -97,6 +97,7 @@ public class GameService {
     }
 
     public Result<Room> start(Room room) {
+        Result<Room> roomResult = new Result<>();
         Game game = room.getGame();
 
         double smallBlind = room.getStake()/2;
@@ -129,7 +130,76 @@ public class GameService {
         playerService.update(player1);
         playerService.update(player2);
 
-        game.setPlayers(List.of(player1, player2));
+        setGameState(room, game, List.of(player1, player2));
+        roomResult.setPayload(room);
+        return roomResult;
+    }
+
+    public Result<Room> handleAction(Room room, Action action) {
+        Result<Room> roomResult = new Result<>();
+        Game game = room.getGame();
+        Player player1 = game.getPlayers().get(0);
+        Player player2 = game.getPlayers().get(1);
+
+        if (action.equals(Action.FOLD)) {
+            String winner = null;
+            for (Player player : game.getPlayers()){
+                if (!player.isPlayersAction()) {
+                    winner = player.getUsername();
+                    resetState(room, player);
+                }
+            }
+            game = room.getGame();
+            game.setWinner(winner);
+            setGameState(room, game, List.of(player1, player2));
+            roomResult.setPayload(room);
+            return roomResult;
+        }
+
+
+
+        return roomResult;
+    }
+
+    private void resetState(Room room, Player winner){
+        Game game = room.getGame();
+        winner.setAccountBalance(winner.getAccountBalance() + game.getPot());
+
+        game.setPot(0);
+        game.setWinner(null);
+        game.setLastAction(null);
+        game.setBoard(null);
+
+        Player player1 = game.getPlayers().get(0);
+        Player player2 = game.getPlayers().get(1);
+        player1.setHoleCards(null);
+        player2.setHoleCards(null);
+
+        if (player1.isPlayersAction()) {
+            player1.setPlayersAction(false);
+            player2.setPlayersAction(true);
+        } else {
+            player1.setPlayersAction(true);
+            player2.setPlayersAction(false);
+        }
+
+        if (player1.getPosition() == Position.SMALLBLIND) {
+            player1.setPosition(Position.BIGBLIND);
+            player2.setPosition(Position.SMALLBLIND);
+        } else {
+            player1.setPosition(Position.SMALLBLIND);
+            player2.setPosition(Position.BIGBLIND);
+        }
+
+        setGameState(room, game, List.of(player1, player2));
+    }
+
+    private void dealNext(){
+
+    }
+
+    private void setGameState(Room room, Game game, List<Player> players){
+        game.setPlayers(players);
         Result<Game> gameResult = update(game);
 
         if (!gameResult.isSuccess()) {
@@ -137,7 +207,7 @@ public class GameService {
         }
 
         room.setGame(game);
-        return roomService.update(room);
+        roomService.update(room);
     }
 
     /**
