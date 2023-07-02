@@ -4,6 +4,7 @@ import learn.poker.domain.GameService;
 import learn.poker.domain.Result;
 import learn.poker.domain.RoomService;
 import learn.poker.models.*;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -22,12 +23,10 @@ public class GameController {
         this.roomService = roomService;
     }
 
-    // TODO: this endpoint is for testing websockets only, to be deleted
-    @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
-    public Greeting greeting(HelloMessage message) throws Exception {
-        Thread.sleep(1000); // simulated delay
-        return new Greeting("Hello, " + HtmlUtils.htmlEscape(message.getName()) + "!");
+    @MessageExceptionHandler
+    @SendTo("/topic/errors")
+    public String handleException(Throwable exception) {
+        return "server exception: " + exception.getMessage();
     }
 
     @MessageMapping("/init")
@@ -37,7 +36,7 @@ public class GameController {
         if (result.isSuccess()) {
             return result.getPayload();
         } else {
-            return null;// TODO
+            throw new RuntimeException("Unable to initialize the game.");
         }
     }
 
@@ -50,7 +49,7 @@ public class GameController {
             Room room1 = roomService.findById(room.getRoomId());
             return room1;
         } else {
-            return null;// TODO
+            throw new RuntimeException("Unable to add player the game.");
         }
     }
 
@@ -61,7 +60,7 @@ public class GameController {
         if (roomResult.isSuccess()) {
             return roomResult.getPayload();
         } else {
-            return null; // TODO
+            throw new RuntimeException("Unable to start the game.");
         }
     }
 
@@ -72,7 +71,7 @@ public class GameController {
         if (roomResult.isSuccess()) {
             return roomResult.getPayload();
         } else {
-            return null; // TODO
+            throw new RuntimeException("Bet failed.");
         }
     }
 
@@ -108,7 +107,19 @@ public class GameController {
             return null; // TODO
         }
     }
-//
+
+    @MessageMapping("/call")
+    @SendTo("/topic/game")
+    public Room call(Room room) {
+        Result<Room> roomResult = gameService.handleAction(room, Action.CALL);
+        if (roomResult.isSuccess()) {
+            return roomResult.getPayload();
+        } else {
+            return null; // TODO
+        }
+    }
+
+
 //    @MessageMapping("/end-game")
 //    @SendTo("/topic/game")
 //    public Room endGame(Room room) {
