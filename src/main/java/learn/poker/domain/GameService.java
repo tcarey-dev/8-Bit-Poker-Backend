@@ -99,6 +99,12 @@ public class GameService {
     public Result<Room> start(Room room) {
         Result<Room> roomResult = new Result<>();
         Game game = room.getGame();
+
+        if(game.getPlayers().size() < 2){
+            roomResult.addMessage("Game must have two players to start.");
+            return roomResult;
+        }
+
         game.setLastAction(Action.NONE);
 
         double smallBlind = room.getStake()/2;
@@ -161,9 +167,17 @@ public class GameService {
             return roomResult;
         }
 
-        // small blind opening call or raise
+        boolean isTerminalCall = (lastAction.equals(Action.RAISE) || lastAction.equals(Action.BET)) && action.equals(Action.CALL);
+
+        if (game.getBoard().getRiver() != null
+                && isTerminalCall
+                || lastAction.equals(Action.CHECK) && action.equals(Action.CHECK)) {
+// TODO            winnerService.determineWinner(game);
+        }
+
+        // raise (also includes special case of small blind opening, which is the one time calling does not end round)
         if ((lastAction.equals(Action.NONE) && currentPlayer.getPosition().equals(Position.SMALLBLIND) && (action.equals(Action.CALL) || action.equals(Action.RAISE)))
-                || ((lastAction.equals(Action.RAISE) || lastAction.equals(Action.CHECK)) && action.equals(Action.RAISE))) {
+                || ((lastAction.equals(Action.RAISE) || lastAction.equals(Action.BET) || lastAction.equals(Action.CHECK)) && action.equals(Action.RAISE))) {
             currentPlayer.setAccountBalance(currentPlayer.getAccountBalance() - bet);
             game.setPot(game.getPot() + bet);
             currentPlayer.setPlayersAction(false);
@@ -183,7 +197,7 @@ public class GameService {
         }
 
         // call behind (terminal action)
-        if (lastAction.equals(Action.RAISE) && action.equals(Action.CALL)) {
+        if (isTerminalCall) {
             currentPlayer.setAccountBalance(currentPlayer.getAccountBalance() - bet);
             game.setPot(game.getPot() + bet);
             currentPlayer.setPlayersAction(false);

@@ -15,11 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-public class GameServiceTest {
+public class GameServiceCrudTest {
 
     @Autowired
     GameService service;
-
     @MockBean
     GameRepository repository;
 
