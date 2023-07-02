@@ -160,9 +160,9 @@ public class GameService {
                     resetState(room, player);
                 }
             }
-            game = room.getGame();
-            game.setWinner(winner);
-            setGameState(room, game, List.of(player1, player2));
+//            game = room.getGame();
+//            game.setWinner(winner);
+//            setGameState(room, game, List.of(player1, player2));
             roomResult.setPayload(room);
             return roomResult;
         }
