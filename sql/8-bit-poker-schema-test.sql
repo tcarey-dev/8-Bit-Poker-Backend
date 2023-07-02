@@ -8,7 +8,7 @@ create table player (
     username varchar(75) not null unique,
     password_hash varchar(2048) not null,
     display_name varchar(100) null,
-    account_balance int null,
+    account_balance double null,
     roles varchar(50) null,
     hole_cards varchar(150) null,
     position varchar(150) null,
@@ -26,6 +26,7 @@ create table game (
 	game_id int primary key auto_increment,
     pot int null,
     winner varchar(150) null,
+    bet_amount double null,
     last_action varchar(50) null,
     board_id int null,
     player_one_id int null,
@@ -94,12 +95,12 @@ begin
     
 	insert into player (player_id, username, password_hash, display_name, account_balance, enabled, roles, hole_cards, `position`, is_player_action)
 		values
-		(1, 'john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 100, 1, 'USER', 'AH,KD', 'SMALLBLIND', true),
-		(2, 'sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 50, 1, 'USER', 'JC,9H', 'BIGBLIND', true),
-        (3, 'fred@astair.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 25, 1, 'USER', '8S,6S', 'SMALLBLIND', false),
-        (4, 'billy@bob.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 80, 1, 'ADMIN', '7H,2D', 'SMALLBLIND', true),
-        (5, 'sam@stone.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 150, 1, 'USER', 'AC,5D', 'BIGBLIND', true),
-        (6, 'lisa@simpson.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 225, 1, 'USER', null, 'BIGBLIND', false);
+		(1, 'john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 100, 1, 'USER', null, null, true),
+		(2, 'sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 50.75, 1, 'USER', null, null, true),
+        (3, 'fred@astair.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 25, 1, 'USER', null, null, false),
+        (4, 'billy@bob.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 80, 1, 'ADMIN', null, null, true),
+        (5, 'sam@stone.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 150, 1, 'USER', null, null, true),
+        (6, 'lisa@simpson.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 225, 1, 'USER', null, null, false);
         
 	insert into player_role (player_id, role_id)
 		values
@@ -116,11 +117,11 @@ begin
         (2, '10C,3D,QS', 'AC', '5S'),
         (3, '7H,QS,8S', '6D', '2D');
 		
-	insert into game (game_id, pot, winner, last_action, board_id, player_one_id, player_two_id)
+	insert into game (game_id, pot, winner, bet_amount, last_action, board_id, player_one_id, player_two_id)
 		values
-		(1, 200, 'sally@jones.com', 'RAISE', 3, 1, 2),
-        (2, 250, 'fred@astair.com', 'FOLD', 2, 3, 4),
-        (3, 300, 'john@smith.com', 'CHECK', 1, 5, 6);
+		(1, 200, 'sally@jones.com', null, 'RAISE', 3, 1, 2),
+        (2, 250, 'fred@astair.com', null, 'FOLD', 2, 3, 4),
+        (3, 300, 'john@smith.com', null, 'CHECK', 1, 5, 6);
 	 
 	 insert into room (room_id, stake, seats, game_id) 
 		values 

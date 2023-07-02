@@ -121,7 +121,7 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
 
     private void addGame(Room room) {
         final String sql = "select " +
-                "g.game_id, g.pot, g.winner, g.last_action, g.board_id, g.player_one_id " +
+                "g.game_id, g.pot, g.winner, g.bet_amount, g.last_action, g.board_id, g.player_one_id " +
                 "from game g " +
                 "inner join room r on g.game_id = r.game_id " +
                 "where r.room_id = ?;";

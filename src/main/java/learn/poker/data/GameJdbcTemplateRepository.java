@@ -4,24 +4,18 @@ import learn.poker.data.mappers.BoardMapper;
 import learn.poker.data.mappers.GameMapper;
 import learn.poker.data.mappers.PlayerMapper;
 import learn.poker.models.Board;
-import learn.poker.models.Card;
 import learn.poker.models.Game;
 import learn.poker.models.Player;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class GameJdbcTemplateRepository implements GameRepository {
@@ -36,7 +30,7 @@ public class GameJdbcTemplateRepository implements GameRepository {
 
     @Override
     public Game findById(int gameId) {
-        final String sql = "select game_id, pot, winner, last_action from game where game_id = ?;";
+        final String sql = "select game_id, pot, winner, bet_amount, last_action from game where game_id = ?;";
 
         Game game = jdbcTemplate.query(sql, new GameMapper(), gameId).stream().findFirst().orElse(null);
 
@@ -60,7 +54,7 @@ public class GameJdbcTemplateRepository implements GameRepository {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         int rowsAffected = jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            ps.setInt(1, game.getPot());
+            ps.setDouble(1, game.getPot());
             ps.setString(2, game.getWinner());
             return ps;
         }, keyHolder);
@@ -76,21 +70,109 @@ public class GameJdbcTemplateRepository implements GameRepository {
     @Override
     public boolean update(Game game) {
 
-        final String sql = "update game set " +
-                "pot = ?, " +
-                "winner = ?, " +
-                "board_id = ?, " +
-                "player_one_id = ?, " +
-                "player_two_id = ? " +
-                "where game_id = ?;";
+        if (game.getBoard() != null && game.getPlayers().size() == 2){
+            final String sql = "update game set " +
+                    "pot = ?, " +
+                    "winner = ?, " +
+                    "bet_amount = ?, " +
+                    "board_id = ?, " +
+                    "player_one_id = ?, " +
+                    "player_two_id = ? " +
+                    "where game_id = ?;";
 
-        return jdbcTemplate.update(sql,
-                game.getPot(),
-                game.getWinner(),
-                game.getBoard().getBoardId(),
-                game.getPlayers().get(0).getPlayerId(),
-                game.getPlayers().get(1).getPlayerId(),
-                game.getGameId()) > 0;
+            return jdbcTemplate.update(sql,
+                    game.getPot(),
+                    game.getWinner(),
+                    game.getBetAmount(),
+                    game.getBoard().getBoardId(),
+                    game.getPlayers().get(0).getPlayerId(),
+                    game.getPlayers().get(1).getPlayerId(),
+                    game.getGameId()) > 0;
+        }
+
+        if (game.getBoard() == null && game.getPlayers().size() == 2){
+            final String sql = "update game set " +
+                    "pot = ?, " +
+                    "winner = ?, " +
+                    "bet_amount = ?, " +
+                    "player_one_id = ?, " +
+                    "player_two_id = ? " +
+                    "where game_id = ?;";
+
+            return jdbcTemplate.update(sql,
+                    game.getPot(),
+                    game.getWinner(),
+                    game.getBetAmount(),
+                    game.getPlayers().get(0).getPlayerId(),
+                    game.getPlayers().get(1).getPlayerId(),
+                    game.getGameId()) > 0;
+        }
+
+        if (game.getBoard() != null && game.getPlayers().size() == 1){
+            final String sql = "update game set " +
+                    "pot = ?, " +
+                    "winner = ?, " +
+                    "bet_amount = ?, " +
+                    "board_id = ?, " +
+                    "player_one_id = ? " +
+                    "where game_id = ?;";
+
+            return jdbcTemplate.update(sql,
+                    game.getPot(),
+                    game.getWinner(),
+                    game.getBetAmount(),
+                    game.getBoard().getBoardId(),
+                    game.getPlayers().get(0).getPlayerId(),
+                    game.getGameId()) > 0;
+        }
+
+        if (game.getBoard() == null && game.getPlayers().size() == 1){
+            final String sql = "update game set " +
+                    "pot = ?, " +
+                    "winner = ?, " +
+                    "bet_amount = ?, " +
+                    "player_one_id = ? " +
+                    "where game_id = ?;";
+
+            return jdbcTemplate.update(sql,
+                    game.getPot(),
+                    game.getWinner(),
+                    game.getBetAmount(),
+                    game.getPlayers().get(0).getPlayerId(),
+                    game.getGameId()) > 0;
+        }
+
+        if (game.getBoard() != null && game.getPlayers().size() == 0){
+            final String sql = "update game set " +
+                    "pot = ?, " +
+                    "winner = ?, " +
+                    "bet_amount = ?, " +
+                    "board_id = ? " +
+                    "where game_id = ?;";
+
+            return jdbcTemplate.update(sql,
+                    game.getPot(),
+                    game.getWinner(),
+                    game.getBetAmount(),
+                    game.getBoard().getBoardId(),
+                    game.getGameId()) > 0;
+        }
+
+        if (game.getBoard() == null && game.getPlayers().size() == 0){
+            final String sql = "update game set " +
+                    "pot = ?, " +
+                    "winner = ? " +
+                    "bet_amount = ?, " +
+                    "where game_id = ?;";
+
+            return jdbcTemplate.update(sql,
+                    game.getPot(),
+                    game.getWinner(),
+                    game.getBetAmount(),
+                    game.getGameId()) > 0;
+        }
+
+        return false;
     }
 
     @Override
