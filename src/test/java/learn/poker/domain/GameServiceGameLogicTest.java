@@ -4,7 +4,6 @@ import learn.poker.data.GameRepository;
 import learn.poker.data.PlayerRepository;
 import learn.poker.data.RoomRepository;
 import learn.poker.models.*;
-import learn.poker.security.Credential;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

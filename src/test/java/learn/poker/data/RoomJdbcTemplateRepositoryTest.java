@@ -61,8 +61,8 @@ class RoomJdbcTemplateRepositoryTest {
         room.setSeats(2);
         Room result = repository.create(room);
         assertNotNull(result);
-        assertEquals(5, result.getRoomId());
-        assertEquals(result, repository.findById(5));
+        assertEquals(6, result.getRoomId());
+        assertEquals(result, repository.findById(6));
     }
 
     @Test

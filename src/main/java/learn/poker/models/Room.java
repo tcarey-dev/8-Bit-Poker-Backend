@@ -5,6 +5,7 @@ public class Room {
     private int roomId;
     private double stake;
     private int seats;
+    private int playerCount;
     private Game game;
 
     public Room(int roomId, double stake, int seats, Game game) {
@@ -46,6 +47,14 @@ public class Room {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public int getPlayerCount() {
+        return playerCount;
+    }
+
+    public void setPlayerCount(int playerCount) {
+        this.playerCount = playerCount;
     }
 
     @Override
