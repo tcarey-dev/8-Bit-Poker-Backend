@@ -31,7 +31,7 @@ public class JwtConverter {
         return Jwts.builder()
                 .setIssuer(ISSUER)
                 .setSubject(user.getUsername())
-                .claim("app_user_id", user.getPlayerId())
+                .claim("player_id", user.getPlayerId())
                 .claim("authorities", authorities)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MILLIS))
                 .signWith(key)
@@ -53,7 +53,7 @@ public class JwtConverter {
                     .parseClaimsJws(token.substring(7));
 
             String username = jws.getBody().getSubject();
-            int playerId = (int)jws.getBody().get("app_user_id");
+            int playerId = (int)jws.getBody().get("player_id");
             String authStr = (String) jws.getBody().get("authorities");
 
             return new Player(playerId, username, null, true, Arrays.asList(authStr.split(",")));

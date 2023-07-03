@@ -10,22 +10,6 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-//    @Override
-//    public void configureClientInboundChannel(ChannelRegistration registration) {
-//        registration.interceptors(new ChannelInterceptor() {
-//            @Override
-//            public Message<?> preSend(Message<?> message, MessageChannel channel) {
-//                StompHeaderAccessor accessor =
-//                        MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-//                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-//                    Authentication user = ... ; // access authentication header(s)
-//                    accessor.setUser(user);
-//                }
-//                return message;
-//            }
-//        });
-//    }
-
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
