@@ -101,7 +101,7 @@ public class GameService {
         Game game = room.getGame();
 
         if(game.getPlayers().size() < 2){
-            roomResult.addMessage("Game must have two players to start.");
+            roomResult.addMessage("Game must have two players to start.", ResultType.INVALID);
             return roomResult;
         }
 
@@ -118,6 +118,11 @@ public class GameService {
 
         player2.setPosition(Position.BIGBLIND);
         player2.setPlayersAction(false);
+
+        if(player1.getAccountBalance() <= 0 || player2.getAccountBalance() <= 0){
+            roomResult.addMessage("Account Balance must be greater than 0 to start game.", ResultType.INVALID);
+            return roomResult;
+        }
 
         player1.setAccountBalance(player1.getAccountBalance() - smallBlind);
         player2.setAccountBalance(player2.getAccountBalance() - bigBlind);
@@ -160,9 +165,9 @@ public class GameService {
                     resetState(room, player);
                 }
             }
-//            game = room.getGame();
-//            game.setWinner(winner);
-//            setGameState(room, game, List.of(player1, player2));
+            game = room.getGame();
+            game.setWinner(winner);
+            setGameState(room, game, List.of(player1, player2));
             roomResult.setPayload(room);
             return roomResult;
         }

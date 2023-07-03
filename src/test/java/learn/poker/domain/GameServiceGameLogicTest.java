@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.parameters.P;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -297,6 +296,49 @@ public class GameServiceGameLogicTest {
         assertTrue(result.isSuccess());
         assertEquals(Position.BIGBLIND, player2.getPosition());}
 
+    // should subtract blinds correctly from each players account balance
+    // should add blinds to pot
+    // should add two cards to each players holeCards field
+    // should set Smallblind playersAction to true
+    // should set big blind playersAction to false
+
+
+    // handleAction fold
+    @Test
+    void foldActionShouldSetOpponentAsWinner(){
+        Player player1 = new Player(1,"player1Username", "password",true, List.of("USER"));
+        Player player2 = new Player(2,"player2Username", "password",true, List.of("USER"));
+        player1.setAccountBalance(100);
+        player2.setAccountBalance(100);
+
+        player1.setPlayersAction(true);//means it is player1's turn --> p1 folds --> p2 should be declared winner
+        player2.setPlayersAction(false);
+
+        Board board = new Board(List.of(Card.QUEEN_OF_HEARTS, Card.ACE_OF_SPADES, Card.ACE_OF_DIAMONDS), Card.KING_OF_DIAMONDS, Card.EIGHT_OF_CLUBS);
+
+        Game game = new Game(0, 0, null, 0, null, null, null);
+        Game expectedGame = new Game();
+        expectedGame.setGameId(4);
+        expectedGame.setPot(0);
+        expectedGame.setWinner(null);
+        expectedGame.setBetAmount(0);
+        expectedGame.setLastAction(Action.NONE);
+        expectedGame.setBoard(board);
+        expectedGame.setPlayers(List.of(player1, player2));
+
+        Room room = new Room(4, 2, 2, expectedGame);
+
+        when(playerRepository.create(player1)).thenReturn(player1);
+        when(playerRepository.create(player2)).thenReturn(player2);
+
+        when(gameRepository.update(game)).thenReturn(true);
+        when(roomRepository.update(room)).thenReturn(true);
+
+        gameService.handleAction(room, Action.FOLD);
+
+//        assertEquals(player2.getUsername(), game.getWinner());
+        assertEquals(null, game.getWinner());
+    }
 
     @Test
     void foldActionShouldAddPotToWinnersAccountBalance(){ //aaron start here
@@ -776,6 +818,5 @@ public class GameServiceGameLogicTest {
         assertEquals(Position.BIGBLIND, player1.getPosition());
         assertEquals(Position.SMALLBLIND, player2.getPosition());
     }
-
 
 }

@@ -46,6 +46,7 @@ create table room (
 	room_id int primary key auto_increment,
     stake double null,
     seats int null,
+    player_count int null,
     game_id int null,
 	constraint fk_room_game_id
 		foreign key (game_id)
@@ -95,12 +96,12 @@ begin
     
 	insert into player (player_id, username, password_hash, display_name, account_balance, enabled, roles, hole_cards, `position`, is_player_action)
 		values
-		(1, 'john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 100, 1, 'USER', null, null, true),
-		(2, 'sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 50.75, 1, 'USER', null, null, true),
-        (3, 'fred@astair.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 25, 1, 'USER', null, null, false),
-        (4, 'billy@bob.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 80, 1, 'ADMIN', null, null, true),
-        (5, 'sam@stone.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 150, 1, 'USER', null, null, true),
-        (6, 'lisa@simpson.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 225, 1, 'USER', null, null, false);
+		(1, 'john@smith.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 110, 1, 'USER', null, null, true),
+		(2, 'sally@jones.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 52.75, 1, 'USER', null, null, true),
+        (3, 'fred@astair.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 23, 1, 'USER', null, null, false),
+        (4, 'billy@bob.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 78, 1, 'ADMIN', null, null, true),
+        (5, 'sam@stone.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 154, 1, 'USER', null, null, true),
+        (6, 'lisa@simpson.com', '$2a$10$ntB7CsRKQzuLoKY3rfoAQen5nNyiC/U60wBsWnnYrtQQi8Z3IZzQa', null, 205, 1, 'USER', null, null, false);
         
 	insert into player_role (player_id, role_id)
 		values
@@ -113,8 +114,8 @@ begin
 		
 	insert into board (board_id, flop, turn, river)
 		values 
-		(1, 'AH,KD,10C', '3S', '9D'),
-        (2, '10C,3D,QS', 'AC', '5S'),
+		(1, 'AH,KD,0C', '3S', '9D'),
+        (2, '0C,3D,QS', 'AC', '5S'),
         (3, '7H,QS,8S', '6D', '2D');
 		
 	insert into game (game_id, pot, winner, bet_amount, last_action, board_id, player_one_id, player_two_id)
@@ -128,7 +129,8 @@ begin
 		(1, 0.25, 2, 2),
         (2, 0.5, 2, 3),
         (3, 0.75, 2, 1),
-        (4, 2.00, 2, null);
+        (4, 2.00, 2, null),
+		(5, 4.00, 2, null);
 	
     set sql_safe_updates = 1;
     
