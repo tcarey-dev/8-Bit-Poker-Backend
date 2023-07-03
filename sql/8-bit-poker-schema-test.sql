@@ -46,6 +46,7 @@ create table room (
 	room_id int primary key auto_increment,
     stake double null,
     seats int null,
+    player_count int null,
     game_id int null,
 	constraint fk_room_game_id
 		foreign key (game_id)
@@ -128,7 +129,8 @@ begin
 		(1, 0.25, 2, 2),
         (2, 0.5, 2, 3),
         (3, 0.75, 2, 1),
-        (4, 2.00, 2, null);
+        (4, 2.00, 2, null),
+		(5, 4.00, 2, null);
 	
     set sql_safe_updates = 1;
     

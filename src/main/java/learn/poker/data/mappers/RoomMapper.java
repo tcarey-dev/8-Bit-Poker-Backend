@@ -13,6 +13,7 @@ public class RoomMapper implements RowMapper<Room> {
         room.setRoomId(rs.getInt("room_id"));
         room.setStake(rs.getDouble("stake"));
         room.setSeats(rs.getInt("seats"));
+        room.setPlayerCount(rs.getInt("player_count"));
         return room;
     }
 }
