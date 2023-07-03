@@ -96,6 +96,19 @@ public class GameService {
         }
     }
 
+    public Result<Room> endGame(Room room) {
+        /**
+         * go back to this state:
+         * {
+         *   "roomId": 4,
+         *   "stake": 2,
+         *   "seats": 2,
+         *   "game": null
+         * }
+         */
+        return null;
+    }
+
     public Result<Room> start(Room room) {
         Result<Room> roomResult = new Result<>();
         Game game = room.getGame();
