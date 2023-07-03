@@ -38,42 +38,6 @@ public class PlayerController {
         this.service = service;
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<?> getPlayerByUserName(@PathVariable String username){
-        Player player = service.loadUserByUsername(username);
-        if(player == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.ok(player);
-
-    }
-
-//    @PostMapping
-//    public ResponseEntity<?> create(@RequestBody Credential credential){
-//        Result<Player> result = service.create(credential);
-//        if(result.isSuccess()){
-//            return new ResponseEntity<>(result.getPayload(), HttpStatus.CREATED);
-//        }
-//        return ErrorResponse.build(result);
-//    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody Player player){
-        Result<Player> result = service.update(player);
-        if(result.isSuccess()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return ErrorResponse.build(result);
-    }
-
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<?> delete(@PathVariable int id){
-//        if(service.deleteById(id)){
-//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-//        }
-//        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//    }
-
     @PostMapping("/authenticate")
     public ResponseEntity<Object> authenticate(@RequestBody Credential credential){
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -111,6 +75,42 @@ public class PlayerController {
 
         return new ResponseEntity<>(map, HttpStatus.CREATED);
     }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<?> getPlayerByUserName(@PathVariable String username){
+        Player player = service.loadUserByUsername(username);
+        if(player == null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(player);
+
+    }
+
+//    @PostMapping
+//    public ResponseEntity<?> create(@RequestBody Credential credential){
+//        Result<Player> result = service.create(credential);
+//        if(result.isSuccess()){
+//            return new ResponseEntity<>(result.getPayload(), HttpStatus.CREATED);
+//        }
+//        return ErrorResponse.build(result);
+//    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@RequestBody Player player){
+        Result<Player> result = service.update(player);
+        if(result.isSuccess()){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ErrorResponse.build(result);
+    }
+
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<?> delete(@PathVariable int id){
+//        if(service.deleteById(id)){
+//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//        }
+//        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    }
 
     private HashMap<String, String> makePlayerTokenMap(Player player){
         HashMap<String, String> map = new HashMap<>();
