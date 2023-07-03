@@ -1,6 +1,7 @@
 package learn.poker.domain;
 
 import learn.poker.data.GameRepository;
+import learn.poker.data.RoomRepository;
 import learn.poker.models.*;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +14,14 @@ public class GameService {
     private final DeckService deckService;
     private final PlayerService playerService;
 
+    private final RoomRepository roomRepository;
 
-    public GameService(GameRepository repository, RoomService roomService, DeckService deckService, PlayerService playerService) {
+    public GameService(GameRepository repository, RoomService roomService, DeckService deckService, PlayerService playerService, RoomRepository roomRepository) {
         this.repository = repository;
         this.roomService = roomService;
         this.deckService = deckService;
         this.playerService = playerService;
+        this.roomRepository = roomRepository;
     }
 
     public Game findById(int gameId) {
@@ -96,8 +99,24 @@ public class GameService {
         }
     }
 
-    public Result<Room> endGame(Room room) {
+    public Result<Room> endGame(Room room, Player winner) {
         /**
+         * when a player leaves the room in the middle of a game
+         * the game goes back to the following state
+         * the player that leaves essentially folds
+         * the remaining player is declared the winner and gets the pot
+         * but it is not the same as the resetState() function
+         * since we do not have two players
+         *
+         * maybe just call handleAction and set action to fold
+         * but the problem is, if it is a problem is the fact that
+         * there is no longer two players but only one left in the game
+         * would it lead to an index out of bounds...
+         *
+         * or maybe just call deleteById
+         *
+         * delete the playerId
+         *
          * go back to this state:
          * {
          *   "roomId": 4,
@@ -106,7 +125,29 @@ public class GameService {
          *   "game": null
          * }
          */
-        return null;
+
+        //if room_count is less than 2
+        //just end the game -- 
+
+        Result<Room> roomResult = new Result<>();
+
+        Game game = room.getGame();
+
+        //called winner but really Player remainingPlayer
+        winner.setAccountBalance(winner.getAccountBalance() + game.getPot());
+
+        game.setPot(0);
+        game.setWinner(null);
+        game.setLastAction(Action.NONE);
+        game.setBoard(null);
+        game.setBetAmount(0);
+
+        roomResult.setPayload(room);
+
+//        handleAction(room, Action.FOLD);
+//        deleteById(game.getGameId());
+
+        return roomResult;
     }
 
     public Result<Room> start(Room room) {
