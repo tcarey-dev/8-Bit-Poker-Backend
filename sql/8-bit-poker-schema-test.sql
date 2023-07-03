@@ -113,8 +113,8 @@ begin
 		
 	insert into board (board_id, flop, turn, river)
 		values 
-		(1, 'AH,KD,10C', '3S', '9D'),
-        (2, '10C,3D,QS', 'AC', '5S'),
+		(1, 'AH,KD,0C', '3S', '9D'),
+        (2, '0C,3D,QS', 'AC', '5S'),
         (3, '7H,QS,8S', '6D', '2D');
 		
 	insert into game (game_id, pot, winner, bet_amount, last_action, board_id, player_one_id, player_two_id)
