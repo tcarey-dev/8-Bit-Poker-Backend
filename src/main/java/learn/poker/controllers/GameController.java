@@ -24,7 +24,7 @@ public class GameController {
     }
 
     @MessageExceptionHandler
-    @SendTo("/topic/errors")
+    @SendTo("/topic/{roomId}/errors")
     public String handleException(Throwable exception) {
         return "server exception: " + exception.getMessage();
     }
