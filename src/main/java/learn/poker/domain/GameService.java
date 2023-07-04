@@ -103,37 +103,6 @@ public class GameService {
             return roomService.update(room);
         }
     }
-    
-    public Result<Room> addPlayer(Room room) {
-        Result<Room> result = new Result<>();
-
-        if(room.getGame() == null || room.getGame().getPlayers().isEmpty()){
-            result.addMessage("Cannot add empty players to game", ResultType.INVALID);
-            return result;
-        }
-
-        List<Player> players = room.getGame().getPlayers();
-
-        Game game = findById(room.getGame().getGameId());
-
-        game.setPlayers(players);
-
-        Result<Game> gameResult = update(game);
-        if (!gameResult.isSuccess()){
-            result.addMessage("Was unable to update the game after adding new players", ResultType.INVALID);
-            return result;
-        }
-
-        Game updatedGame = findById(game.getGameId());
-        room.setGame(updatedGame);
-
-        Result roomUpdateResult = roomService.update(room);
-        if (!roomUpdateResult.isSuccess()){
-            result.addMessage("Was unable to update room after updating game");
-        }
-        result.setPayload(room);
-        return result;
-    }
 
     public Result<Room> addPlayer(Room room) {
         Result<Room> result = new Result<>();
@@ -166,42 +135,30 @@ public class GameService {
         return result;
     }
 
-    public Result<Room> endGame(Room room, Player winner) {
+    public Result<Room> leaveGame(Room room) {
         /**
-         * when a player leaves the room in the middle of a game
-         * the game goes back to the following state
-         * the player that leaves essentially folds
-         * the remaining player is declared the winner and gets the pot
-         * but it is not the same as the resetState() function
-         * since we do not have two players
-         *
-         * maybe just call handleAction and set action to fold
-         * but the problem is, if it is a problem is the fact that
-         * there is no longer two players but only one left in the game
-         * would it lead to an index out of bounds...
-         *
-         * or maybe just call deleteById
-         *
-         * delete the playerId
-         *
-         * go back to this state:
-         * {
-         *   "roomId": 4,
-         *   "stake": 2,
-         *   "seats": 2,
-         *   "game": null
-         * }
+         * remove them from the list of players from game
+         * then check if the game has any players
+         * if game doesn't have any player left then set back to null
          */
-
-        //if room_count is less than 2
-        //just end the game --
 
         Result<Room> roomResult = new Result<>();
 
         Game game = room.getGame();
 
-        //called winner but really Player remainingPlayer
-        winner.setAccountBalance(winner.getAccountBalance() + game.getPot());
+        //both players have left the game
+        if(game.getPlayers().size() < 1) {
+            if(!deleteById(room.getGame().getGameId())){
+                roomResult.addMessage("Sorry, unable to delete the game", ResultType.NOT_FOUND);
+            };
+            room.setGame(null);
+            roomResult.setPayload(room);
+            return roomResult;
+        }
+
+
+        //there is only one player remaining in the game
+//        winner.setAccountBalance(winner.getAccountBalance() + game.getPot());
 
         game.setPot(0);
         game.setWinner(null);
@@ -209,10 +166,13 @@ public class GameService {
         game.setBoard(null);
         game.setBetAmount(0);
 
-        roomResult.setPayload(room);
 
-//        handleAction(room, Action.FOLD);
-//        deleteById(game.getGameId());
+        if(!repository.update(game)){
+            roomResult.addMessage("Unable to delete game ", ResultType.NOT_FOUND);
+            return roomResult;
+        }
+        repository.update(game);
+        roomResult.setPayload(room);
 
         return roomResult;
     }
