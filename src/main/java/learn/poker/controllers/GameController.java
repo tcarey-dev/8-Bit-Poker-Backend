@@ -43,11 +43,9 @@ public class GameController {
     @MessageMapping("/add-players")
     @SendTo("/topic/game")
     public Room addPlayer(Room room) {
-        Game game = room.getGame();
-        Result<Game> gameResult = gameService.update(game);
-        if (gameResult.isSuccess()) {
-            Room room1 = roomService.findById(room.getRoomId());
-            return room1;
+        Result<Room> roomResult = gameService.addPlayer(room);
+        if (roomResult.isSuccess()) {
+            return room;
         } else {
             throw new RuntimeException("Unable to add player the game.");
         }
