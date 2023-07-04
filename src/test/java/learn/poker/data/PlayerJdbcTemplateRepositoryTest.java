@@ -1,5 +1,6 @@
 package learn.poker.data;
 
+import learn.poker.models.Game;
 import learn.poker.models.Player;
 import learn.poker.models.Room;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,12 +53,16 @@ class PlayerJdbcTemplateRepositoryTest {
 
     @Test
     void shouldUpdate() {
+        Player player = repository.findByUsername("sam@stone.com");
+        player.setAuthorities(Collections.singletonList("ADMIN"));
 
+        assertTrue(repository.update(player));
     }
 
     @Test
-    void shouldNotUpdateUnknownId() {
-
+    void shouldNotUpdateUnknownUsername() {
+        Player player = repository.findByUsername("fake@fake.com");
+        assertNull(player);
     }
 
 
@@ -69,7 +75,8 @@ class PlayerJdbcTemplateRepositoryTest {
 
     @Test
     void shouldNotGetRolesByInvalidUsername() {
-
+        List<String> roles = repository.getRolesByUsername("fake@fake.com");
+        assertTrue(roles.isEmpty());
     }
 
 
