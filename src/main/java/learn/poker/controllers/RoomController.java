@@ -49,7 +49,7 @@ public class RoomController {
     public ResponseEntity<?> update(@RequestBody Room room){
         Result<Room> result = service.update(room);
         if(result.isSuccess()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(result.getPayload(), HttpStatus.OK);
         }
         return ErrorResponse.build(result);
     }
