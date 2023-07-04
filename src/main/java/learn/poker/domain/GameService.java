@@ -57,6 +57,11 @@ public class GameService {
             return result;
         }
 
+        if(game.getPlayers() == null || game.getPlayers().size() < 1) {
+            result.addMessage("Cannot update a game with no players", ResultType.INVALID);
+            return result;
+        }
+
         boolean updated = repository.update(game);
         if (!updated) {
             result.addMessage("Game doesn't exist", ResultType.NOT_FOUND);
@@ -99,6 +104,37 @@ public class GameService {
         }
     }
 
+    public Result<Room> addPlayer(Room room) {
+        Result<Room> result = new Result<>();
+
+        if(room.getGame() == null || room.getGame().getPlayers().isEmpty()){
+            result.addMessage("Cannot add empty players to game", ResultType.INVALID);
+            return result;
+        }
+
+        List<Player> players = room.getGame().getPlayers();
+
+        Game game = findById(room.getGame().getGameId());
+
+        game.setPlayers(players);
+
+        Result<Game> gameResult = update(game);
+        if (!gameResult.isSuccess()){
+            result.addMessage("Was unable to update the game after adding new players", ResultType.INVALID);
+            return result;
+        }
+
+        Game updatedGame = findById(game.getGameId());
+        room.setGame(updatedGame);
+
+        Result roomUpdateResult = roomService.update(room);
+        if (!roomUpdateResult.isSuccess()){
+            result.addMessage("Was unable to update room after updating game");
+        }
+        result.setPayload(room);
+        return result;
+    }
+
     public Result<Room> endGame(Room room, Player winner) {
         /**
          * when a player leaves the room in the middle of a game
@@ -127,7 +163,7 @@ public class GameService {
          */
 
         //if room_count is less than 2
-        //just end the game -- 
+        //just end the game --
 
         Result<Room> roomResult = new Result<>();
 
