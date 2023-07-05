@@ -6,6 +6,9 @@ import learn.poker.models.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 @Service
 public class GameService {
 
@@ -239,6 +242,7 @@ public class GameService {
         Player opponent = game.getPlayers().stream().filter(player -> !player.isPlayersAction()).findFirst().orElse(null);
         double bet = game.getBetAmount();
 
+        // Fold
         if (action.equals(Action.FOLD)) {
             String winner = null;
             for (Player player : game.getPlayers()){
@@ -255,20 +259,24 @@ public class GameService {
             return roomResult;
         }
 
-        boolean isTerminal = (lastAction.equals(Action.RAISE) || lastAction.equals(Action.BET)) && action.equals(Action.CALL);
+        boolean isTerminal = ((lastAction.equals(Action.RAISE)
+                || lastAction.equals(Action.BET))
+                && action.equals(Action.CALL)
+                || lastAction.equals(Action.CHECK)
+                && action.equals(Action.CHECK)
+                && currentPlayer.getPosition().equals(Position.BIGBLIND));
 
+        // Final showdown
         if ((game.getBoard() != null
                 && game.getBoard().getRiver() != null
-                && isTerminal)
-                || (lastAction.equals(Action.CHECK)
-                && action.equals(Action.CHECK)
-                && currentPlayer.getPosition().equals(Position.BIGBLIND))) {
-            String winner = winnerService.determineWinner(room);
-            Player winningPlayer = game.getPlayers().stream().filter(p -> p.getUsername() == winner).findFirst().orElse(null);
-            Player losingPlayer = game.getPlayers().stream().filter(p -> p.getUsername() != winner).findFirst().orElse(null);
+                && isTerminal)) {
+            Player winner = winnerService.determineWinner(room);
+            Player winningPlayer = game.getPlayers().stream().filter(p -> Objects.equals(p.getUsername(), winner.getUsername())).findFirst().orElse(null);
+            Player losingPlayer = game.getPlayers().stream().filter(p -> !Objects.equals(p.getUsername(), winner.getUsername())).findFirst().orElse(null);
             if (winningPlayer != null && losingPlayer != null) {
                 winningPlayer.setAccountBalance(winningPlayer.getAccountBalance() + game.getPot());
                 game.setLastAction(action);
+                game.setWinner(winningPlayer.getUsername());
                 setGameState(room, game, List.of(winningPlayer, losingPlayer));
                 roomResult.setPayload(room);
                 return roomResult;
@@ -276,7 +284,7 @@ public class GameService {
 
         }
 
-        // raise (also includes special case of small blind opening, which is the one time calling does not end round)
+        // Any raise, or Small Blind open Call
         if ((lastAction.equals(Action.NONE) && currentPlayer.getPosition().equals(Position.SMALLBLIND) && (action.equals(Action.CALL) || action.equals(Action.RAISE)))
                 || ((lastAction.equals(Action.RAISE) || lastAction.equals(Action.BET) || lastAction.equals(Action.CHECK)) && action.equals(Action.RAISE))) {
             if(currentPlayer.getPosition().equals(Position.SMALLBLIND)){
@@ -293,8 +301,20 @@ public class GameService {
             return roomResult;
         }
 
-        // big blind check behind (terminal action)
-        if (lastAction.equals(Action.CALL) && currentPlayer.getPosition().equals(Position.BIGBLIND) && action.equals(Action.CHECK)) {
+        // Small Blind open Check
+        if ((lastAction.equals(Action.CHECK) || lastAction.equals(Action.CALL))
+                && currentPlayer.getPosition().equals(Position.SMALLBLIND)){
+            currentPlayer.setPlayersAction(false);
+            opponent.setPlayersAction(true);
+            game.setLastAction(action);
+            setGameState(room, game, List.of(currentPlayer, opponent));
+            roomResult.setPayload(room);
+            return roomResult;
+        }
+
+        // Big Blind Checks behind a Call (terminal)
+        if ((lastAction.equals(Action.CALL) || lastAction.equals(Action.CHECK))
+                && currentPlayer.getPosition().equals(Position.BIGBLIND) && action.equals(Action.CHECK)) {
             currentPlayer.setPlayersAction(false);
             opponent.setPlayersAction(true);
             game.setLastAction(action);
@@ -303,7 +323,7 @@ public class GameService {
             return roomResult;
         }
 
-        // call behind (terminal action)
+        // Any Call behind a Raise (terminal)
         if (isTerminal) {
             currentPlayer.setAccountBalance(currentPlayer.getAccountBalance() - bet);
             game.setPot(game.getPot() + bet);
