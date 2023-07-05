@@ -248,6 +248,7 @@ public class GameService {
             for (Player player : game.getPlayers()){
                 if (!player.isPlayersAction()) {
                     winner = player.getUsername();
+                    room.getGame().setWinner(winner);
                     resetState(room, player);
                 }
             }
@@ -275,9 +276,11 @@ public class GameService {
             Player losingPlayer = game.getPlayers().stream().filter(p -> !Objects.equals(p.getUsername(), winner.getUsername())).findFirst().orElse(null);
             if (winningPlayer != null && losingPlayer != null) {
                 winningPlayer.setAccountBalance(winningPlayer.getAccountBalance() + game.getPot());
+                game.setPot(0);
                 game.setLastAction(action);
                 game.setWinner(winningPlayer.getUsername());
-                setGameState(room, game, List.of(winningPlayer, losingPlayer));
+                startNextHand(room, game, List.of(winningPlayer, losingPlayer));
+//                setGameState(room, game, List.of(winningPlayer, losingPlayer));
                 roomResult.setPayload(room);
                 return roomResult;
             }
@@ -285,9 +288,10 @@ public class GameService {
         }
 
         // Any raise, or Small Blind open Call
-        if ((lastAction.equals(Action.NONE) && currentPlayer.getPosition().equals(Position.SMALLBLIND) && (action.equals(Action.CALL) || action.equals(Action.RAISE)))
-                || ((lastAction.equals(Action.RAISE) || lastAction.equals(Action.BET) || lastAction.equals(Action.CHECK)) && action.equals(Action.RAISE))) {
-            if(currentPlayer.getPosition().equals(Position.SMALLBLIND)){
+        if ((lastAction.equals(Action.NONE) && currentPlayer.getPosition().equals(Position.SMALLBLIND) && (action.equals(Action.CALL)))
+                || action.equals(Action.RAISE) || action.equals(Action.BET)) {
+
+            if(currentPlayer.getPosition().equals(Position.SMALLBLIND) && lastAction.equals(Action.NONE)){
                 bet = room.getStake() / 2;
             }
 
@@ -338,6 +342,55 @@ public class GameService {
         return roomResult;
     }
 
+    private Result<Room> startNextHand(Room room, Game game, List<Player> players){
+        Result<Room> roomResult = new Result<>();
+        game.setLastAction(Action.NONE);
+        double smallBlind = room.getStake()/2;
+        double bigBlind = room.getStake();
+
+        Player currentPlayer = players.stream().filter(Player::isPlayersAction).findFirst().orElse(null);
+        Player opponent = players.stream().filter(player -> !player.isPlayersAction()).findFirst().orElse(null);
+
+        Position nextPosition = currentPlayer.getPosition() == Position.SMALLBLIND ? Position.BIGBLIND : Position.SMALLBLIND;
+        Position opponentsNextPosition = opponent.getPosition() == Position.SMALLBLIND ? Position.BIGBLIND : Position.SMALLBLIND;
+
+        currentPlayer.setPosition(nextPosition);
+        currentPlayer.setPlayersAction(false);
+
+        opponent.setPosition(opponentsNextPosition);
+        opponent.setPlayersAction(true);
+
+        if(currentPlayer.getAccountBalance() <= 0 || opponent.getAccountBalance() <= 0){
+            roomResult.addMessage("Account Balance must be greater than 0 to start game.", ResultType.INVALID);
+            return roomResult;
+        }
+
+        double nextBlind = currentPlayer.getPosition() == Position.SMALLBLIND ? smallBlind : bigBlind;
+        double opponentsNextBlind = currentPlayer.getPosition() == Position.SMALLBLIND ? smallBlind : bigBlind;
+
+        currentPlayer.setAccountBalance(currentPlayer.getAccountBalance() - nextBlind);
+        opponent.setAccountBalance(opponent.getAccountBalance() - opponentsNextBlind);
+        game.setPot(smallBlind + bigBlind);
+
+        Deck deck = deckService.drawCards(4);
+        List<PokerApiCard> playerCards = deck.getCards();
+
+        List<Card> cards = playerCards.stream().map(pokerApiCard -> {
+            String code = pokerApiCard.getCode();
+            return Card.getCardFromAbbreviation(code);
+        }).toList();
+
+        currentPlayer.setHoleCards(cards.subList(0,2));
+        opponent.setHoleCards(cards.subList(2,4));
+
+        playerService.update(currentPlayer);
+        playerService.update(opponent);
+
+        setGameState(room, game, List.of(currentPlayer, opponent));
+        roomResult.setPayload(room);
+        return roomResult;
+    }
+
     private void resetState(Room room, Player winner){
         Game game = room.getGame();
         winner.setAccountBalance(winner.getAccountBalance() + game.getPot());
@@ -369,7 +422,8 @@ public class GameService {
             player2.setPosition(Position.BIGBLIND);
         }
 
-        deckService.shuffle();
+        // TODO throws connection refused error
+//        deckService.shuffle();
 
         setGameState(room, game, List.of(player1, player2));
     }
