@@ -106,7 +106,7 @@ public class PlayerJdbcTemplateRepository implements PlayerRepository {
         if (player.getPosition() != null) {
             stringifiedPosition = player.getPosition().toString();
         }
-        
+
         final String position = stringifiedPosition;
 
         int rowsReturned = jdbcTemplate.update(sql,
