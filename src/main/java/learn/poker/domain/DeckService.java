@@ -25,6 +25,15 @@ public class DeckService {
                 .block();
     }
 
+    public Deck shuffle() {
+        String deckId = getDeckId().getDeck_id();
+        return client.build().get()
+                .uri(String.format("/%s/shuffle/", api_url, deckId)).accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(Deck.class)
+                .block();
+    }
+
     private Deck getDeckId() {
         return client.build().get()
                 .uri(api_url + "/new/shuffle/?deck_count=1").accept(MediaType.APPLICATION_JSON)
@@ -32,7 +41,5 @@ public class DeckService {
                 .bodyToMono(Deck.class)
                 .block();
     }
-
-//    private Deck shuffle()
 
 }

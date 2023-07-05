@@ -13,14 +13,15 @@ public class GameService {
     private final RoomService roomService;
     private final DeckService deckService;
     private final PlayerService playerService;
-
+    private final WinnerService winnerService;
     private final RoomRepository roomRepository;
 
-    public GameService(GameRepository repository, RoomService roomService, DeckService deckService, PlayerService playerService, RoomRepository roomRepository) {
+    public GameService(GameRepository repository, RoomService roomService, DeckService deckService, PlayerService playerService, WinnerService winnerService, RoomRepository roomRepository) {
         this.repository = repository;
         this.roomService = roomService;
         this.deckService = deckService;
         this.playerService = playerService;
+        this.winnerService = winnerService;
         this.roomRepository = roomRepository;
     }
 
@@ -267,7 +268,16 @@ public class GameService {
         if (game.getBoard().getRiver() != null
                 && isTerminalCall
                 || lastAction.equals(Action.CHECK) && action.equals(Action.CHECK)) {
-// TODO            winnerService.determineWinner(game);
+            String winner = winnerService.determineWinner(room);
+            Player winningPlayer = game.getPlayers().stream().filter(p -> p.getUsername() == winner).findFirst().orElse(null);
+            Player losingPlayer = game.getPlayers().stream().filter(p -> p.getUsername() != winner).findFirst().orElse(null);
+            if (winningPlayer != null && losingPlayer != null) {
+                winningPlayer.setAccountBalance(winningPlayer.getAccountBalance() + game.getPot());
+                setGameState(room, game, List.of(winningPlayer, losingPlayer));
+                roomResult.setPayload(room);
+                return roomResult;
+            }
+
         }
 
         // raise (also includes special case of small blind opening, which is the one time calling does not end round)
@@ -337,7 +347,7 @@ public class GameService {
             player2.setPosition(Position.BIGBLIND);
         }
 
-// TODO        deckService.shuffle();
+        deckService.shuffle();
 
         setGameState(room, game, List.of(player1, player2));
     }
@@ -376,27 +386,22 @@ public class GameService {
         }
     }
 
-    private void setGameState(Room room, Game game, List<Player> players){
+    private Result<Room> setGameState(Room room, Game game, List<Player> players){
+        Result<Room> roomResult = new Result<>();
         game.setPlayers(players);
         Result<Game> gameResult = update(game);
 
         if (!gameResult.isSuccess()) {
-            // TODO error
+            roomResult.addMessage("An error occurred when updating the game", ResultType.INVALID);
+            return roomResult;
         }
 
         room.setGame(game);
-        roomService.update(room);
+        roomResult = roomService.update(room);
+        if (!roomResult.isSuccess()){
+            roomResult.addMessage("An error occured when updating the room", ResultType.INVALID);
+            return roomResult;
+        }
+        return roomResult;
     }
-
-    /**
-     *
-
-     /////////////////// UI layer rendering logic
-     if lastAction == CHECK && my playersAction == true
-     render BET/CHECK/FOLD
-
-     if lastAction == BET || RAISE && my playersAction == true
-     render CALL/RAISE/FOLD
-     */
-
 }
