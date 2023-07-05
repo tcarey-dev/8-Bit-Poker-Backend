@@ -2,5 +2,6 @@ package learn.poker.models;
 
 public enum Position {
     SMALLBLIND,
-    BIGBLIND
+    BIGBLIND,
+    EMPTY
 }
