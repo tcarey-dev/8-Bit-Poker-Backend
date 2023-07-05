@@ -6,12 +6,14 @@ public class Room {
     private double stake;
     private int seats;
     private int playerCount;
+    private String deckId;
     private Game game;
 
-    public Room(int roomId, double stake, int seats, Game game) {
+    public Room(int roomId, double stake, int seats, String deckId, Game game) {
         this.roomId = roomId;
         this.stake = stake;
         this.seats = seats;
+        this.deckId = deckId;
         this.game = game;
     }
 
@@ -55,6 +57,14 @@ public class Room {
 
     public void setPlayerCount(int playerCount) {
         this.playerCount = playerCount;
+    }
+
+    public String getDeckId() {
+        return deckId;
+    }
+
+    public void setDeckId(String deckId) {
+        this.deckId = deckId;
     }
 
     @Override

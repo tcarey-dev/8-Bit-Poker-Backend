@@ -47,6 +47,7 @@ create table room (
     stake double null,
     seats int null,
     player_count int null,
+    deck_id varchar(50) null,
     game_id int null,
 	constraint fk_room_game_id
 		foreign key (game_id)
@@ -124,13 +125,13 @@ begin
         (2, 250, 'fred@astair.com', null, 'FOLD', 2, 3, 4),
         (3, 300, 'john@smith.com', null, 'CHECK', 1, 5, 6);
 	 
-	 insert into room (room_id, stake, seats, game_id) 
+	 insert into room (room_id, stake, seats, deck_id, game_id) 
 		values 
-		(1, 0.25, 2, 2),
-        (2, 0.5, 2, 3),
-        (3, 0.75, 2, 1),
-        (4, 2.00, 2, null),
-		(5, 4.00, 2, null);
+		(1, 0.25, 2, 'dflkj43', 2),
+        (2, 0.5, 2, null, 3),
+        (3, 0.75, 2, null, 1),
+        (4, 2.00, 2, null, null),
+		(5, 4.00, 2, null, null);
 	
     set sql_safe_updates = 1;
     

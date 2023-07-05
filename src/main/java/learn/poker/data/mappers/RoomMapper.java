@@ -14,6 +14,11 @@ public class RoomMapper implements RowMapper<Room> {
         room.setStake(rs.getDouble("stake"));
         room.setSeats(rs.getInt("seats"));
         room.setPlayerCount(rs.getInt("player_count"));
+
+        String deckId = rs.getString("deck_id");
+        if (deckId != null) {
+            room.setDeckId(deckId);
+        }
         return room;
     }
 }

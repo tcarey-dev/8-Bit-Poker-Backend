@@ -31,6 +31,7 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
        final String sql = "select room_id," +
                 " stake," +
                 " seats," +
+                " deck_id," +
                 " player_count" +
                 " from room;";
 
@@ -49,6 +50,7 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
                 " stake," +
                 " seats," +
                 " player_count," +
+                " deck_id," +
                 " game_id" +
                 " from room" +
                 " where room_id = ?;";
@@ -92,6 +94,7 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
                     "stake = ?, " +
                     "seats = ?, " +
                     "player_count = ?, " +
+                    "deck_id = ?, " +
                     "game_id = ? " +
                     "where room_id = ?;";
 
@@ -99,6 +102,7 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
                     room.getStake(),
                     room.getSeats(),
                     room.getPlayerCount(),
+                    room.getDeckId(),
                     room.getGame().getGameId(),
                     room.getRoomId());
 
@@ -108,12 +112,14 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
                     "stake = ?, " +
                     "seats = ?, " +
                     "player_count = ? " +
+                    "deck_id = ?, " +
                     "where room_id = ?;";
 
             int rowsUpdated = jdbcTemplate.update(sql,
                     room.getStake(),
                     room.getSeats(),
                     room.getPlayerCount(),
+                    room.getDeckId(),
                     room.getRoomId());
 
             return rowsUpdated > 0;
