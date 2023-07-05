@@ -35,10 +35,10 @@ public class GameServiceGameLogicTest {
 
     @Test
     void shouldInitGame(){
-        Room room = new Room(4, 2, 2, null);
+        Room room = new Room(4, 2, 2, deckId, null);
         Game game = new Game(0, 0, null, 0, null, null, null);
         Game expectedGame = new Game(4, 0, null, 0, null, null, null);
-        Room expectedRoom = new Room(4, 2, 2, expectedGame);
+        Room expectedRoom = new Room(4, 2, 2, deckId, expectedGame);
 
         when(gameRepository.create(game)).thenReturn(expectedGame);
         when(roomRepository.update(expectedRoom)).thenReturn(true);
@@ -53,7 +53,7 @@ public class GameServiceGameLogicTest {
     // init
     @Test
     void shouldNotInitNonExistingRoom(){
-        Room room = new Room(9999, 2, 2, null);
+        Room room = new Room(9999, 2, 2, deckId, null);
 
         Result<Room> result = gameService.init(room);
 
@@ -79,7 +79,7 @@ public class GameServiceGameLogicTest {
         game.setBoard(board);
         game.setPlayers(List.of(player1));
 
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         when(gameRepository.update(game)).thenReturn(true);
         when(roomRepository.update(room)).thenReturn(true);
@@ -106,7 +106,7 @@ public class GameServiceGameLogicTest {
         game.setBoard(board);
         game.setPlayers(List.of(player1, player2));
 
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         when(gameRepository.update(game)).thenReturn(true);
         when(roomRepository.update(room)).thenReturn(true);
@@ -139,7 +139,7 @@ public class GameServiceGameLogicTest {
         game.setBoard(board);
         game.setPlayers(List.of(player1, player2));
 
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         Result<Room> result = gameService.start(room);
 
@@ -159,7 +159,7 @@ public class GameServiceGameLogicTest {
         game.setBoard(board);
         game.setPlayers(List.of(player1));
 
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         Result<Room> result = gameService.start(room);
 
@@ -192,7 +192,7 @@ public class GameServiceGameLogicTest {
         expectedGame.setBoard(null);
         expectedGame.setPlayers(List.of(player1, player2));
 
-        Room room = new Room(4, 2, 2, expectedGame);
+        Room room = new Room(4, 2, 2, deckId, expectedGame);
 
         when(gameRepository.update(game)).thenReturn(true);
         when(roomRepository.update(room)).thenReturn(true);
@@ -221,7 +221,7 @@ public class GameServiceGameLogicTest {
         expectedGame.setBoard(null);
         expectedGame.setPlayers(List.of(player1, player2));
 
-        Room room = new Room(4, 2, 2, expectedGame);
+        Room room = new Room(4, 2, 2, deckId, expectedGame);
 
         when(playerRepository.create(player1)).thenReturn(player1);
         when(playerRepository.create(player2)).thenReturn(player2);
@@ -252,7 +252,7 @@ public class GameServiceGameLogicTest {
         expectedGame.setBoard(null);
         expectedGame.setPlayers(List.of(player1, player2));
 
-        Room room = new Room(4, 2, 2, expectedGame);
+        Room room = new Room(4, 2, 2, deckId, expectedGame);
 
         when(playerRepository.create(player1)).thenReturn(player1);
         when(playerRepository.create(player2)).thenReturn(player2);
@@ -283,7 +283,7 @@ public class GameServiceGameLogicTest {
         expectedGame.setBoard(null);
         expectedGame.setPlayers(List.of(player1, player2));
 
-        Room room = new Room(4, 2, 2, expectedGame);
+        Room room = new Room(4, 2, 2, deckId, expectedGame);
 
         when(playerRepository.create(player1)).thenReturn(player1);
         when(playerRepository.create(player2)).thenReturn(player2);
@@ -326,7 +326,7 @@ public class GameServiceGameLogicTest {
         expectedGame.setBoard(board);
         expectedGame.setPlayers(List.of(player1, player2));
 
-        Room room = new Room(4, 2, 2, expectedGame);
+        Room room = new Room(4, 2, 2, deckId, expectedGame);
 
         when(playerRepository.create(player1)).thenReturn(player1);
         when(playerRepository.create(player2)).thenReturn(player2);
@@ -359,11 +359,11 @@ public class GameServiceGameLogicTest {
         Board board = new Board(2, List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS, Card.EIGHT_OF_HEARTS), Card.KING_OF_HEARTS, Card.NINE_OF_DIAMONDS);
 
         Game game = new Game(4, 50, null, 5, Action.BET, board, players);
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         Game expectedGame = new Game(4, 0, "john@smith.com", 0, null, null, players);
 
-        Room expectedRoom = new Room(4, 2, 2, expectedGame);
+        Room expectedRoom = new Room(4, 2, 2, deckId, expectedGame);
 
         when(gameRepository.update(expectedGame)).thenReturn(true);
         when(roomRepository.update(expectedRoom)).thenReturn(true);
@@ -392,11 +392,11 @@ public class GameServiceGameLogicTest {
         Board board = new Board(2, List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS, Card.EIGHT_OF_HEARTS), Card.KING_OF_HEARTS, Card.NINE_OF_DIAMONDS);
 
         Game game = new Game(4, 50, null, 5, Action.BET, board, players);
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         Game expectedGame = new Game(4, 0, "john@smith.com", 0, null, null, players);
 
-        Room expectedRoom = new Room(4, 2, 2, expectedGame);
+        Room expectedRoom = new Room(4, 2, 2, deckId, expectedGame);
 
         when(gameRepository.update(expectedGame)).thenReturn(true);
         when(roomRepository.update(expectedRoom)).thenReturn(true);
@@ -425,11 +425,11 @@ public class GameServiceGameLogicTest {
         Board board = new Board(2, List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS, Card.EIGHT_OF_HEARTS), Card.KING_OF_HEARTS, Card.NINE_OF_DIAMONDS);
 
         Game game = new Game(4, 50, "john@smith.com", 5, Action.BET, board, players);
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         Game expectedGame = new Game(4, 0, "john@smith.com", 0, null, null, players);
 
-        Room expectedRoom = new Room(4, 2, 2, expectedGame);
+        Room expectedRoom = new Room(4, 2, 2, deckId, expectedGame);
 
         when(gameRepository.update(expectedGame)).thenReturn(true);
         when(roomRepository.update(expectedRoom)).thenReturn(true);
@@ -459,11 +459,11 @@ public class GameServiceGameLogicTest {
         Board board = new Board(2, List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS, Card.EIGHT_OF_HEARTS), Card.KING_OF_HEARTS, Card.NINE_OF_DIAMONDS);
 
         Game game = new Game(4, 50, null, 5, Action.BET, board, players);
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         Game expectedGame = new Game(4, 0, "john@smith.com", 0, null, null, players);
 
-        Room expectedRoom = new Room(4, 2, 2, expectedGame);
+        Room expectedRoom = new Room(4, 2, 2, deckId, expectedGame);
 
         when(gameRepository.update(expectedGame)).thenReturn(true);
         when(roomRepository.update(expectedRoom)).thenReturn(true);
@@ -492,11 +492,11 @@ public class GameServiceGameLogicTest {
         Board board = new Board(2, List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS, Card.EIGHT_OF_HEARTS), Card.KING_OF_HEARTS, Card.NINE_OF_DIAMONDS);
 
         Game game = new Game(4, 50, null, 5, Action.BET, board, players);
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         Game expectedGame = new Game(4, 0, "john@smith.com", 0, null, null, players);
 
-        Room expectedRoom = new Room(4, 2, 2, expectedGame);
+        Room expectedRoom = new Room(4, 2, 2, deckId, expectedGame);
 
         when(gameRepository.update(expectedGame)).thenReturn(true);
         when(roomRepository.update(expectedRoom)).thenReturn(true);
@@ -528,11 +528,11 @@ public class GameServiceGameLogicTest {
         Board board = new Board(2, List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS, Card.EIGHT_OF_HEARTS), Card.KING_OF_HEARTS, Card.NINE_OF_DIAMONDS);
 
         Game game = new Game(4, 50, null, 5, Action.BET, board, players);
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         Game expectedGame = new Game(4, 0, "john@smith.com", 0, null, null, players);
 
-        Room expectedRoom = new Room(4, 2, 2, expectedGame);
+        Room expectedRoom = new Room(4, 2, 2, deckId, expectedGame);
 
         when(gameRepository.update(expectedGame)).thenReturn(true);
         when(roomRepository.update(expectedRoom)).thenReturn(true);
@@ -562,11 +562,11 @@ public class GameServiceGameLogicTest {
         Board board = new Board(2, List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS, Card.EIGHT_OF_HEARTS), Card.KING_OF_HEARTS, Card.NINE_OF_DIAMONDS);
 
         Game game = new Game(4, 50, null, 5, Action.BET, board, players);
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         Game expectedGame = new Game(4, 0, "john@smith.com", 0, null, null, players);
 
-        Room expectedRoom = new Room(4, 2, 2, expectedGame);
+        Room expectedRoom = new Room(4, 2, 2, deckId, expectedGame);
 
         when(gameRepository.update(expectedGame)).thenReturn(true);
         when(roomRepository.update(expectedRoom)).thenReturn(true);
@@ -599,11 +599,11 @@ public class GameServiceGameLogicTest {
         Board board = new Board(2, List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS, Card.EIGHT_OF_HEARTS), Card.KING_OF_HEARTS, Card.NINE_OF_DIAMONDS);
 
         Game game = new Game(4, 50, null, 5, Action.BET, board, players);
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         Game expectedGame = new Game(4, 0, "john@smith.com", 0, null, null, players);
 
-        Room expectedRoom = new Room(4, 2, 2, expectedGame);
+        Room expectedRoom = new Room(4, 2, 2, deckId, expectedGame);
 
         when(gameRepository.update(expectedGame)).thenReturn(true);
         when(roomRepository.update(expectedRoom)).thenReturn(true);
@@ -638,11 +638,11 @@ public class GameServiceGameLogicTest {
         Board board = new Board(2, List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS, Card.EIGHT_OF_HEARTS), Card.KING_OF_HEARTS, Card.NINE_OF_DIAMONDS);
 
         Game game = new Game(4, 50, null, 5, Action.RAISE, board, players);
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         Game expectedGame = new Game(4, 0, "john@smith.com", 0, Action.RAISE, null, players);
 
-        Room expectedRoom = new Room(4, 2, 2, expectedGame);
+        Room expectedRoom = new Room(4, 2, 2, deckId, expectedGame);
 
         when(gameRepository.update(expectedGame)).thenReturn(true);
         when(roomRepository.update(expectedRoom)).thenReturn(true);
@@ -678,11 +678,11 @@ public class GameServiceGameLogicTest {
         Board board = new Board(2, List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS, Card.EIGHT_OF_HEARTS), Card.KING_OF_HEARTS, Card.NINE_OF_DIAMONDS);
 
         Game game = new Game(4, 50, null, 5, Action.RAISE, board, players);
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         Game expectedGame = new Game(4, 0, "john@smith.com", 0, null, null, players);
 
-        Room expectedRoom = new Room(4, 2, 2, expectedGame);
+        Room expectedRoom = new Room(4, 2, 2, deckId, expectedGame);
 
         when(gameRepository.update(expectedGame)).thenReturn(true);
         when(roomRepository.update(expectedRoom)).thenReturn(true);
@@ -720,11 +720,11 @@ public class GameServiceGameLogicTest {
         Board board = new Board(2, List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS, Card.EIGHT_OF_HEARTS), Card.KING_OF_HEARTS, Card.NINE_OF_DIAMONDS);
 
         Game game = new Game(4, 50, null, 5, Action.CHECK, board, players);
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         Game expectedGame = new Game(4, 0, "john@smith.com", 0, Action.CHECK, null, players);
 
-        Room expectedRoom = new Room(4, 2, 2, expectedGame);
+        Room expectedRoom = new Room(4, 2, 2, deckId, expectedGame);
 
         when(gameRepository.update(expectedGame)).thenReturn(true);
         when(roomRepository.update(expectedRoom)).thenReturn(true);
@@ -760,11 +760,11 @@ public class GameServiceGameLogicTest {
         Board board = new Board(2, List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS, Card.EIGHT_OF_HEARTS), Card.KING_OF_HEARTS, Card.NINE_OF_DIAMONDS);
 
         Game game = new Game(4, 50, null, 5, Action.NONE, board, players);
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         Game expectedGame = new Game(4, 0, "john@smith.com", 0, Action.NONE, null, players);
 
-        Room expectedRoom = new Room(4, 2, 2, expectedGame);
+        Room expectedRoom = new Room(4, 2, 2, deckId, expectedGame);
 
         when(gameRepository.update(expectedGame)).thenReturn(true);
         when(roomRepository.update(expectedRoom)).thenReturn(true);
@@ -801,11 +801,11 @@ public class GameServiceGameLogicTest {
         Board board = new Board(2, List.of(Card.ACE_OF_CLUBS, Card.FIVE_OF_DIAMONDS, Card.EIGHT_OF_HEARTS), Card.KING_OF_HEARTS, Card.NINE_OF_DIAMONDS);
 
         Game game = new Game(4, 50, null, 5, Action.RAISE, board, players);
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         Game expectedGame = new Game(4, 0, "john@smith.com", 0, null, null, players);
 
-        Room expectedRoom = new Room(4, 2, 2, expectedGame);
+        Room expectedRoom = new Room(4, 2, 2, deckId, expectedGame);
 
         when(gameRepository.update(expectedGame)).thenReturn(true);
         when(roomRepository.update(expectedRoom)).thenReturn(true);
@@ -836,7 +836,7 @@ public class GameServiceGameLogicTest {
         game.setBoard(null);
         game.setPlayers(List.of(player1, player2));
 
-        Room room = new Room(4, 2, 2, game);
+        Room room = new Room(4, 2, 2, deckId, game);
 
         when(gameRepository.delete(game.getGameId())).thenReturn(true);
 
@@ -868,7 +868,7 @@ public class GameServiceGameLogicTest {
         game.setBoard(null);
         game.setPlayers(List.of(player1, player2));
 
-        Room room = new Room(4, 2, 2, null);
+        Room room = new Room(4, 2, 2, deckId, null);
 
         when(gameRepository.delete(game.getGameId())).thenReturn(true);
         when(gameRepository.update(game)).thenReturn(true);

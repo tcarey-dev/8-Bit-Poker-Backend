@@ -31,9 +31,9 @@ public class RoomServiceTest {
         Game game3 = new Game();
 
         when(repository.findAll()).thenReturn(List.of(
-                new Room(1, 0.25, 2, game1),
-                new Room(2, 0.5,2, game2),
-                new Room(3, 0.75, 2, game3)
+                new Room(1, 0.25, 2, deckId, game1),
+                new Room(2, 0.5,2, deckId, game2),
+                new Room(3, 0.75, 2, deckId, game3)
         ));
 
         List<Room> rooms = service.findAll();

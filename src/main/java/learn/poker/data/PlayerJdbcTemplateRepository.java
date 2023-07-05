@@ -90,14 +90,24 @@ public class PlayerJdbcTemplateRepository implements PlayerRepository {
                 where player_id = ?
                 """;
 
-        List<String> cards = player.getHoleCards().stream().map(Card::getAbbr).toList();
-        String serialized = "";
-        for (String card : cards){
-            serialized += card + ",";
+        String serializedCards = "";
+        if (player.getHoleCards() != null){
+            List<String> cards = player.getHoleCards().stream().map(Card::getAbbr).toList();
+            String serialized = "";
+            for (String card : cards){
+                serialized += card + ",";
+            }
+            serializedCards = serialized.substring(0, serialized.length() -1);
         }
-        final String holeCards = serialized.substring(0, serialized.length() -1);
+        final String holeCards = serializedCards;
 
-        final String position = player.getPosition().toString();
+
+        String stringifiedPosition = "";
+        if (player.getPosition() != null) {
+            stringifiedPosition = player.getPosition().toString();
+        }
+        
+        final String position = stringifiedPosition;
 
         int rowsReturned = jdbcTemplate.update(sql,
                 player.getUsername(),
