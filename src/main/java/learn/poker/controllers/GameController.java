@@ -81,7 +81,7 @@ public class GameController {
         if (roomResult.isSuccess()) {
             return roomResult.getPayload();
         } else {
-            return null; // TODO
+            throw new RuntimeException("Check failed.");
         }
     }
 
@@ -92,7 +92,7 @@ public class GameController {
         if (roomResult.isSuccess()) {
             return roomResult.getPayload();
         } else {
-            return null; // TODO
+            throw new RuntimeException("Raise failed.");
         }
     }
 
@@ -103,7 +103,7 @@ public class GameController {
         if (roomResult.isSuccess()) {
             return roomResult.getPayload();
         } else {
-            return null; // TODO
+            throw new RuntimeException("Fold failed.");
         }
     }
 
@@ -114,21 +114,21 @@ public class GameController {
         if (roomResult.isSuccess()) {
             return roomResult.getPayload();
         } else {
-            return null; // TODO
+            throw new RuntimeException("Call failed.");
         }
     }
 
 
-//    @MessageMapping("/leave-game/{roomId}")
-//    @SendTo("/topic/game/{roomId}")
-//    public Room leaveGame(@DestinationVariable int roomId, Room room) {
-//        Result<Room> roomResult = gameService.leaveGame(room);
-//        if (roomResult.isSuccess()) {
-//            return roomResult.getPayload();
-//        } else {
-//            return null; // TODO
-//        }
-//    }
+    @MessageMapping("/leave-game/{roomId}")
+    @SendTo("/topic/game/{roomId}")
+    public Room leaveGame(@DestinationVariable int roomId, Room room) {
+        Result<Room> roomResult = gameService.leaveGame(room);
+        if (roomResult.isSuccess()) {
+            return roomResult.getPayload();
+        } else {
+            throw new RuntimeException("Something went wrong, unable to leave game.");
+        }
+    }
 
 
 
