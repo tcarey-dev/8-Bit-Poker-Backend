@@ -111,8 +111,8 @@ public class RoomJdbcTemplateRepository implements RoomRepository {
             final String sql = "update room set " +
                     "stake = ?, " +
                     "seats = ?, " +
-                    "player_count = ? " +
-                    "deck_id = ?, " +
+                    "player_count = ?, " +
+                    "deck_id = ? " +
                     "where room_id = ?;";
 
             int rowsUpdated = jdbcTemplate.update(sql,

@@ -48,8 +48,10 @@ public class PlayerMapper implements RowMapper<Player> {
         }
 
         String position = rs.getString("position");
-        if (position != null) {
+        if (position != null ) {
             player.setPosition(Position.valueOf(position));
+        }else{
+            player.setPosition(Position.EMPTY);
         }
 
         player.setPlayersAction(rs.getBoolean("is_player_action"));
