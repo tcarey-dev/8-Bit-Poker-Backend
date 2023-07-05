@@ -1,13 +1,11 @@
 package learn.poker.domain;
 
 import learn.poker.data.GameRepository;
-import learn.poker.data.RoomRepository;
 import learn.poker.models.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class GameService {
@@ -17,24 +15,17 @@ public class GameService {
     private final DeckService deckService;
     private final PlayerService playerService;
     private final WinnerService winnerService;
-    private final RoomRepository roomRepository;
 
-    public GameService(GameRepository repository, RoomService roomService, DeckService deckService, PlayerService playerService, WinnerService winnerService, RoomRepository roomRepository) {
+    public GameService(GameRepository repository, RoomService roomService, DeckService deckService, PlayerService playerService, WinnerService winnerService) {
         this.repository = repository;
         this.roomService = roomService;
         this.deckService = deckService;
         this.playerService = playerService;
         this.winnerService = winnerService;
-        this.roomRepository = roomRepository;
     }
 
     public Game findById(int gameId) {
         return repository.findById(gameId);
-    }
-
-    public Player getWinner(List<Player> players, Board board) {
-        //TODO call pokerApi to determine winner
-        return null;
     }
 
     public Result<Game> add(Game game) {
@@ -142,7 +133,7 @@ public class GameService {
         Game updatedGame = findById(game.getGameId());
         room.setGame(updatedGame);
 
-        Result roomUpdateResult = roomService.update(room);
+        Result<Room> roomUpdateResult = roomService.update(room);
         if (!roomUpdateResult.isSuccess()){
             result.addMessage("Was unable to update room after updating game");
         }
@@ -165,7 +156,7 @@ public class GameService {
         if(game.getPlayers().size() < 1) {
             if(!deleteById(room.getGame().getGameId())){
                 roomResult.addMessage("Sorry, unable to delete the game", ResultType.NOT_FOUND);
-            };
+            }
             room.setGame(null);
             roomResult.setPayload(room);
             return roomResult;
@@ -224,13 +215,7 @@ public class GameService {
         player2.setAccountBalance(player2.getAccountBalance() - bigBlind);
         game.setPot(smallBlind + bigBlind);
 
-        Deck deck = deckService.drawCards(4, room.getDeckId());
-        List<PokerApiCard> playerCards = deck.getCards();
-
-        List<Card> cards = playerCards.stream().map(pokerApiCard -> {
-            String code = pokerApiCard.getCode();
-            return Card.getCardFromAbbreviation(code);
-        }).toList();
+        List<Card> cards = deckService.drawCards(4, room);
 
         player1.setHoleCards(cards.subList(0,2));
         player2.setHoleCards(cards.subList(2,4));
@@ -355,55 +340,6 @@ public class GameService {
         return roomResult;
     }
 
-//    private Result<Room> startNextHand(Room room, Game game, List<Player> players){
-//        Result<Room> roomResult = new Result<>();
-//        game.setLastAction(Action.NONE);
-//        double smallBlind = room.getStake()/2;
-//        double bigBlind = room.getStake();
-//
-//        Player currentPlayer = players.stream().filter(Player::isPlayersAction).findFirst().orElse(null);
-//        Player opponent = players.stream().filter(player -> !player.isPlayersAction()).findFirst().orElse(null);
-//
-//        Position nextPosition = currentPlayer.getPosition() == Position.SMALLBLIND ? Position.BIGBLIND : Position.SMALLBLIND;
-//        Position opponentsNextPosition = opponent.getPosition() == Position.SMALLBLIND ? Position.BIGBLIND : Position.SMALLBLIND;
-//
-//        currentPlayer.setPosition(nextPosition);
-//        currentPlayer.setPlayersAction(false);
-//
-//        opponent.setPosition(opponentsNextPosition);
-//        opponent.setPlayersAction(true);
-//
-//        if(currentPlayer.getAccountBalance() <= 0 || opponent.getAccountBalance() <= 0){
-//            roomResult.addMessage("Account Balance must be greater than 0 to start game.", ResultType.INVALID);
-//            return roomResult;
-//        }
-//
-//        double nextBlind = currentPlayer.getPosition() == Position.SMALLBLIND ? smallBlind : bigBlind;
-//        double opponentsNextBlind = currentPlayer.getPosition() == Position.SMALLBLIND ? smallBlind : bigBlind;
-//
-//        currentPlayer.setAccountBalance(currentPlayer.getAccountBalance() - nextBlind);
-//        opponent.setAccountBalance(opponent.getAccountBalance() - opponentsNextBlind);
-//        game.setPot(smallBlind + bigBlind);
-//
-//        Deck deck = deckService.drawCards(4, room.getDeckId());
-//        List<PokerApiCard> playerCards = deck.getCards();
-//
-//        List<Card> cards = playerCards.stream().map(pokerApiCard -> {
-//            String code = pokerApiCard.getCode();
-//            return Card.getCardFromAbbreviation(code);
-//        }).toList();
-//
-//        currentPlayer.setHoleCards(cards.subList(0,2));
-//        opponent.setHoleCards(cards.subList(2,4));
-//
-//        playerService.update(currentPlayer);
-//        playerService.update(opponent);
-//
-//        setGameState(room, game, List.of(currentPlayer, opponent));
-//        roomResult.setPayload(room);
-//        return roomResult;
-//    }
-
     private void resetState(Room room, Player winner){
         Game game = room.getGame();
         winner.setAccountBalance(winner.getAccountBalance() + game.getPot());
@@ -445,13 +381,7 @@ public class GameService {
         Board board = game.getBoard();
 
         if (board == null || board.getFlop().isEmpty()) {
-            Deck apiCards = deckService.drawCards(3, deckService.getDeckId());
-            List<PokerApiCard> playerCards = apiCards.getCards();
-
-            List<Card> flop = playerCards.stream().map(pokerApiCard -> {
-                String code = pokerApiCard.getCode();
-                return Card.getCardFromAbbreviation(code);
-            }).toList();
+            List<Card> flop = deckService.drawCards(3, room);
 
             board = new Board();
             board.setFlop(flop);
@@ -459,16 +389,14 @@ public class GameService {
             setGameState(room, game, players);
 
         }else if (!board.getFlop().isEmpty() && board.getTurn() == null) {
-            Deck apiCard = deckService.drawCards(1, room.getDeckId());
-            Card turn = Card.getCardFromAbbreviation(apiCard.getCards().get(0).getCode());
+            Card turn = deckService.drawCards(1, room).get(0);
 
             board.setTurn(turn);
             game.setBoard(board);
             setGameState(room, game, players);
 
         }else if (board.getTurn() != null && board.getRiver() == null) {
-            Deck apiCard = deckService.drawCards(1, room.getDeckId());
-            Card river = Card.getCardFromAbbreviation(apiCard.getCards().get(0).getCode());
+            Card river = deckService.drawCards(1, room).get(0);
 
             board.setRiver(river);
             game.setBoard(board);
@@ -476,22 +404,20 @@ public class GameService {
         }
     }
 
-    private Result<Room> setGameState(Room room, Game game, List<Player> players){
+    private void setGameState(Room room, Game game, List<Player> players){
         Result<Room> roomResult = new Result<>();
         game.setPlayers(players);
         Result<Game> gameResult = update(game);
 
         if (!gameResult.isSuccess()) {
             roomResult.addMessage("An error occurred when updating the game", ResultType.INVALID);
-            return roomResult;
+            return;
         }
 
         room.setGame(game);
         roomResult = roomService.update(room);
         if (!roomResult.isSuccess()){
-            roomResult.addMessage("An error occured when updating the room", ResultType.INVALID);
-            return roomResult;
+            roomResult.addMessage("An error occurred when updating the room", ResultType.INVALID);
         }
-        return roomResult;
     }
 }
