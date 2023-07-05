@@ -4,6 +4,7 @@ import learn.poker.domain.GameService;
 import learn.poker.domain.Result;
 import learn.poker.domain.RoomService;
 import learn.poker.models.*;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -29,9 +30,9 @@ public class GameController {
         return "server exception: " + exception.getMessage();
     }
 
-    @MessageMapping("/init")
-    @SendTo("/topic/game")
-    public Room init(Room room) {
+    @MessageMapping("/init/{roomId}")
+    @SendTo("/topic/game/{roomId}")
+    public Room init(@DestinationVariable int roomId, Room room) {
         Result<Room> result = gameService.init(room);
         if (result.isSuccess()) {
             return result.getPayload();
@@ -40,9 +41,9 @@ public class GameController {
         }
     }
 
-    @MessageMapping("/add-players")
-    @SendTo("/topic/game")
-    public Room addPlayer(Room room) {
+    @MessageMapping("/add-players/{roomId}")
+    @SendTo("/topic/game/{roomId}")
+    public Room addPlayer(@DestinationVariable int roomId, Room room) {
         Result<Room> roomResult = gameService.addPlayer(room);
         if (roomResult.isSuccess()) {
             return room;
@@ -51,9 +52,9 @@ public class GameController {
         }
     }
 
-    @MessageMapping("/start-game")
-    @SendTo("/topic/game")
-    public Room startGame(Room room) {
+    @MessageMapping("/start-game/{roomId}")
+    @SendTo("/topic/game/{roomId}")
+    public Room startGame(@DestinationVariable int roomId, Room room) {
         Result<Room> roomResult = gameService.start(room);
         if (roomResult.isSuccess()) {
             return roomResult.getPayload();
@@ -62,9 +63,9 @@ public class GameController {
         }
     }
 
-    @MessageMapping("/bet")
-    @SendTo("/topic/game")
-    public Room bet(Room room) {
+    @MessageMapping("/bet/{roomId}")
+    @SendTo("/topic/game/{roomId}")
+    public Room bet(@DestinationVariable int roomId, Room room) {
         Result<Room> roomResult = gameService.handleAction(room, Action.BET);
         if (roomResult.isSuccess()) {
             return roomResult.getPayload();
@@ -73,9 +74,9 @@ public class GameController {
         }
     }
 
-    @MessageMapping("/check")
-    @SendTo("/topic/game")
-    public Room check(Room room) {
+    @MessageMapping("/check/{roomId}")
+    @SendTo("/topic/game/{roomId}")
+    public Room check(@DestinationVariable int roomId, Room room) {
         Result<Room> roomResult = gameService.handleAction(room, Action.CHECK);
         if (roomResult.isSuccess()) {
             return roomResult.getPayload();
@@ -84,9 +85,9 @@ public class GameController {
         }
     }
 
-    @MessageMapping("/raise")
-    @SendTo("/topic/game")
-    public Room raise(Room room) {
+    @MessageMapping("/raise/{roomId}")
+    @SendTo("/topic/game/{roomId}")
+    public Room raise(@DestinationVariable int roomId, Room room) {
         Result<Room> roomResult = gameService.handleAction(room, Action.RAISE);
         if (roomResult.isSuccess()) {
             return roomResult.getPayload();
@@ -95,9 +96,9 @@ public class GameController {
         }
     }
 
-    @MessageMapping("/fold")
-    @SendTo("/topic/game")
-    public Room fold(Room room) {
+    @MessageMapping("/fold/{roomId}")
+    @SendTo("/topic/game/{roomId}")
+    public Room fold(@DestinationVariable int roomId, Room room) {
         Result<Room> roomResult = gameService.handleAction(room, Action.FOLD);
         if (roomResult.isSuccess()) {
             return roomResult.getPayload();
@@ -106,9 +107,9 @@ public class GameController {
         }
     }
 
-    @MessageMapping("/call")
-    @SendTo("/topic/game")
-    public Room call(Room room) {
+    @MessageMapping("/call/{roomId}")
+    @SendTo("/topic/game/{roomId}")
+    public Room call(@DestinationVariable int roomId, Room room) {
         Result<Room> roomResult = gameService.handleAction(room, Action.CALL);
         if (roomResult.isSuccess()) {
             return roomResult.getPayload();
@@ -118,10 +119,10 @@ public class GameController {
     }
 
 
-//    @MessageMapping("/end-game")
-//    @SendTo("/topic/game")
-//    public Room endGame(Room room) {
-//        Result<Room> roomResult = gameService.end(room);
+//    @MessageMapping("/leave-game/{roomId}")
+//    @SendTo("/topic/game/{roomId}")
+//    public Room leaveGame(@DestinationVariable int roomId, Room room) {
+//        Result<Room> roomResult = gameService.leaveGame(room);
 //        if (roomResult.isSuccess()) {
 //            return roomResult.getPayload();
 //        } else {
