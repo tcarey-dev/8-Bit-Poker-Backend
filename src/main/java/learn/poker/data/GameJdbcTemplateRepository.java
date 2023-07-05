@@ -4,6 +4,7 @@ import learn.poker.data.mappers.BoardMapper;
 import learn.poker.data.mappers.GameMapper;
 import learn.poker.data.mappers.PlayerMapper;
 import learn.poker.models.Board;
+import learn.poker.models.Card;
 import learn.poker.models.Game;
 import learn.poker.models.Player;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class GameJdbcTemplateRepository implements GameRepository {
@@ -70,7 +72,17 @@ public class GameJdbcTemplateRepository implements GameRepository {
     @Override
     public boolean update(Game game) {
 
+        if (game.getBoard() != null) {
+            Board board = createBoard(game.getBoard());
+
+            if (board != null){
+                game.setBoard(board);
+            }
+        }
+
+
         if (game.getBoard() != null && game.getPlayers().size() == 2){
+
             final String sql = "update game set " +
                     "pot = ?, " +
                     "winner = ?, " +
@@ -180,6 +192,37 @@ public class GameJdbcTemplateRepository implements GameRepository {
     public boolean delete(int gameId) {
         jdbcTemplate.update("delete from room where game_id = ?;", gameId);
         return jdbcTemplate.update("delete from game where game_id = ?;", gameId) > 0;
+    }
+
+    private Board createBoard(Board board) {
+        final String sql = """
+                insert into board
+                	(flop, turn, river)
+                    values
+                    (?, ?, ?);
+                """;
+
+        String flop = board.getFlop().stream()
+                    .map(Card::getAbbr).collect(Collectors.joining(","));
+
+        String turn = board.getTurn() != null ? board.getTurn().getAbbr() : "";
+        String river = board.getRiver() != null ? board.getTurn().getAbbr() : "";
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        int rowsAffected = jdbcTemplate.update(con -> {
+            PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, flop);
+            ps.setString(2, turn);
+            ps.setString(3, river);
+            return ps;
+        }, keyHolder);
+
+        if (rowsAffected <= 0) {
+            return null;
+        }
+
+        board.setBoardId(keyHolder.getKey().intValue());
+        return board;
     }
 
     private void addBoard(Game game) {

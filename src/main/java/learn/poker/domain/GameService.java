@@ -249,21 +249,26 @@ public class GameService {
             }
             game = room.getGame();
             game.setWinner(winner);
+            game.setLastAction(action);
             setGameState(room, game, List.of(player1, player2));
             roomResult.setPayload(room);
             return roomResult;
         }
 
-        boolean isTerminalCall = (lastAction.equals(Action.RAISE) || lastAction.equals(Action.BET)) && action.equals(Action.CALL);
+        boolean isTerminal = (lastAction.equals(Action.RAISE) || lastAction.equals(Action.BET)) && action.equals(Action.CALL);
 
-        if (game.getBoard().getRiver() != null
-                && isTerminalCall
-                || lastAction.equals(Action.CHECK) && action.equals(Action.CHECK)) {
+        if ((game.getBoard() != null
+                && game.getBoard().getRiver() != null
+                && isTerminal)
+                || (lastAction.equals(Action.CHECK)
+                && action.equals(Action.CHECK)
+                && currentPlayer.getPosition().equals(Position.BIGBLIND))) {
             String winner = winnerService.determineWinner(room);
             Player winningPlayer = game.getPlayers().stream().filter(p -> p.getUsername() == winner).findFirst().orElse(null);
             Player losingPlayer = game.getPlayers().stream().filter(p -> p.getUsername() != winner).findFirst().orElse(null);
             if (winningPlayer != null && losingPlayer != null) {
                 winningPlayer.setAccountBalance(winningPlayer.getAccountBalance() + game.getPot());
+                game.setLastAction(action);
                 setGameState(room, game, List.of(winningPlayer, losingPlayer));
                 roomResult.setPayload(room);
                 return roomResult;
@@ -274,10 +279,15 @@ public class GameService {
         // raise (also includes special case of small blind opening, which is the one time calling does not end round)
         if ((lastAction.equals(Action.NONE) && currentPlayer.getPosition().equals(Position.SMALLBLIND) && (action.equals(Action.CALL) || action.equals(Action.RAISE)))
                 || ((lastAction.equals(Action.RAISE) || lastAction.equals(Action.BET) || lastAction.equals(Action.CHECK)) && action.equals(Action.RAISE))) {
+            if(currentPlayer.getPosition().equals(Position.SMALLBLIND)){
+                bet = room.getStake() / 2;
+            }
+
             currentPlayer.setAccountBalance(currentPlayer.getAccountBalance() - bet);
             game.setPot(game.getPot() + bet);
             currentPlayer.setPlayersAction(false);
             opponent.setPlayersAction(true);
+            game.setLastAction(action);
             setGameState(room, game, List.of(currentPlayer, opponent));
             roomResult.setPayload(room);
             return roomResult;
@@ -287,22 +297,23 @@ public class GameService {
         if (lastAction.equals(Action.CALL) && currentPlayer.getPosition().equals(Position.BIGBLIND) && action.equals(Action.CHECK)) {
             currentPlayer.setPlayersAction(false);
             opponent.setPlayersAction(true);
+            game.setLastAction(action);
             dealNext(room, game, List.of(currentPlayer, opponent));
             roomResult.setPayload(room);
             return roomResult;
         }
 
         // call behind (terminal action)
-        if (isTerminalCall) {
+        if (isTerminal) {
             currentPlayer.setAccountBalance(currentPlayer.getAccountBalance() - bet);
             game.setPot(game.getPot() + bet);
             currentPlayer.setPlayersAction(false);
             opponent.setPlayersAction(true);
+            game.setLastAction(action);
             dealNext(room, game, List.of(currentPlayer, opponent));
             roomResult.setPayload(room);
             return roomResult;
         }
-
 
         return roomResult;
     }
@@ -355,6 +366,7 @@ public class GameService {
                 return Card.getCardFromAbbreviation(code);
             }).toList();
 
+            board = new Board();
             board.setFlop(flop);
             game.setBoard(board);
             setGameState(room, game, players);
