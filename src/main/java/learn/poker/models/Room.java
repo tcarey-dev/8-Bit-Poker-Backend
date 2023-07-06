@@ -17,6 +17,13 @@ public class Room {
         this.game = game;
     }
 
+    public Room(int roomId, double stake, int seats, Game game) {
+        this.roomId = roomId;
+        this.stake = stake;
+        this.seats = seats;
+        this.game = game;
+    }
+
     public Room(){}
 
     public int getRoomId() {

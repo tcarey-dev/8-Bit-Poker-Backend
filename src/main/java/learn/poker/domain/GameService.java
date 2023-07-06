@@ -266,6 +266,7 @@ public class GameService {
         // Final showdown
         if ((game.getBoard() != null
                 && game.getBoard().getRiver() != null
+                && game.getBoard().getRiver() != Card.EMPTY
                 && isTerminal)) {
             Player winner = winnerService.determineWinner(room);
             Player winningPlayer = game.getPlayers().stream().filter(p -> Objects.equals(p.getUsername(), winner.getUsername())).findFirst().orElse(null);
@@ -274,6 +275,9 @@ public class GameService {
             if (winningPlayer != null && losingPlayer != null) {
                 winningPlayer.setAccountBalance(winningPlayer.getAccountBalance() + game.getPot());
                 game.setPot(0);
+                game.setBetAmount(0);
+                Board board = new Board(List.of(Card.EMPTY, Card.EMPTY, Card.EMPTY), Card.EMPTY, Card.EMPTY);
+                game.setBoard(board);
                 game.setWinner(winningPlayer.getUsername());
 
                 if (winningPlayer.isPlayersAction()) {
@@ -380,7 +384,11 @@ public class GameService {
     private void dealNext(Room room, Game game, List<Player> players){
         Board board = game.getBoard();
 
-        if (board == null || board.getFlop().isEmpty()) {
+        if (board == null
+                || board.getFlop().isEmpty()
+                || (board.getFlop().get(0).equals(Card.EMPTY)
+                    && board.getFlop().get(1).equals(Card.EMPTY)
+                    && board.getFlop().get(2).equals(Card.EMPTY))) {
             List<Card> flop = deckService.drawCards(3, room);
 
             board = new Board();
@@ -388,14 +396,16 @@ public class GameService {
             game.setBoard(board);
             setGameState(room, game, players);
 
-        }else if (!board.getFlop().isEmpty() && board.getTurn() == null) {
+        }else if (board.getTurn() == null
+                    || board.getTurn().equals(Card.EMPTY)) {
             Card turn = deckService.drawCards(1, room).get(0);
 
             board.setTurn(turn);
             game.setBoard(board);
             setGameState(room, game, players);
 
-        }else if (board.getTurn() != null && board.getRiver() == null) {
+        }else if (board.getRiver() == null
+                    || board.getRiver().equals(Card.EMPTY)) {
             Card river = deckService.drawCards(1, room).get(0);
 
             board.setRiver(river);

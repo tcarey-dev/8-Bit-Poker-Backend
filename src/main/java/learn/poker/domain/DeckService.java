@@ -21,6 +21,7 @@ public class DeckService {
                 .uri(String.format("%s/%s/draw/?count=%s", api_url, deckId, numCards)).accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Deck.class)
+                .retry(3)
                 .block();
 
         if (deck == null) {
@@ -79,6 +80,7 @@ public class DeckService {
                 .uri(api_url + "/new/shuffle/?deck_count=1").accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Deck.class)
+                .retry(3)
                 .block()
                 .getDeck_id();
     }
