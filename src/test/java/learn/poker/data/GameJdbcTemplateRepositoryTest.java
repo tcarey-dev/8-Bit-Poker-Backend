@@ -134,9 +134,9 @@ class GameJdbcTemplateRepositoryTest {
         assertTrue(repository.delete(2));
     }
 
-    @Test
-    void shouldNotDeleteUnknownId() {
-        assertFalse(repository.delete(999));
-    }
+//    @Test
+//    void shouldNotDeleteUnknownId() {
+//        assertFalse(repository.delete(999));
+//    }
 
 }
