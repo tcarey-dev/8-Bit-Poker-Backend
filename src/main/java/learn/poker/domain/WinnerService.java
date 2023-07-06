@@ -44,7 +44,6 @@ public class WinnerService {
         return null;
     }
 
-
     public PokerApiWinnerResponse getWinnerFromApi(Room room) {
         String flop1 = room.getGame().getBoard().getFlop().get(0).getAbbr();
         String flop2 = room.getGame().getBoard().getFlop().get(1).getAbbr();
@@ -101,14 +100,8 @@ public class WinnerService {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(PokerApiWinnerResponse.class)
+                .retry(3)
                 .block();
-
-//        return client.build().get()
-//                .uri("https://api.pokerapi.dev/v1/winner/texas_holdem?cc=10D,JD,JS,2H,2S&pc[]=KH,5H&pc[]=JC,4H")
-//                .accept(MediaType.APPLICATION_JSON)
-//                .retrieve()
-//                .bodyToMono(PokerApiWinnerResponse.class)
-//                .block();
 
     }
 }
