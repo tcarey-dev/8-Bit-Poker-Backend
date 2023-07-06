@@ -48,7 +48,9 @@ public class GameController {
 
     @MessageMapping("/add-players/{roomId}")
     @SendTo("/topic/game/{roomId}")
-    public Room addPlayer(@DestinationVariable int roomId, Room room) {
+    public Room addPlayer(
+            @DestinationVariable int roomId, Room room
+    ) {
         Result<Room> roomResult = gameService.addPlayer(room);
         if (roomResult.isSuccess()) {
             Room updatedRoom = roomResult.getPayload();
