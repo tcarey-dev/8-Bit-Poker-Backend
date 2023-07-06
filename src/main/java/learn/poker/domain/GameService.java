@@ -121,13 +121,13 @@ public class GameService {
         List<Player> players = room.getGame().getPlayers();
         Game game = findById(room.getGame().getGameId());
 
-//        for (Player p : players) {
-//            Player match = game.getPlayers().stream().filter(player -> player.getUsername().equalsIgnoreCase(p.getUsername())).findFirst().orElse(null);
-//            if (match != null) {
-//                result.addMessage("Cannot add duplicate player to game", ResultType.INVALID);
-//                return result;
-//            }
-//        }
+        for (Player p : players) {
+            Player match = game.getPlayers().stream().filter(player -> player.getUsername().equalsIgnoreCase(p.getUsername())).findFirst().orElse(null);
+            if (match != null && players.size() == 1) {
+                result.addMessage("Cannot add duplicate player to game", ResultType.INVALID);
+                return result;
+            }
+        }
 
         game.setPlayers(players);
 
@@ -173,6 +173,7 @@ public class GameService {
         }
 
         remainingPlayer.setAccountBalance(remainingPlayer.getAccountBalance() + game.getPot());
+        remainingPlayer.setHoleCards(List.of(Card.EMPTY, Card.EMPTY));
 
         game.setWinner(null);
         game.setPot(0);
@@ -239,6 +240,10 @@ public class GameService {
         Result<Room> roomResult = new Result<>();
         Game game = room.getGame();
         Action lastAction = game.getLastAction();
+        if (lastAction == null){
+            lastAction = Action.NONE;
+        }
+
         Player player1 = game.getPlayers().get(0);
         Player player2 = game.getPlayers().get(1);
         Player currentPlayer = game.getPlayers().stream().filter(Player::isPlayersAction).findFirst().orElse(null);
