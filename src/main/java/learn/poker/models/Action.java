@@ -6,5 +6,6 @@ public enum Action {
     FOLD,
     RAISE,
     CALL,
+    LEAVE,
     NONE;
 }

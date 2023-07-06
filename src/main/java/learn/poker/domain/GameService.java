@@ -119,8 +119,15 @@ public class GameService {
         }
 
         List<Player> players = room.getGame().getPlayers();
-
         Game game = findById(room.getGame().getGameId());
+
+//        for (Player p : players) {
+//            Player match = game.getPlayers().stream().filter(player -> player.getUsername().equalsIgnoreCase(p.getUsername())).findFirst().orElse(null);
+//            if (match != null) {
+//                result.addMessage("Cannot add duplicate player to game", ResultType.INVALID);
+//                return result;
+//            }
+//        }
 
         game.setPlayers(players);
 
@@ -141,7 +148,7 @@ public class GameService {
         return result;
     }
 
-    public Result<Room> leaveGame(Room room) {
+    public Result<Room> leaveGame(Room room, String username) {
         /**
          * remove them from the list of players from game
          * then check if the game has any players
@@ -149,11 +156,14 @@ public class GameService {
          */
 
         Result<Room> roomResult = new Result<>();
-
         Game game = room.getGame();
+        Player exitingPlayer = game.getPlayers().stream().filter(player -> player.getUsername().equalsIgnoreCase(username)).findFirst().orElse(null);
+        Player remainingPlayer = game.getPlayers().stream().filter(player -> !player.getUsername().equalsIgnoreCase(username)).findFirst().orElse(null);
 
-        //both players have left the game
-        if(game.getPlayers().size() < 1) {
+        if(remainingPlayer != null) {
+            game.setPlayers(List.of(remainingPlayer));
+        } else {
+            game.setPlayers(null);
             if(!deleteById(room.getGame().getGameId())){
                 roomResult.addMessage("Sorry, unable to delete the game", ResultType.NOT_FOUND);
             }
@@ -162,16 +172,13 @@ public class GameService {
             return roomResult;
         }
 
+        remainingPlayer.setAccountBalance(remainingPlayer.getAccountBalance() + game.getPot());
 
-        //there is only one player remaining in the game
-//        winner.setAccountBalance(winner.getAccountBalance() + game.getPot());
-
-        game.setPot(0);
         game.setWinner(null);
-        game.setLastAction(Action.NONE);
+        game.setPot(0);
+        game.setLastAction(Action.LEAVE);
         game.setBoard(null);
         game.setBetAmount(0);
-
 
         if(!repository.update(game)){
             roomResult.addMessage("Unable to delete game ", ResultType.NOT_FOUND);
@@ -237,6 +244,10 @@ public class GameService {
         Player currentPlayer = game.getPlayers().stream().filter(Player::isPlayersAction).findFirst().orElse(null);
         Player opponent = game.getPlayers().stream().filter(player -> !player.isPlayersAction()).findFirst().orElse(null);
         double bet = game.getBetAmount();
+
+        if (lastAction.equals(Action.NONE) && game.getWinner() != null) {
+            game.setWinner(null);
+        }
 
         // Fold
         if (action.equals(Action.FOLD)) {
@@ -376,7 +387,7 @@ public class GameService {
         }
 
         // TODO throws connection refused error
-//        deckService.shuffle();
+        deckService.shuffle(room.getDeckId());
 
         setGameState(room, game, List.of(player1, player2));
     }

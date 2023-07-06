@@ -4,6 +4,8 @@ import learn.poker.domain.GameService;
 import learn.poker.domain.Result;
 import learn.poker.domain.RoomService;
 import learn.poker.models.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -11,11 +13,14 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.util.HtmlUtils;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @Controller
 @CrossOrigin(origins = {"http://localhost:3000"})
 public class GameController {
 
+    @Autowired
+    private SimpMessagingTemplate template;
     private final GameService gameService;
     private final RoomService roomService;
 
@@ -46,11 +51,22 @@ public class GameController {
     public Room addPlayer(@DestinationVariable int roomId, Room room) {
         Result<Room> roomResult = gameService.addPlayer(room);
         if (roomResult.isSuccess()) {
-            return room;
+            Room updatedRoom = roomResult.getPayload();
+            return updatedRoom;
         } else {
             throw new RuntimeException("Unable to add player the game.");
         }
     }
+
+//    private void notifyPlayersOfPlayerJoined(int roomId, Room room) {
+//        // Create a message indicating that a new player has joined
+////        Message message = new Message();
+////        message.setType(MessageType.PLAYER_JOINED);
+////        message.setContent("A new player has joined the game.");
+//
+//        // Broadcast the message to all players in the room
+//        template.convertAndSend("/topic/game/" + roomId, room);
+//    }
 
     @MessageMapping("/start-game/{roomId}")
     @SendTo("/topic/game/{roomId}")
@@ -119,10 +135,10 @@ public class GameController {
     }
 
 
-    @MessageMapping("/leave-game/{roomId}")
+    @MessageMapping("/leave-game/{roomId}/{username}")
     @SendTo("/topic/game/{roomId}")
-    public Room leaveGame(@DestinationVariable int roomId, Room room) {
-        Result<Room> roomResult = gameService.leaveGame(room);
+    public Room leaveGame(@DestinationVariable int roomId, Room room, @DestinationVariable String username) {
+        Result<Room> roomResult = gameService.leaveGame(room, username);
         if (roomResult.isSuccess()) {
             return roomResult.getPayload();
         } else {
