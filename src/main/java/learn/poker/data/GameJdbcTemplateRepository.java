@@ -190,8 +190,8 @@ public class GameJdbcTemplateRepository implements GameRepository {
     @Override
     public boolean delete(int gameId) {
         Game game = findById(gameId);
-        jdbcTemplate.update("UPDATE game SET player_one_id = NULL WHERE player_one_id = ?;", game.getPlayers().get(0));
-        jdbcTemplate.update("UPDATE game SET player_two_id = NULL WHERE player_two_id = ?;", game.getPlayers().get(1));
+        jdbcTemplate.update("UPDATE game SET player_one_id = NULL WHERE player_one_id = ?;", game.getPlayers().get(0).getPlayerId());
+        jdbcTemplate.update("UPDATE game SET player_two_id = NULL WHERE player_two_id = ?;", game.getPlayers().get(1).getPlayerId());
         jdbcTemplate.update("UPDATE game SET board_id = NULL WHERE board_id = ?;", game.getBoard().getBoardId());
         jdbcTemplate.update("UPDATE room SET game_id = NULL WHERE game_id = ?;", gameId);
         return jdbcTemplate.update("delete from game where game_id = ?;", gameId) > 0;
