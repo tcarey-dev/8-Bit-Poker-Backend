@@ -9,8 +9,8 @@ import learn.poker.domain.RoomService;
 import learn.poker.models.Game;
 import learn.poker.models.Player;
 import learn.poker.models.Room;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
@@ -20,12 +20,17 @@ import java.util.List;
 
 @Component
 public class WebSocketEventListener {
-    @Autowired
-    RoomService roomService;
-    @Autowired
-    GameService gameService;
-    @Autowired
-    PlayerService playerService;
+    private final SimpMessageSendingOperations messagingTemplate;
+    private final RoomService roomService;
+    private final GameService gameService;
+    private final PlayerService playerService;
+
+    public WebSocketEventListener(SimpMessageSendingOperations messagingTemplate, RoomService roomService, GameService gameService, PlayerService playerService) {
+        this.messagingTemplate = messagingTemplate;
+        this.roomService = roomService;
+        this.gameService = gameService;
+        this.playerService = playerService;
+    }
 
     @EventListener
     public void handleWebSocketSubscribeListener(
@@ -56,26 +61,26 @@ public class WebSocketEventListener {
 
             // add player to game
             Game game = room.getGame();
+            Player player = playerService.loadUserByUsername(username);
+
             List<Player> playerList = new ArrayList<>();
             if(game.getPlayers() != null){
                 playerList = game.getPlayers();
             }
 
-            Player player = playerService.loadUserByUsername(username);
-            playerList.add(player);
-            game.setPlayers(playerList);
-            room.setGame(game);
+            if (!playerList.contains(player)) {
+                playerList.add(player);
+                game.setPlayers(playerList);
+                room.setGame(game);
 
-            
+                result = roomService.update(room);
 
-
-
-
-            // if game is not initialized, do so
-            // if user is not added, add them
-
+                if (result.isSuccess()) {
+                    Room updatedRoom = result.getPayload();
+                    messagingTemplate.convertAndSend(destination, updatedRoom);
+                }
+            }
         }
-
     }
 
     private int extractRoomIdFromDestination(String destination) {
