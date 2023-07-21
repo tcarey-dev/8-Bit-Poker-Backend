@@ -60,8 +60,10 @@ public class GameService {
         boolean updated = repository.update(game);
         if (!updated) {
             result.addMessage("Game doesn't exist", ResultType.NOT_FOUND);
+            return result;
         }
 
+        result.setPayload(game);
         return result;
     }
 
@@ -89,8 +91,6 @@ public class GameService {
 
         Game game = new Game(0, null, null, null);
         Result<Game> gameResult = add(game);
-
-
 
         if (!gameResult.isSuccess()){
             roomResult.addMessage("Something went wrong when initializing the game", ResultType.INVALID);

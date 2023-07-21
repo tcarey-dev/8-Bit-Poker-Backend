@@ -71,13 +71,20 @@ public class WebSocketEventListener {
             if (!playerList.contains(player)) {
                 playerList.add(player);
                 game.setPlayers(playerList);
-                room.setGame(game);
 
-                result = roomService.update(room);
+                Result<Game> gameResult = gameService.update(game);
 
-                if (result.isSuccess()) {
-                    Room updatedRoom = result.getPayload();
-                    messagingTemplate.convertAndSend(destination, updatedRoom);
+                if (!gameResult.isSuccess()){
+                    // TODO: handle error scenario
+                } else {
+                    room.setGame(game);
+
+                    result = roomService.update(room);
+
+                    if (result.isSuccess()) {
+                        Room updatedRoom = result.getPayload();
+                        messagingTemplate.convertAndSend(destination, updatedRoom);
+                    }
                 }
             }
         }
