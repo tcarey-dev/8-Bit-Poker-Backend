@@ -1,0 +1,86 @@
+@url = http://localhost:8080/api/room
+
+GET {{url}} HTTP/1.1
+
+###
+
+POST {{url}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "stake": 1.00,
+    "seats": 2
+}
+
+###
+
+POST {{url}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "stake": 0.5,
+    "seats": 2
+}
+
+###
+
+GET {{url}}/1 HTTP/1.1
+
+###
+
+PUT {{url}}/1 HTTP/1.1
+Content-Type: application/json
+
+{
+    "roomId": 1,
+    "stake": 4.0,
+    "seats": 2,
+    "game": {
+        "gameId": 2,
+        "pot": 250,
+        "winner": "fred@astair.com",
+        "board": {
+        "boardId": 2,
+        "flop": [
+        ],
+        "turn": "ACE_OF_CLUBS",
+        "river": "FIVE_OF_SPADES"
+        },
+        "players": [
+        {
+            "playerId": 3,
+            "username": "fred@astair.com",
+            "displayName": null,
+            "enabled": true,
+            "accountBalance": 0,
+            "authorities": [
+            "USER"
+            ],
+            "holeCards": null,
+            "position": null,
+            "playersAction": false
+        },
+        {
+            "playerId": 4,
+            "username": "billy@bob.com",
+            "displayName": null,
+            "enabled": true,
+            "accountBalance": 0,
+            "authorities": [
+            "ADMIN"
+            ],
+            "holeCards": null,
+            "position": null,
+            "playersAction": false
+        }
+        ]
+    }
+}
+
+###
+
+DELETE {{url}}/4 HTTP/1.1
+
+###
+
+DELETE {{url}}/999 HTTP/1.1

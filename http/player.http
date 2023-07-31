@@ -1,0 +1,53 @@
+@url = http://localhost:8080/api/player
+
+
+
+GET {{url}}/john@smith.com HTTP/1.1
+
+###
+
+PUT {{url}}/1 HTTP/1.1
+Content-Type: application/json
+
+{
+    "playerId": 1,
+    "username": "john@smith.com",
+    "displayName": "sharklightning",
+    "enabled": true,
+    "accountBalance": 200,
+    "authorities": [
+        "ADMIN"
+    ],
+    "holeCards": [
+    "ACE_OF_HEARTS",
+    "KING_OF_DIAMONDS"
+    ],
+    "position": "SMALLBLIND",
+    "playersAction": true
+}
+
+###
+
+POST {{url}}/create-account HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "bob@jones.com",
+    "password": "P@ssw0rd!"
+}
+
+###
+
+POST {{url}}/authenticate HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "bob@jones.com",
+    "password": "P@ssw0rd!"
+}
+
+###
+
+POST {{url}}/refresh-token HTTP/1.1
+
+Authorization: Bearer
