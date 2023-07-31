@@ -390,8 +390,7 @@ public class GameService {
             player1.setPosition(Position.SMALLBLIND);
             player2.setPosition(Position.BIGBLIND);
         }
-
-        // TODO throws connection refused error
+        
         deckService.shuffle(room.getDeckId());
 
         setGameState(room, game, List.of(player1, player2));
